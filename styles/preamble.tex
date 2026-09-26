@@ -1,0 +1,166 @@
+% Preamble: packages, page layout and heading format. main.tex \inputs this file right after \documentclass.
+\usepackage[fontsize=12pt]{scrextend}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[english]{babel}
+\usepackage{vntex}
+\usepackage{csquotes}
+
+\usepackage[style=ieee,sorting=none]{biblatex} %Imports biblatex package
+\AtEveryBibitem{%
+  \clearfield{issn} % Remove issn
+  \clearfield{doi} % Remove doi
+
+  \ifentrytype{online}{}{% Remove url except for @online
+    \clearfield{url}
+  }
+}
+\addbibresource{refs.bib}
+\usepackage{longtable}
+\usepackage{amsmath}
+%new packet added
+\usepackage{indentfirst}
+\usepackage{ragged2e}
+\usepackage{blindtext}
+\usepackage{titlesec}
+%new packet added
+\usepackage{a4wide,amssymb,epsfig,latexsym,multicol,array,hhline,fancyhdr}
+% \usepackage{vntex}
+% \usepackage[english]{babel}
+\usepackage{mathptmx}[ptm]
+
+% \usepackage{newtxtext}
+% \usepackage{newtxmath}
+
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{lastpage}
+\usepackage{enumerate}
+\usepackage{color}
+\usepackage{graphicx}							% Standard graphics package
+\graphicspath{{figures/}}						% \includegraphics paths are relative to figures/
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{epsfig}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{longfbox}
+\usepackage{float}
+\usepackage{pdfpages}
+
+\usetikzlibrary{arrows,snakes,backgrounds,calc}
+\usepackage{hyperref}
+\hypersetup{urlcolor=blue,linkcolor=black,citecolor=black,colorlinks=true} 
+\hypersetup{pdftitle={\reporttitle},pdfauthor={\reportauthor}} % values come from metadata.tex
+% CI writes the build source, commit and build time to buildinfo.tex (see .github/workflows/build.yml),
+% which goes into the PDF Subject field without printing anything on the pages. Local builds have no such file.
+\IfFileExists{buildinfo.tex}{\input{buildinfo}\hypersetup{pdfsubject={\buildinfo}}}{}
+\usepackage{comment}
+\usepackage{tocloft}
+\usepackage{appendix}
+\usepackage{algorithm}		% algorithm float: \begin{algorithm}\caption{...}
+\usepackage{algorithmic}	% \STATE, \REQUIRE, \FOR, ...
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+% \renewcommand{\cftfigindent}{pt}
+\renewcommand{\cftfigpresnum}{\figurename~}
+\renewcommand{\cftfignumwidth}{5em}
+
+% \renewcommand{\cfttabindent}{0.5pt}
+\renewcommand{\cfttabpresnum}{\tablename~}
+\renewcommand{\cfttabnumwidth}{5em}
+\newtheorem{theorem}{{\bf Theorem}}
+\newtheorem{property}{{\bf Property}}
+\newtheorem{proposition}{{\bf Proposition}}
+\newtheorem{corollary}[proposition]{{\bf Corollary}}
+\newtheorem{lemma}[proposition]{{\bf Lemma}}
+
+%%%Setting document
+\renewcommand{\baselinestretch}{1.5} 
+
+\def\thesislayout{	% A4: 210 × 297
+	\newgeometry{
+		% a4paper,
+		% total={210mm,297mm},  % fix over page
+		left=35mm,
+		top=25mm,
+            bottom=30mm,
+            right=30mm
+	}
+}
+\def\thesisheadlayout{	% A4: 210 × 297
+	\geometry{
+		% a4paper,
+		% total={210mm,297mm},  % fix over page
+		left=40mm,
+		top=30mm,
+            bottom=30mm,
+            right=30mm
+	}
+}
+\AtBeginDocument{\renewcommand*\contentsname{Contents}}
+\AtBeginDocument{\renewcommand*\refname{References}}
+
+\thesisheadlayout
+%\usepackage{fancyhdr}
+\setlength{\headheight}{40pt}
+% \pagestyle{fancy}
+% \fancyhead{} % clear all header fields
+% \fancyhead[L]{
+%  \begin{tabular}{rl}
+%     \begin{picture}(25,15)(0,0)
+%     \put(0,-8){\includegraphics[width=8mm, height=8mm]{hcmut.png}}
+%     %\put(0,-8){\epsfig{width=10mm,figure=hcmut.eps}}
+%    \end{picture}&
+% 	%\includegraphics[width=8mm, height=8mm]{hcmut.png} & %
+% 	\begin{tabular}{l}
+% 		\textbf{\bf Ho Chi Minh City University of Technology}\\
+% 		\textbf{\bf  Faculty of Computer Science and Engineering}
+% 	\end{tabular} 	
+%  \end{tabular}
+% }
+% \fancyhead[R]{
+% 	\begin{tabular}{l}
+% 		\tiny \bf \\
+% 		\tiny \bf 
+% 	\end{tabular}  }
+\fancyfoot{} % clear all footer fields
+% \fancyfoot[L]{\scriptsize  Specialized Project Report (CO3335) - Semester-231 2023 - 2024}
+\fancyfoot[R]{\scriptsize Page {\thepage}/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\setlength\parindent{0pt}
+%%%
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+\makeatletter
+\newcounter {subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection .\@alph\c@subsubsubsection}
+\newcommand\subsubsubsection{\@startsection{subsubsubsection}{4}{\z@}%
+                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries}}
+\newcommand*\l@subsubsubsection{\@dottedtocline{3}{10.0em}{4.1em}}
+\newcommand*{\subsubsubsectionmark}[1]{}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+\newcommand\blank[1]{\rule[-.2ex]{#1}{.4pt}}
+\makeatother
+% \input{styles/usecase} % usecase environment for use case specification tables, uncomment when needed
+\setlength{\floatsep}{5pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries}{\chaptertitlename{} \thechapter}{15pt}{\Huge}

@@ -1,0 +1,38 @@
+\section{Results and analysis}
+We evaluate KEALLM on two question answering benchmarks, FB15k-237 QA and MetaQA, comparing its performance against baselines, including the standard LLaMa-2 model, a retrieval-augmented generation (RAG) system, and a knowledge graph-augmented RAG (KG-RAG) system. The results are summarized in Table \ref{tab:rag}, with accuracy as the evaluation metric.
+\begin{table}[hbt]
+    \centering
+    \caption{Results on KEALLM, RAG and KG-RAG}
+    \begin{tabular}{|c|c|c|}
+        \hline
+         \textbf{Model name} &  \textbf{FB15K-237QA} & \textbf{MetaQA}\\
+         \hline
+         Llama-2 &  $0.5242$ & $0.3225$\\
+         \hline
+         Llama-2 RAG & $0.6159$ &  $0.5181$ \\
+         \hline
+         Llama-2 KG-RAG&  $0.6534$ &  $0.512$\\
+         \hline
+         KEALLM-SFT &  $\mathbf{0.6934}$ &  $0.557$\\
+         \hline
+         KEALLM-DPO &  $0.2341$ &  $0.485$\\
+         \hline
+         KEALLM-SFT-DPO &  $0.6824$ &  $\mathbf{0.5883}$\\
+         \hline
+    \end{tabular}
+    
+    \label{tab:rag}
+\end{table}
+
+Some of findings:
+\begin{itemize}
+\item Baselines: The standard LLaMa-2 model achieves moderate accuracy on both datasets, indicating its limitations in accessing and utilizing factual knowledge. Both RAG systems, which retrieve relevant information from an external corpus, show significant improvements over the vanilla LLaMa-2. KG-RAG, which specifically retrieves information from a knowledge graph, achieves further gains, highlighting the benefit of structured knowledge for question answering
+
+\item KEALLM-SFT: KEALLM, after supervised fine-tuning (SFT) of the Projector module, outperforms all baselines on both datasets. This demonstrates the effectiveness of directly integrating knowledge graph embeddings into the LLM, allowing for implicit knowledge access during response generation
+
+\item KEALLM-DPO: Directly fine-tuning KEALLM with DPO without the initial SFT stage leads to significantly lower accuracy. This suggests that the initial alignment of the Projector module through supervised learning is crucial for effective knowledge integration
+
+\item KEALLM-SFT-DPO: Combining SFT and DPO fine-tuning results in the best performance on MetaQA, indicating that DPO can further enhance the model's ability to align with user preferences and generate more accurate answers. However, on FB15k-237 QA, the performance slightly decreases compared to KEALLM-SFT, potentially due to overfitting or a mismatch between the DPO objective and the evaluation metric
+\end{itemize}
+Overall, the results demonstrate that KEALLM, by integrating knowledge graph embeddings directly into the LLM, provides a promising approach for knowledge-grounded response generation. The combination of SFT and DPO fine-tuning further enhances the model's performance, highlighting the benefit of aligning the model's output with user preferences. Further investigation is needed to understand the performance differences across datasets and fine-tuning stages
+

@@ -1,0 +1,97 @@
+\section{Experiment setup}
+\subsection{Baselines setup}
+\textbf{Generator:} Llama-2 7b \cite{touvron2023llama2} is chosen as the generator for this project because it is an open-source Large Language Model that can perform natural language generation and in-context learning. The configuration is described below:
+\begin{itemize}
+    \item temperature: 0.5
+    \item top\_K: 5
+    \item max\_new\_tokens: 100
+\end{itemize}
+\textbf{Encoders:} In this project, two types of encoders are used: Bi-encoder and Cross-encoder. Both of them use the MiniLM architecture, which is a distilled version of large pre-trained Transformer models \cite{wang2020minilm}. The Bi-encoder, using the training weight utilizing the cosine similarity\footnote{https://huggingface.co/sentence-transformers/multi-qa-MiniLM-L6-cos-v1}\cite{reimers-2019-sentence-bert}, maps sentences or paragraphs to a 384 dimensional dense vector space. On the other hand, the Cross-encoder uses the training weight utilizing the reranking task\footnote{https://huggingface.co/cross-encoder/ms-marco-MiniLM-L-12-v2}.\
+
+Retrieval-Augmented Generation experiment:
+\begin{itemize}
+    \item Top-K documents: 20
+    \item Top-K' documents: 5
+\end{itemize}
+
+Knowledge Graph-based Retrieval-Augmented Generation experiment:
+\begin{itemize}
+    \item Top-K neighbor hops: 2
+    \item Top-K' documents: 5
+\end{itemize}
+\subsection{Data preparation}
+\subsubsection{Knowledge graph}
+\textbf{FB15k-237} \cite{toutanova-etal-2015-representing}: FB15k-237 is a subset of the Freebase knowledge graph, specifically designed for knowledge graph completion tasks. It contains a curated set of entities and relations, addressing the issue of inverse relations present in the original FB15k dataset.
+
+\textbf{MetaQA}\cite{zhang2018variational}: MetaQA is a large-scale question answering dataset based on a knowledge graph extracted from Wikipedia. The knowledge graph contains factual triples, and the dataset includes a large set of multi-hop questions designed to test reasoning capabilities.
+
+We preprocess both knowledge graphs to extract a set of triples for training the knowledge graph embedding module. The statistics of the preprocessed datasets are summarized in Table \ref{table:dataset_stats}.
+\begin{table}[hbt]
+\centering
+\caption{Knowledge graph description}
+\label{table:dataset_stats}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Dataset} & \textbf{Entities} & \textbf{Relations} & \textbf{Triples} \\
+\hline
+FB15k-237 & 14,505 & 237 & 310,079 \\
+\hline
+MetaQA & 43,238 & 9 & 138,989 \\
+\hline
+\end{tabular}
+\end{table}
+Each knowledge graph dataset into train, development, and test sets following the standard splits provided in their respective sources, as detailed in Table \ref{table:dataset_splits}.
+\begin{table}[hbt]
+\centering
+\caption{Knowledge graph dataset splits}
+\label{table:dataset_splits}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Dataset} & \textbf{Train Triples} & \textbf{Dev Triples} & \textbf{Test Triples} \\
+\hline
+FB15k-237  & 272,208 & 17,535 & 20,336 \\
+\hline
+MetaQA  & 121,213 & 8,821 & 8,955 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Training dataset for Projector module}
+The Projector module plays a crucial role in KEALLM, bridging the knowledge encoded in the KG embeddings and the linguistic understanding of the LLM. To train this module, we construct a dedicated dataset derived from the knowledge graphs and user queries designed to elicit specific entities.
+
+For MetaQA, we utilize the existing question provided in the dataset
+
+For FB15k-237, we create a training dataset FB15k-237QA as follows:
+\begin{itemize}
+
+\item Triple Selection: Due to the limitation of computational resource, we randomly sample a subset of triples from the knowledge graph's training split (as outlined in Table \ref{table:dataset_splits}) about 15,000 samples.
+
+\item Query Generation: For each triple $(h, r, t)$, we generate a user query aimed at eliciting the tail entity $t$ given the head entity $h$ and the relation $r$. This query generation process is tailored to the specific characteristics of each knowledge graph. For simplicity,  we use a template  "What is the [relation] of [head entity]?"
+
+\end{itemize}
+
+Data Instance Creation: Each data instance consists of:
+\begin{itemize}
+\item User Query ($X_q$): The generated user query.
+\item Knowledge Embedding input ($e_i, r_i, ?$): The tuple the head entity $e_i$ and the relation $r_i$.
+\item Target Entity ($X_a$): The tail entity $e_k$ of the triple.
+\end{itemize}
+This procedure results in a training dataset where each instance represents a user query seeking specific information that can be found in the knowledge graph. The Projector module is then trained on this dataset to learn a mapping between the knowledge embedding and a representation suitable for the LLM.
+
+\begin{table}[hbt]
+\centering
+\caption{Projector module dataset splits}
+\label{table:projector_dataset}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Dataset} & \textbf{Train Instances} & \textbf{Dev Instances} & \textbf{Test Instances} \\
+\hline
+FB15k-237QA & 10,500 & 1,500 & 3,000 \\
+\hline
+MetaQA (1-hop QA) & 96,106 &  9,992 & 9,947 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Implementation details}
+The training code is implemented in PyTorch\cite{paszke2019pytorch}. We use Adam optimizer\cite{DBLP:journals/corr/KingmaB14} for optimizing with a standard exponential decay learning rate scheduler. For the LLM component of KEALLM, we utilize the Llama-2-7b model \cite{touvron2023llama}. This model, with 7 billion parameters, offers a balance between language modeling capabilities and computational feasibility. Due to limitations in computational resources, we employ 8-bit quantization to reduce the model's memory footprint and enable efficient training and inference. We use the pretrained BERT-base-uncased model for learning knowledge graph embeddings for both FB15k-237 and MetaQA. We fine-tune separate KG-BERT models for each knowledge graph using the training splits described in Table \ref{table:dataset_splits}. The models are trained for 5 epochs with a batch size of 16 and a learning rate of $2 \times 10^{-5}$. The Projector module is trained for 10 epochs on each of the knowledge graph datasets described in Table \ref{table:projector_dataset}. After training the Projector module, we further fine-tune again using DPO. We use the preferred and less preferred responses derived from the knowledge graph embedding, as described in the DPO section. The DPO training is performed for 5 epochs with a batch size of 8 and a learning rate of $5 \times 10^{-6}$. The hyperparameter $\beta$, which controls the strength of the KL penalty in the DPO loss function, is set to 0.1. We also investigate applying DPO directly to the KEALLM architecture before the supervised fine-tuning (SFT) of the Projector module. This explores whether DPO can effectively guide the knowledge integration process even without initial supervised alignment.

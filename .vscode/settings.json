@@ -1,0 +1,5 @@
+{
+  // LaTeX Workshop: build with latexmk using only the options in .latexmkrc; the PDF is at the repo root
+  "latex-workshop.latex.recipe.default": "latexmk (latexmkrc)",
+  "latex-workshop.latex.outDir": "%DIR%"
+}

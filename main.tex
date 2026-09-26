@@ -1,0 +1,59 @@
+\documentclass[a4paper]{report}
+\input{metadata}
+\input{styles/preamble}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+\input{frontmatter/titlepage}
+
+% \thesislayout
+
+%\thispagestyle{empty}
+\renewcommand{\figurename}{\textbf{Figure}}
+\renewcommand{\tablename}{\textbf{Table}}
+\newpage
+
+\pagenumbering{roman}
+
+% \include{frontmatter/supervisor-signature}
+
+% Capstone project tasks
+% \includepdf[pages=-]{frontmatter/attachments/task.pdf}
+
+% Capstone project evaluation forms
+% \includepdf[pages=-]{frontmatter/attachments/Dong.pdf}
+
+\setcounter{page}{1}
+\include{frontmatter/declaration}
+\include{frontmatter/acknowledgement}
+\include{frontmatter/abstract}
+
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapters
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\thesislayout
+\include{chapters/1-introduction/main}
+\include{chapters/2-theoretical-background/main}
+\include{chapters/3-related-work/main}
+\include{chapters/4-proposed-solution/main}
+\include{chapters/5-conclusion/main}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Back matter
+% \nocite{*}
+\addcontentsline{toc}{chapter}{References}
+
+\printbibliography[title=References]
+
+\include{backmatter/appendix}
+\end{document}

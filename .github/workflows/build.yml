@@ -1,0 +1,135 @@
+name: Build PDF
+
+# Pull request: build as a check, keep the PDF as an artifact for 7 days.
+# main: rebuild, keep the PDF as an artifact for 30 days and overwrite it in the `latest` prerelease (never expires).
+# Published release (e.g. tag `phase-1`): build the tagged commit and attach report-<tag>.pdf to the release (never expires).
+# Manual run (Run workflow): build the selected branch or tag, keep the PDF as an artifact for 30 days.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+# For consecutive pushes to the same branch or pull request, keep only the newest build.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # needed to update tags and releases
+
+jobs:
+  build:
+    # The `latest` release is managed by this workflow, so do not rebuild when it gets published.
+    if: github.event_name != 'release' || github.event.release.tag_name != 'latest'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Record the build source, commit and build time in the PDF Subject field (see styles/preamble.tex),
+      # so a downloaded PDF still tells where it came from without printing anything on its pages.
+      - name: Write build info
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            source="PR ${PR_NUMBER}"; sha="$PR_SHA"
+          else
+            source="$GITHUB_REF_NAME"; sha="$GITHUB_SHA"
+          fi
+          info="$source, commit ${sha::7}, build $(date -u '+%Y-%m-%d %H:%M UTC')"
+          # Replace LaTeX special characters (_ # % & ...) that may appear in branch names
+          info=$(printf '%s' "$info" | tr -c 'A-Za-z0-9.,:/ -' '-')
+          printf '\\def\\buildinfo{%s}\n' "$info" > buildinfo.tex
+          cat buildinfo.tex
+
+      # Run latexmk in a TeX Live Docker image. All build settings live in .latexmkrc.
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: main.tex
+
+      - name: Name the PDF
+        id: pdf
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            name="report-pr${PR_NUMBER}-${PR_SHA::7}.pdf"
+          else
+            name="report-${GITHUB_REF_NAME//\//-}-${GITHUB_SHA::7}.pdf"
+          fi
+          cp main.pdf "$name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Upload PDF artifact
+        id: artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ steps.pdf.outputs.name }}
+          archive: false # upload the PDF as is, so it opens right after download without unzipping
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 30 }}
+          if-no-files-found: error
+
+      - name: Publish to prerelease `latest`
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp main.pdf report.pdf
+          git tag -f latest
+          git push -f origin refs/tags/latest
+          notes="PDF built from commit ${GITHUB_SHA::7} on main at $(date -u '+%Y-%m-%d %H:%M UTC'). CI updates this release every time main changes."
+          if gh release view latest > /dev/null 2>&1; then
+            gh release upload latest report.pdf --clobber
+            gh release edit latest --notes "$notes" --prerelease
+          else
+            gh release create latest report.pdf --title "Latest build of main" --notes "$notes" --prerelease
+          fi
+
+      # Checkpoint: a user publishes a release (e.g. `phase-1`) and CI attaches the PDF of that exact commit to it.
+      - name: Attach PDF to release
+        id: release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          asset="report-${TAG//\//-}.pdf"
+          cp main.pdf "$asset"
+          gh release upload "$TAG" "$asset" --clobber
+          echo "url=https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$asset" >> "$GITHUB_OUTPUT"
+
+      - name: Write summary
+        env:
+          PDF_NAME: ${{ steps.pdf.outputs.name }}
+          ARTIFACT_URL: ${{ steps.artifact.outputs.artifact-url }}
+          IS_MAIN: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+          RELEASE_URL: ${{ steps.release.outputs.url }}
+        run: |
+          {
+            echo "### PDF"
+            echo "- Artifact (expires automatically): [$PDF_NAME]($ARTIFACT_URL)"
+            if [ "$IS_MAIN" = true ]; then
+              echo "- Latest build of main: https://github.com/$GITHUB_REPOSITORY/releases/download/latest/report.pdf"
+            fi
+            if [ -n "$RELEASE_URL" ]; then
+              echo "- PDF of this release: $RELEASE_URL"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # On compile failure, upload the log to locate the error.
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-log
+          path: build/main.log
+          retention-days: 7
+          if-no-files-found: ignore

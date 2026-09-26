@@ -1,0 +1,81 @@
+\addto\captionsenglish{%
+ \renewcommand\chaptername{Appendix}}
+\appendixtitleon
+\appendixtitletocon
+\begin{appendices}
+\chapter{Prompt setting}
+\label{apd:A}
+% the \\ insures the section title is centered below the phrase: AppendixA
+
+\section{NER prompt}
+\textbf{Prompt}: \textit{As a good AI assistant, your mission is to extract entities in a sentence, your format answer is a dictionary json which key is entity, and value is type of entity.\\
+\{fewshot\}\\
+Sentence: \{sentence\}\\
+Answer: }\\\\
+
+\section{Text-based RAG prompt}
+\textbf{Prompt}: \textit{As a good AI assistant, your mission is to based on the context to answer the question as an entity, your format answer is a dictionary like ```json \{ "answer" :`Your answer`\} ```\\
+\{fewshot\}\\
+Context: '''\\
+\{context\}\\
+'''\\
+Question: \{question\}\\
+Answer: }\\\\
+
+\section{KG-based RAG prompt}
+\textbf{Prompt}: \textit{As a good AI assistant, your mission is to based on the given relations to answer the question as an entity, your format answer is a dictionary like ```json \{ "answer" :`Your answer` \} ```\\
+\{fewshot\}\\
+Relations: '''\\
+\{context\}\\
+'''\\
+Question: \{question\}\\
+Answer: }\\\\
+
+% \chapter{Generation samples}
+% \label{apd:B}
+% % the \\ insures the section title is centered below the phrase: Appendix B
+% \section{NER Prompt Generation}
+% \textbf{Prompt}: \textit{As a good AI assistant, your mission is to extract entities in a sentence, your format answer is a dictionary json which key is entity, and value is type of entity.\\\\
+% Sentence: When food is reduced in the stomach?\\
+% Answer: }\\\\
+% \textbf{Answer}: \textit{\{"food": \{"type": "object"\}\,"stomach": \{"type": "organ"\}\} }
+% \section{Text-based RAG Prompt Generation}
+% \textbf{Prompt}: \textit{As a good AI assistant, your mission is to based on the context to answer the question, your format answer is a dictionary like ```json \{ "answer" :`Your answer is "A","B","C","D","E"`\} ```\\\\
+% Context: '''\\
+% You are likely to find a canal around in venice\\
+% Venice has many canals\\
+% '''\\
+% Question: Where in Southern Europe would you find many canals?\\
+% A. michigan\\
+% B. new york\\
+% C. amsterdam\\
+% D. venice\\
+% E. other\\
+% Answer: }\\\\
+% \textbf{Answer:} \textit{\{ "answer": "D" \} Venice}
+
+% \section{KG-based RAG Prompt Generation}
+% \textbf{Prompt}: \textit{As a good AI assistant, your mission is to based on the given relations to answer the question, your format answer is a dictionary like ```json \{ "answer" :`Your answer is "A","B","C","D","E"` \} ```\\\\
+% Relations: '''\\
+% Venice-location\_of-canal\\
+% Venice-is\_part\_of-Veneto\\
+% Veneto-is\_part\_of-Italy\\
+% Southern Europe-related\_to-Italy\\
+% Southern Europe-related\_to-Portuga\\
+% '''\\
+% Question: Where in Southern Europe would you find many canals?\\
+% A. michigan\\
+% B. new york\\
+% C. amsterdam\\
+% D. venice\\
+% E. other\\
+% Answer: }\\\\
+% \textbf{Answer:} \textit{\{ "answer": "D" \} based on the provided information, Venice is located in Southern Europe and is famous for its canals.}
+
+\chapter{2024 Annual Conference of the North American Chapter of the Association for Computational Linguistics}
+\label{apd:B}
+% the \\ insures the section title is centered below the phrase: Appendix B
+A paper that we submitted to the 2024 Annual Conference of the North American Chapter of the Association for Computational Linguistics that demonstrate our work was accepted . The url of the paper: \url{https://arxiv.org/abs/2403.02715}
+
+
+\end{appendices}

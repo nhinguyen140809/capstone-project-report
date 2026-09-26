@@ -1,0 +1,57 @@
+\begin{titlepage}
+\begin{tikzpicture}[remember picture, overlay]
+  \draw[line width = 4pt] ($(current page.north west) + (30mm,-0.5in)$) rectangle ($(current page.south east) + (-20mm,0.5in)$);
+  \draw[line width=1.5pt]
+    ($ (current page.north west) + (30mm+0.05in,-0.55in) $)
+    rectangle
+    ($ (current page.south east) + (-20mm-0.05in,0.55in) $);
+\end{tikzpicture}
+\vspace{-2.cm}
+\begin{center}
+\large \textbf{\fontsize{14pt}{0pt}\selectfont VIETNAM NATIONAL UNIVERSITY, HO CHI MINH CITY} \\
+\Large \textbf{\fontsize{14pt}{0pt}\selectfont HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY} \\
+\Large \textbf{\fontsize{14pt}{0pt}\selectfont FACULTY OF COMPUTER SCIENCE AND ENGINEERING}
+\end{center}
+
+% \vspace{0.3cm}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=8cm]{hcmut.png}
+\end{center}
+\end{figure}
+\vspace{-1cm}
+\begin{center}
+{\Large \textbf{REPORT}}\\
+{\Large \textbf{\MakeUppercase{\reportkind}}}
+\ifdefempty{\reportphase}{}{\\[0.2cm] {\large \textbf{\MakeUppercase{\reportphase}}}}
+\end{center}
+% Title
+\rule[0.4cm]{\linewidth}{0.3mm}
+\centering
+{\Large \bfseries \MakeUppercase{\reporttitle}}
+
+\rule{\linewidth}{0.2mm} \\[0.1cm]
+\begin{center}
+    \MakeUppercase{\textbf{\Large Major: \Large \reportmajor}}
+\end{center}
+
+\vspace{-1cm}
+
+% \stackedlines stacks several aligned lines in one cell, used for entries with multiple people
+\newcommand{\stackedlines}[1]{\begin{tabular}[t]{@{}l@{}}#1\end{tabular}}
+\begin{center}
+\large
+\begin{tabular}{r@{\hspace{0.4em}:\hspace{0.4em}}l}
+     \textbf{THESIS COMMITTEE} & \reportcommittee\\
+     \textbf{SUPERVISOR(s)} & \stackedlines{\reportsupervisors}\\
+     \textbf{REVIEWER} & \stackedlines{\reportreviewers}\\
+     \multicolumn{2}{c}{\textbf{————o0o———–}}\\
+     \textbf{STUDENT} & \stackedlines{\reportstudents}\\
+\end{tabular}
+\end{center}
+% \vspace{1.cm}
+\begin{center}
+{\fontsize{12pt}{0pt} \MakeUppercase{\reportplace}, \reportdate}
+\end{center}
+\end{titlepage}
