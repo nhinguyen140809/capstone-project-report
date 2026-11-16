@@ -3,7 +3,7 @@
 
 \subsection{Automatic Rework}
 \label{sec:pa-rework}
-When the analyst's result is not OK, because issues need a stakeholder's answer, the \texttt{rework\_elicitation} control node writes a rework directive and the interview continues with the personas it names. The number of rework loops is bounded by \texttt{max\_iterations}.
+When the analyst's result is not OK, because issues need a stakeholder's answer, the \texttt{rework\_elicitation} control node writes a \emph{rework directive}: a record that names the open ambiguity issues and conflicts to settle and the personas who can settle them. The interview continues with these personas; the interviewer reads the directive first and asks about the issues, and the new messages are appended to the same transcripts. The analyst then runs again on the current analysis and resolves the issues the new answers settle. The number of rework loops is bounded by \texttt{max\_iterations}.
 
 \subsection{Human Review Checkpoints}
 \label{sec:pa-checkpoints}
@@ -28,4 +28,15 @@ At a checkpoint the run pauses and waits for the user (Table~\ref{tab:pa-checkpo
 \label{sec:pa-intent-router}
 A message the user sends while the run works is taken in at the next safe point, after a node finishes: the intent router decides which node should handle it (planner, interviewer, analyst, requirement engineer or backlog manager) and the run continues there. A later run of the same thread starts at the intent router; only the first run of a project starts at the planner.
 
-\todo{Example of a late change of intent and the node it is routed to.}
+The intent router reads the pending messages, newest first, together with the current specification and backlog, chooses the node whose artifact the message changes, and restates the intent as one instruction to that node. Some examples:
+\begin{itemize}
+    \item ``Also support booking from a smartwatch'' adds a capability that no stakeholder discussed: it is routed to the \emph{interviewer}, so that the personas are asked about it.
+    \item ``Students must not book more than two rooms per week'' is a decision of the product owner rather than a stakeholder need: it is routed to the \emph{requirement engineer}, which adds a constraint.
+    \item ``Split the booking story into booking and cancelling'' concerns only the backlog: it is routed to the \emph{backlog manager}.
+\end{itemize}
+A message that only restates a wish already covered by the artifacts is routed to the node that would run next. The router never routes to a persona agent, since the user does not speak in the place of a stakeholder.
+
+\subsection{Bounded Automatic Decisions}
+\label{sec:pa-decisions}
+
+Three gates of the workflow take a decision that is not a free generation: whether the interview of a persona should stop, whether a specified requirement has the right type and priority, and whether validation passed. At these gates the value written into the state can come from a separate, calibrated decision model instead of the agent alone. When the confidence of the decision model is high, its decision is applied automatically; between two thresholds the agent's own value is kept; below the low threshold the run asks the user through a review. The decision layer never changes the graph: the gates keep their edges, and only the value that the routing functions read can change. \todo{Confirm whether the decision layer is used in the evaluation, and with which provider.}

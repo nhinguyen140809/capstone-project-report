@@ -1,6 +1,19 @@
 \section{Persona-Based Elicitation Interviews}
 \label{sec:pa-elicitation}
 
-The interviewer and the persona agent alternate until the turn limit of the persona is reached, then the next persona is interviewed; when all personas are done, the workflow moves to the analyst. Each of the two agents receives only the transcript of the persona being interviewed, which only grows at its end, so that repeated calls reuse the provider's prompt cache.
+Each persona is interviewed by two agents that alternate: the \emph{interviewer} asks one question, the \emph{persona agent} answers it in the role of the persona. The interview of a persona ends when the interviewer decides that the plan is sufficiently covered for this persona, or when \texttt{max\_turns} is reached; then the next persona is interviewed. When all personas are done, the workflow moves to the analyst. Each interview is stored as an \emph{interview transcript} artifact, one per persona, whose items are the messages, each with a key such as \texttt{PER-001\#4} that later requirements cite as evidence.
 
-\todo{Interview strategy of the interviewer (open questions first, follow-ups on vague answers, coverage of the plan topics); how the persona agent stays in character and admits what the persona does not know; one short example exchange.}
+\subsection{Interviewer}
+\label{sec:pa-interviewer}
+
+The interviewer receives the plan, the persona, the transcript so far, the turn number and, on a rework round, the directive that names what must be clarified. At every turn it chooses the most valuable topic of the plan not yet covered for this persona and asks exactly one question that builds on the previous answers, asking for numbers and concrete examples. It never repeats a question of the transcript. On a rework round it first addresses the directive. When it stops, it writes a one-sentence summary of what the interviewee said, shown at the top of the transcript.
+
+\subsection{Persona Agent}
+\label{sec:pa-persona-agent}
+
+The persona agent \emph{is} the persona: it answers in the first person, consistently with the goals, background, constraints, priorities and concerns of the persona, with concrete examples and numbers when it has them. Two rules counter the agreeableness of aligned models (Section~\ref{sec:bg-pretraining}): the agent must not blindly agree with the interviewer and must disagree where the priorities of the persona conflict with the question, and it voices what a real stakeholder of this type would hide or worry about.
+
+\subsection{Context and Cost}
+\label{sec:pa-interview-cost}
+
+The two agents receive only the transcript of the persona being interviewed, not the other interviews. Since the transcript only grows at its end, consecutive calls share their prompt prefix, and the provider serves it from its prompt cache at a lower price. Interviews run one persona after the other rather than in parallel, because parallel calls that start at the same moment cannot reuse each other's cache.

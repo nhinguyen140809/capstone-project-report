@@ -17,7 +17,13 @@ The workflow differs from a sequential pipeline in three ways, detailed in Secti
     \item \textbf{Incremental intent.} A message the user sends while the run works, or in a later run, is routed by an intent router to the node that should handle it.
 \end{itemize}
 
-\todo{Name and motivate the design principles: grounding before simulation, artifacts instead of chat history, bounded loops (Table~\ref{tab:pa-run-parameters}).}
+The design of the framework follows four principles:
+\begin{enumerate}
+    \item \textbf{Grounding before simulation.} No persona is invented from the product idea alone. The workflow first collects real documents of the domain and extracts what real stakeholder groups say in them; personas are then built only from these observations, and each persona keeps links to the quotes it rests on. This addresses the bias and homogeneity of ungrounded LLM-generated personas~\cite{li2026persona}.
+    \item \textbf{Artifacts instead of chat history.} Agents do not read the conversation of the whole run. Each agent receives the current version of the artifacts it needs and writes typed items with typed links. The artifacts are the shared workspace of the agents, the material the user reviews, and the trace graph of the output at the same time.
+    \item \textbf{Evidence for every statement.} Every requirement carries the words of the interview it comes from, every observation the sentence of the document it comes from. The system checks that quotes are copied exactly and that documents and messages exist, and rejects an agent output that fails the check.
+    \item \textbf{Bounded non-linearity.} The workflow may loop back, but every loop is bounded by a run parameter (Table~\ref{tab:pa-run-parameters}), so that a run always terminates and its cost has an upper limit.
+\end{enumerate}
 
 \begin{table}[H]
     \centering

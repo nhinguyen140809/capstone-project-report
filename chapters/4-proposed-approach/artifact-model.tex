@@ -45,4 +45,23 @@ The output of the workflow has two levels: \emph{artifacts}, the work products, 
     \end{tabularx}
 \end{table}
 
-\todo{Integrity rules (no cycles in \texttt{derived\_from} and \texttt{depends\_on}, content checked against a versioned schema); versioning of artifacts and items; the traceability matrix export.}
+\subsection{Integrity Rules}
+\label{sec:pa-integrity}
+
+Since agents write the output, the system cannot trust it: every write of an artifact, an item or a link, whether from an agent or from the user, passes the same checks before it is saved. The main ones are:
+\begin{itemize}
+    \item \textbf{Content}: the content of an artifact or an item is valid against the content schema of its kind and schema version, and every value taken from a value list (priority, quality category, ambiguity type, conflict type, validation category) exists in the workflow definition in use.
+    \item \textbf{Plan values}: a field that refers to the plan, such as the stakeholder type of a persona, takes only values listed in the current elicitation plan.
+    \item \textbf{Link type}: the pair of source and target kinds is allowed for the link type (Table~\ref{tab:pa-links}); links of some types can be created only by agents.
+    \item \textbf{No cycle}: following \texttt{derived\_from}, \texttt{depends\_on} or \texttt{supersedes} links from an item never returns to it.
+    \item \textbf{Exact quotes}: the quote of a link is copied exactly from the item it quotes, as one run of words of at most 300 characters.
+    \item \textbf{Supersedes}: creating a \texttt{supersedes} link marks its target as superseded. An agent may change only the lifecycle fields of an existing item (the status of an issue, the disposition of a latent need); any other change is a new item.
+\end{itemize}
+The checks are pure functions over data, used both by the workflow and by the API, so that an item created by an agent and an item edited by the user cannot follow different rules. An agent output that fails a check is rejected, and the step fails instead of saving an inconsistent artifact.
+
+\subsection{Versioning}
+\label{sec:pa-versioning}
+
+Artifacts and items are versioned: every change creates a new revision and old revisions are never rewritten. The workflow state holds \emph{references} to artifacts and items at the version a step used, not copies of their content, so every saved checkpoint of a run stays readable and every result can be reproduced from the versions it was computed from. The workflow itself is versioned the same way: the agent roles, nodes, checkpoints, item kinds, link types and value lists form a \emph{workflow definition} with a version number, and every run records the version it ran with. Version 2, presented in this chapter, adds the research corpus, the stakeholder observations and the \texttt{grounded\_in} link to version 1, whose personas are generated from the plan alone; version 1 remains available as the ungrounded baseline of the evaluation.
+
+From the trace graph the system derives a \emph{traceability matrix} and a coverage view, which show for each requirement its sources and its backlog items, and reveal requirements without a source and requirements without a story.
