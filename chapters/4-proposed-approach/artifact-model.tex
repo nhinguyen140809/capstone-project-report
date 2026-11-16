@@ -45,6 +45,15 @@ The output of the workflow has two levels: \emph{artifacts}, the work products, 
     \end{tabularx}
 \end{table}
 
+Figure~\ref{fig:pa-trace-model} shows the same model as a UML class diagram: every item kind is a class, which specializes the generic \texttt{ArtifactItem} of the database (Figure~\ref{fig:sd-domain-model}), and every link type is a navigable association.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/proposed-approach/uml/trace-model}}
+    \caption{UML class diagram of the item kinds and the trace links between them.}
+    \label{fig:pa-trace-model}
+\end{figure}
+
 \subsection{Integrity Rules}
 \label{sec:pa-integrity}
 

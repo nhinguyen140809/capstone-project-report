@@ -3,14 +3,14 @@
 
 \subsection{Use Case Diagram}
 \label{sec:sd-uc-diagram}
-\todo{Draw the use case diagram (draw.io, source in \texttt{figures/system-design/src/}) with the actors of Table~\ref{tab:sd-actors} and the use cases below, grouped by package: Account, Project, Requirements engineering run, Review, Artifacts and traceability, Export, Experiments.}
+Figure~\ref{fig:sd-use-case} shows the use cases of the system and its actors. The researcher is a specialization of the user: they use the web app like any user, and in addition run experiments. Reviewing an artifact at a checkpoint (UC-02) and sending a message during a run (UC-03) extend UC-01, since they happen only while a run is unfinished.
 
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=\linewidth]{system-design/use-case-diagram.pdf}
-%     \caption{Use case diagram.}
-%     \label{fig:sd-use-case}
-% \end{figure}
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/use-case}}
+    \caption{UML use case diagram.}
+    \label{fig:sd-use-case}
+\end{figure}
 
 \subsection{Use Case Specifications}
 \label{sec:sd-uc-specs}

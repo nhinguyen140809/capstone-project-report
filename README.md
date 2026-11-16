@@ -36,6 +36,7 @@ Submission/Release của từng giai đoạn được lưu tại trang [Releases
 Convention:
 
 - Mỗi chương là một thư mục `chapters/<order>-<name>/`. File `main.tex` của chapter chứa lệnh `\chapter{}` và `\input` các section, mỗi section nằm trong một file riêng.
+- Diagram theo chuẩn UML (use case, activity, state machine, sequence, class, component, package, deployment) được vẽ bằng TikZ, mỗi diagram một file trong `figures/<chapter name>/uml/<name>.tex` và được `\input` trong environment `figure`. Ký hiệu UML dùng chung khai báo tại `styles/uml.tex`; sequence diagram dùng package `pgf-umlsd`, class diagram dùng `pgf-umlcd`. File `.tex` chính là source, không cần export.
 - Hình minh họa đặt trong `figures/<chapter name>/`. Preamble đã khai báo `\graphicspath{{figures/}}`, vì vậy đường dẫn trong `\includegraphics` chỉ cần tính từ `figures/`.
 - Mọi đường dẫn trong `\input` và `\include` đều tính từ thư mục gốc của repo, kể cả khi lệnh nằm trong file của một chapter.
 - Tên đề tài, giai đoạn, sinh viên, giảng viên và ngày tháng chỉ được khai báo tại `metadata.tex`. Trang bìa, lời cam đoan và PDF properties đều lấy thông tin từ file này. Chẳng hạn, trước khi nộp giai đoạn 2, chỉ cần sửa `\newcommand{\reportphase}{Phase 2}` và `\reportdate` thay vì tìm và sửa từng vị trí.

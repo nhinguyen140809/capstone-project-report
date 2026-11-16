@@ -1,13 +1,13 @@
 \section{Database Design}
 \label{sec:sd-database}
 
-The schema has 36 tables in five groups (Figure~\ref{fig:sd-database}): identity and settings, workspace, conversation and execution, artifacts and trace, and supporting tables.
+The schema has 36 tables in five groups: identity and settings, workspace, conversation and execution, artifacts and trace, and supporting tables. Figure~\ref{fig:sd-domain-model} shows the main persistent entities and their associations as a UML class diagram; tables that only support these entities (sessions, settings, revisions, comments, exports, notifications) are left out.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{system-design/database-overview.pdf}
-    \caption{Overview of the database schema.}
-    \label{fig:sd-database}
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/domain-model}}
+    \caption{UML class diagram of the main persistent entities.}
+    \label{fig:sd-domain-model}
 \end{figure}
 
 \subsection{Artifact Storage}

@@ -1,25 +1,12 @@
 \section{Evidence-Grounded Persona Construction}
 \label{sec:pa-personas}
 
-The first stage of the workflow turns the product idea into a set of interviewable personas in four steps: the planner writes an elicitation plan, the corpus builder collects real documents of the domain, the stakeholder miner extracts what stakeholder groups say in them, and the persona generator builds the personas from these observations. The pipeline adapts the persona construction of MAJ-EVAL~\cite{chen2026majeval}, which derives stakeholder groups and their evaluative dimensions from domain literature, from evaluation to requirements elicitation. Figure~\ref{fig:pa-grounding} summarizes the chain of evidence it produces.
+The first stage of the workflow turns the product idea into a set of interviewable personas in four steps: the planner writes an elicitation plan, the corpus builder collects real documents of the domain, the stakeholder miner extracts what stakeholder groups say in them, and the persona generator builds the personas from these observations. The pipeline adapts the persona construction of MAJ-EVAL~\cite{chen2026majeval}, which derives stakeholder groups and their evaluative dimensions from domain literature, from evaluation to requirements elicitation. Figure~\ref{fig:pa-grounding} shows the activities and the objects they exchange; the trace links between these objects are shown in Figure~\ref{fig:pa-trace-model}.
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[
-        box/.style={draw, rounded corners, align=center, minimum height=1.1cm, text width=2.5cm, font=\small},
-        arr/.style={->, >=stealth, thick}
-    ]
-        \node[box] (plan) {Elicitation plan\\\footnotesize stakeholder types, topics};
-        \node[box, right=1.0cm of plan] (src) {Source documents\\\footnotesize uploads, web, papers};
-        \node[box, right=1.0cm of src] (obs) {Stakeholder observations\\\footnotesize dimension + quote};
-        \node[box, right=1.0cm of obs] (per) {Personas\\\footnotesize grounded in observations};
-        \draw[arr] (plan) -- node[above, font=\scriptsize] {queries} (src);
-        \draw[arr] (src) -- node[above, font=\scriptsize] {mining} (obs);
-        \draw[arr] (obs) -- node[above, font=\scriptsize] {clustering} (per);
-        \draw[arr, dashed] (obs.south) to[bend left=25] node[below, font=\scriptsize] {\texttt{evidenced\_by}} (src.south);
-        \draw[arr, dashed] (per.south) to[bend left=25] node[below, font=\scriptsize] {\texttt{grounded\_in}} (obs.south);
-    \end{tikzpicture}
-    \caption{Evidence chain of the persona construction. Dashed arrows are trace links.}
+    \resizebox{\linewidth}{!}{\input{figures/proposed-approach/uml/grounding}}
+    \caption{UML activity diagram with object flows of the persona construction.}
     \label{fig:pa-grounding}
 \end{figure}
 

@@ -1,15 +1,15 @@
 \section{System Architecture}
 \label{sec:sd-architecture}
 
-The structure diagrams follow the building block view of arc42, equivalent to the context, container and component levels of the C4 model; together with the behavior, deployment and database diagrams they cover the views of the 4+1 model~\cite{kruchten1995}.
+The architecture is described with UML diagrams that together cover the views of the 4+1 model~\cite{kruchten1995}: a component diagram of the building blocks and package diagrams of the backend and the web app (logical and development views), the state machine, activity and sequence diagrams of Section~\ref{sec:sd-behavior} (process view), a deployment diagram (physical view), and the use cases of Section~\ref{sec:sd-use-cases} (scenarios).
 
 \subsection{Building Blocks}
 \label{sec:sd-building-blocks}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{system-design/building-blocks.pdf}
-    \caption{Building blocks of the system.}
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/building-blocks}}
+    \caption{UML component diagram of the building blocks.}
     \label{fig:sd-building-blocks}
 \end{figure}
 
@@ -23,12 +23,12 @@ The workflow writes its events to an event log in the database and the stream en
 
 \subsection{Backend Modules}
 \label{sec:sd-backend-modules}
-The API application is one deployable unit, a modular monolith. Figure~\ref{fig:sd-backend-modules} shows its modules and the allowed import directions.
+The API application is one deployable unit, a modular monolith. Figure~\ref{fig:sd-backend-modules} shows its modules as UML packages, with an \stereo{import} dependency for every allowed import direction.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\linewidth]{system-design/backend-modules.pdf}
-    \caption{Backend modules and allowed import directions.}
+    \resizebox{0.85\linewidth}{!}{\input{figures/system-design/uml/backend-modules}}
+    \caption{UML package diagram of the backend modules and their allowed imports.}
     \label{fig:sd-backend-modules}
 \end{figure}
 
@@ -58,11 +58,11 @@ The API application is one deployable unit, a modular monolith. Figure~\ref{fig:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{system-design/frontend-architecture.pdf}
-    \caption{Frontend architecture.}
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/frontend-architecture}}
+    \caption{UML package diagram of the web app.}
     \label{fig:sd-frontend}
 \end{figure}
-The web app is organized in layers (Figure~\ref{fig:sd-frontend}):
+The web app is organized in packages (Figure~\ref{fig:sd-frontend}), following a layered feature structure:
 \begin{itemize}
     \item \textbf{Routes} (\texttt{app/}) follow the file-based routing of Next.js, grouped into authentication, home and project pages. A route only composes modules.
     \item \textbf{Modules} (\texttt{modules/}) hold one feature each, such as the chat, the workflow graph, the run progress, the reviews, the artifact viewers and editors, the traceability view and the settings.
@@ -77,8 +77,8 @@ The web app holds no business logic of the workflow. It draws the graph, the sta
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{system-design/deployment-production.pdf}
-    \caption{Deployment diagram (production).}
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/deployment-production}}
+    \caption{UML deployment diagram of the production baseline.}
     \label{fig:sd-deployment}
 \end{figure}
 The production baseline runs every service on one Linux host with Docker Compose behind a reverse proxy (Figure~\ref{fig:sd-deployment}). The reverse proxy is the only public entry: it terminates TLS and routes \texttt{/} to the web server and \texttt{/api} to the API. The API runs the agent workflow as background tasks; the database stores the application data, the run events and the workflow checkpoints; object storage keeps exported and uploaded files; and a tracing service stores a trace of every agent step. The layout imposes the following constraints:
