@@ -14,4 +14,23 @@ The schema has 36 tables in five groups (Figure~\ref{fig:sd-database}): identity
 \label{sec:sd-artifact-storage}
 Requirements engineering output has two levels, each in its own generic table: \texttt{artifacts} and \texttt{artifact\_items}, with the fields of each kind in a JSON \texttt{content} column validated against a versioned content schema. The items and the \texttt{trace\_links} between them form a property graph.
 
-\todo{Explain the decisions and their trade-offs: generic tables vs.\ one table per kind; workflow vocabulary as text checked against the workflow definition vs.\ database enums; relational database (PostgreSQL with pgvector) vs.\ graph database. Include the ER diagram of the \texttt{artifacts\_and\_trace} group.}
+The main design decisions and their trade-offs are summarized in Table~\ref{tab:sd-db-decisions}.
+
+\begin{table}[H]
+    \centering
+    \caption{Main decisions of the database design.}
+    \label{tab:sd-db-decisions}
+    \begin{tabularx}{\linewidth}{|p{2.6cm}|X|X|X|}
+        \hline
+        \textbf{Question} & \textbf{Options considered} & \textbf{Decision} & \textbf{Trade-off} \\
+        \hline
+        Fields of the artifact and item kinds & One table per kind with typed columns; generic tables with a JSON content column & Generic tables, one per level, with a JSON \texttt{content} column validated against a versioned content schema & A field change is a schema change in code, not a migration, which suits fields that change while prompts are tuned; the database does not check the fields, so the application must \\
+        \hline
+        Names of the workflow (roles, nodes, options, kinds, link types) & Database enums; lookup tables; text checked against the workflow definition & Text checked against the versioned workflow definition; every run stores its workflow name and version & A new experiment is a new definition version with no migration, and old runs stay readable; every write must be checked by the application \\
+        \hline
+        Storage of the trace graph & Graph database; relational database & Relational database & The rest of the data (users, runs, events, checkpoints) is relational and the agent runtime can store its checkpoints there; the graph queries needed (trace of an item, matrix, coverage) are shallow \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+The design targets PostgreSQL with the pgvector extension for the embeddings of items. The current implementation runs on SQLite through the same SQLAlchemy models and Alembic migrations, which keeps the development setup to one file; Section~\ref{sec:impl-backend} describes it.

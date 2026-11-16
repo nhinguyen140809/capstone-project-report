@@ -1,7 +1,15 @@
 \section{API Design}
 \label{sec:sd-api}
 
-\todo{Design drivers: the server holds all state, a run is a resource rather than a request, events go through a durable log, the server-to-client direction is a stream, agent output is structured.}
+The API is a REST API under \texttt{/api/v1} with JSON bodies, plus one Server-Sent Events (SSE) stream per run. Its design follows from a few drivers:
+\begin{itemize}
+    \item \textbf{The server holds all state.} The browser cannot hold provider keys or run tools, so every screen can be rebuilt from \texttt{GET} requests and nothing is kept only in the browser.
+    \item \textbf{A run is a resource, not a request.} A workflow takes minutes and waits for a human, so it must survive a closed tab, a reload and a second device: \texttt{POST} creates a run, \texttt{GET} reads or streams it.
+    \item \textbf{Events go through a durable log.} Replay after a reconnection, resume after hours, cost tracking and debugging use the same ordered record of events.
+    \item \textbf{Server to client is a stream, client to server is plain requests.} During a run nearly all data flows down, while the user sends a few separate actions (a message, a decision, a cancellation).
+    \item \textbf{Agent output is structured.} Artifacts and items are typed resources and a review request is a typed event, not a chat message, so that they can be rendered as forms and tables and traced.
+\end{itemize}
+Authentication uses an httpOnly session cookie. A resource the user has no access to answers \texttt{404}, as one that does not exist, so that identifiers cannot be probed, and every request other than \texttt{GET} must carry an \texttt{Origin} header equal to the application origin, which protects against cross-site request forgery.
 
 \begin{table}[H]
     \centering

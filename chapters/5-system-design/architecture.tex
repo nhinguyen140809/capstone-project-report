@@ -62,7 +62,15 @@ The API application is one deployable unit, a modular monolith. Figure~\ref{fig:
     \caption{Frontend architecture.}
     \label{fig:sd-frontend}
 \end{figure}
-\todo{Describe the layers of the web app: routes, features, typed API client generated from the OpenAPI schema, server state and client state.}
+The web app is organized in layers (Figure~\ref{fig:sd-frontend}):
+\begin{itemize}
+    \item \textbf{Routes} (\texttt{app/}) follow the file-based routing of Next.js, grouped into authentication, home and project pages. A route only composes modules.
+    \item \textbf{Modules} (\texttt{modules/}) hold one feature each, such as the chat, the workflow graph, the run progress, the reviews, the artifact viewers and editors, the traceability view and the settings.
+    \item \textbf{Shared} code holds the UI components, built on shadcn/ui, and the utilities used by several modules.
+    \item The \textbf{API client} is generated from the OpenAPI schema of the backend, so that a change of the API is a type error in the web app rather than a failure at run time.
+    \item \textbf{Server state}, the data that belongs to the backend, is cached and refreshed by TanStack Query, and updated from the event stream of a run; \textbf{client state}, such as the open panel or the selected item, lives in small Zustand stores.
+\end{itemize}
+The web app holds no business logic of the workflow. It draws the graph, the stages, the review forms and the artifact panels from the workflow definition and the content schemas served by the API, so that a new workflow version needs no change of the web app. In mock mode, the API is replaced by handlers in the browser (MSW), which allows the web app to be developed and tested without a backend.
 
 \subsection{Deployment}
 \label{sec:sd-deployment}
@@ -73,4 +81,10 @@ The API application is one deployable unit, a modular monolith. Figure~\ref{fig:
     \caption{Deployment diagram (production).}
     \label{fig:sd-deployment}
 \end{figure}
-\todo{Describe the nodes (reverse proxy, web, api, db, object storage, tracing) and the constraints: same origin, one API process, long-lived responses.}
+The production baseline runs every service on one Linux host with Docker Compose behind a reverse proxy (Figure~\ref{fig:sd-deployment}). The reverse proxy is the only public entry: it terminates TLS and routes \texttt{/} to the web server and \texttt{/api} to the API. The API runs the agent workflow as background tasks; the database stores the application data, the run events and the workflow checkpoints; object storage keeps exported and uploaded files; and a tracing service stores a trace of every agent step. The layout imposes the following constraints:
+\begin{itemize}
+    \item \textbf{Same origin}: the browser reaches the web app and the API through one host name, so the session cookie is sent on every request and no cross-origin configuration is needed.
+    \item \textbf{One API process}: runs execute inside the API process, so there is exactly one; scaling out requires moving run execution to separate workers fed by a queue. Since events already pass through the event log, the web app and the API would not change.
+    \item \textbf{Long-lived responses}: the proxy must not buffer the event stream and must keep connections open for minutes; the API sends a heartbeat every 15 seconds while a run waits.
+    \item \textbf{Secrets}: provider API keys and the session secret exist only in the environment of the API service; only outbound HTTPS to the providers is needed.
+\end{itemize}
