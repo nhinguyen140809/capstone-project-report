@@ -1,81 +1,211 @@
-\addto\captionsenglish{%
- \renewcommand\chaptername{Appendix}}
+% vntex sets the appendix names in Vietnamese; the report is in English.
+\renewcommand{\appendixname}{Appendix}
+\renewcommand{\appendixtocname}{Appendices}
+\renewcommand{\appendixpagename}{Appendices}
+\addto\captionsenglish{\renewcommand\chaptername{Appendix}}
 \appendixtitleon
 \appendixtitletocon
 \begin{appendices}
-\chapter{Prompt setting}
-\label{apd:A}
-% the \\ insures the section title is centered below the phrase: AppendixA
 
-\section{NER prompt}
-\textbf{Prompt}: \textit{As a good AI assistant, your mission is to extract entities in a sentence, your format answer is a dictionary json which key is entity, and value is type of entity.\\
-\{fewshot\}\\
-Sentence: \{sentence\}\\
-Answer: }\\\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Detailed Review of LLM-Based Requirements Engineering Studies}
+\label{apx:re-studies}
 
-\section{Text-based RAG prompt}
-\textbf{Prompt}: \textit{As a good AI assistant, your mission is to based on the context to answer the question as an entity, your format answer is a dictionary like ```json \{ "answer" :`Your answer`\} ```\\
-\{fewshot\}\\
-Context: '''\\
-\{context\}\\
-'''\\
-Question: \{question\}\\
-Answer: }\\\\
+\begin{landscape}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.1}
+\begin{longtable}{|p{2.0cm}|p{2.6cm}|p{2.6cm}|p{2.2cm}|p{4.0cm}|p{4.0cm}|p{4.4cm}|}
+    \caption{Summary of AI techniques and evaluation results in requirements engineering.}
+    \label{tab:apx-re-studies} \\
+    \hline
+    \textbf{Study} & \textbf{RE tasks} & \textbf{AI technologies} & \textbf{AI model} & \textbf{Dataset} & \textbf{Metric} & \textbf{Result} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Study} & \textbf{RE tasks} & \textbf{AI technologies} & \textbf{AI model} & \textbf{Dataset} & \textbf{Metric} & \textbf{Result} \\
+    \hline
+    \endhead
+    GPT-Powered~\cite{gorer2024gpt} &
+    Requirements elicitation: generate interview scripts for practical RE training &
+    RAG-like in-context learning; prompt chaining (outline-based sequential dialogue generation) &
+    OpenAI GPT-4; custom GPT-4 agent &
+    4 generated scenarios: meeting scheduler, social housing, digital health tracking, food delivery; a modified FIFA interview script as reference knowledge source &
+    GRUEN for reference-free linguistic quality; expert evaluation of naturalness, coherence, completeness and RE interview practices (1--5) &
+    GRUEN 0.79--0.81; naturalness 4/5, coherence 4/5, completeness 3/5; strong rapport and closing, weaker active listening and stakeholder identification \\
+    \hline
+    MARE~\cite{mare2024} &
+    End-to-end RE: elicitation $\rightarrow$ modeling $\rightarrow$ verification $\rightarrow$ specification, performed iteratively and collaboratively &
+    Multi-agent infrastructure; prompt engineering for specialized agents; shared workspace &
+    GPT-3.5-turbo, text-davinci-002/003; MetaGPT &
+    5 public cases (ATM, Cafeteria Ordering, Library, Assembly, Time Monitor); GoalModelDataset; 4 new cases (Smart Home, Temperature, Air Conditioner, Humidistat control) &
+    Modeling: precision, recall, F1; specification: human evaluation of completeness, correctness, consistency (0--2) &
+    F1 84.1\% (problem), 78.9\% (use case), 87.6\% (goal); SRS 0.98 completeness, 1.92 correctness, 1.98 consistency; multi-agent collaboration +1.1\% F1 over individual LLMs \\
+    \hline
+    LLMREI~\cite{korn2025llmrei} &
+    Requirements elicitation &
+    Autonomous LLM interview chatbot; zero-shot (LLMREI-short) and least-to-most prompting (LLMREI-long); fine-tuning explored, then abandoned &
+    GPT-4o (2024-08-06); GPT-3.5 Turbo for fine-tuning only; WhisperX for transcription &
+    33 simulated stakeholder interviews over 2 scenarios (hair/nail salon, ski resort); 50 interview transcripts from Ferrari et al.\ for fine-tuning &
+    Likert ratings of 20 common interviewer mistakes; elicitation coverage against ground truth (not, partially, fully elicited); question adaptability categories &
+    Mistakes comparable to trained human interviewers; up to 73.7\% of ground-truth requirements elicited; about half of the questions context-dependent; fine-tuned models underperformed \\
+    \hline
+    ROPE~\cite{ma2025rope} &
+    Requirement elicitation and specification for LLM use; iterative requirement refinement from execution feedback &
+    Interactive ROPE training suite; prompt optimization tool; execution engine &
+    GPT-4o; o3-mini &
+    6 ``LLM-hard'' replication tasks: 3 GPT applications and 3 coding games, in a counterbalanced pre/post-test &
+    Requirement quality and output quality; learning gain (post-test minus pre-test) &
+    +19.1\% learning gain vs.\ +0.7\% for conventional prompt engineering; requirement quality +25.4\%, output quality +12.7\% \\
+    \hline
+    XTRAREG~\cite{abualhaija2025llm} &
+    Extraction of regulatory requirements &
+    LangChain RAG pipeline; zero-shot and chain-of-thought prompts &
+    GPT-4o; GPT-3.5-turbo; text-embedding-ada-002 &
+    GDPR and additional legal sources; 108 reference requirements built manually &
+    BLEU, ROUGE-L, METEOR, BERTScore; legal expert evaluation of correctness, groundedness, plausibility and coverage &
+    GPT-4o clearly outperformed GPT-3.5, but coverage of the reference requirements was low and limited to the GDPR; performance drops without RAG; legal expert remains necessary \\
+    \hline
+    Hymel and Johnson~\cite{hymel2025analysis} &
+    Early requirements elicitation &
+    Single-shot prompt vs.\ one hour of expert work &
+    ChatGPT 4.0 &
+    50 business stakeholders, each submitting a software idea; one LLM and one human expert document per idea &
+    Alignment score (1--10); completeness rating; source identification accuracy; t-tests &
+    LLM documents scored higher and more consistently on alignment; no significant difference in completeness; both documents over-attributed to AI \\
+    \hline
+    QUARE~\cite{cheng2026quare} &
+    Requirements quality analysis; cross-quality conflict negotiation; KAOS goal modeling; standards compliance &
+    Multi-agent system; chain-of-thought; zero-shot; RAG; cosine similarity &
+    gpt-4o-mini; bert-base-uncased &
+    Autonomous driving (industrial); ATM and Library (MARE); RollCall and Bookkeeping (iReDev) &
+    CHV, MDC, coverage uniformity, minimum axis coverage; conflict resolution rate, BERTScore F1; DAG topology, logical consistency, ISO/IEC/IEEE 29148 scores, compliance coverage &
+    35.0 requirements per project; 98.2\% compliance coverage; 94.9\% semantic preservation; verifiability and feasibility 4.96/5 \\
+    \hline
+    VibeIntent~\cite{vibeintent2026} &
+    Elicitation, analysis, backlog generation and validation &
+    Multi-agent system; ReAct; persona and stakeholder simulation; human-in-the-loop; staged pipeline &
+    GPT-5.4, GPT-5.4-mini &
+    Cafe Booking, Textbook Exchange, Mood Tracking, Educational Feedback Platform, Fit Together; human and LLM-as-a-judge evaluation &
+    Requirement count; MDC; Vendi Score; INVEST (1--5); ICC(2,k) &
+    59 requirements; MDC 0.414; Vendi Score 14.39; INVEST 4.42/5; ICC 0.85 \\
+    \hline
+    Elicitron~\cite{ataei2025elicitron} &
+    Requirements elicitation &
+    LLM agents role-playing diverse users; serial vs.\ parallel agent generation with KMeans filtering; chain-of-thought &
+    GPT-4-Turbo; text-embedding-ada-002 &
+    Tent design case study with 20 human empathic lead user interviews as baseline; three experiments with 20 agents per condition &
+    CHV, MDC, silhouette score; latent needs per condition (t-test); precision, recall, F1 of latent need detection &
+    Serial generation yields the most diverse users; all conditions found more latent needs than the human baseline; criteria + CoT best for latent need detection \\
+    \hline
+    iReDev~\cite{jin2025iredev} &
+    End-to-end RE &
+    Multi-agent system; knowledge-driven agents; chain-of-thought; stakeholder simulation; event-driven communication; human-in-the-loop &
+    GPT-4-turbo (2024-04-09) &
+    10 real-world software systems (Bookkeeping, Random Roll Call, Shopping Site, Gomoku, Weather Forecast, Currency Converter, \ldots); manual ground truth and LLM-as-a-judge &
+    Elicitation: CHV, MDC; modeling: precision, recall, F1, BLEU, BERTScore; specification: BLEU, BERTScore, G-Eval &
+    CHV 0.47, MDC 0.62; model F1 0.389, BERTScore 0.593; SRS BERTScore 0.616, completeness 4.2, correctness 4.0, cohesiveness 4.1 \\
+    \hline
+    Almeida et al.~\cite{almeida2025elicitation} &
+    Requirements analysis and classification &
+    Prompt engineering; few-shot and persona prompting &
+    GPT-4; DeepSeek-V3 &
+    WEPGCOMP and Lugar; manual ground truth &
+    Requirement count, precision, recall, F1 &
+    GPT-4: P 75\%, R 61.76\%, F1 67.74\%; DeepSeek-V3: 60\%, 52.90\%, 56.30\%; both struggled with non-functional requirements \\
+    \hline
+    Binkhonain and Alfayez~\cite{binkhonain2025prompts} &
+    Requirements classification &
+    Zero-shot, few-shot, persona and chain-of-thought prompting; fine-tuning &
+    Claude 3 Haiku, DeepSeek-V3, Gemini 2.0 Flash, GPT-4 Turbo, Llama 3.2 3B &
+    PROMISE NFR; SecReq &
+    Macro-F1; precision, recall, weighted and micro F1 &
+    Few-shot better than zero-shot on all tasks; few-shot + persona (+ CoT) best; several configurations outperform fine-tuned BERT \\
+    \hline
+\end{longtable}
+\end{landscape}
 
-\section{KG-based RAG prompt}
-\textbf{Prompt}: \textit{As a good AI assistant, your mission is to based on the given relations to answer the question as an entity, your format answer is a dictionary like ```json \{ "answer" :`Your answer` \} ```\\
-\{fewshot\}\\
-Relations: '''\\
-\{context\}\\
-'''\\
-Question: \{question\}\\
-Answer: }\\\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Detailed Review of Persona and Stakeholder Simulation Studies}
+\label{apx:persona-studies}
 
-% \chapter{Generation samples}
-% \label{apd:B}
-% % the \\ insures the section title is centered below the phrase: Appendix B
-% \section{NER Prompt Generation}
-% \textbf{Prompt}: \textit{As a good AI assistant, your mission is to extract entities in a sentence, your format answer is a dictionary json which key is entity, and value is type of entity.\\\\
-% Sentence: When food is reduced in the stomach?\\
-% Answer: }\\\\
-% \textbf{Answer}: \textit{\{"food": \{"type": "object"\}\,"stomach": \{"type": "organ"\}\} }
-% \section{Text-based RAG Prompt Generation}
-% \textbf{Prompt}: \textit{As a good AI assistant, your mission is to based on the context to answer the question, your format answer is a dictionary like ```json \{ "answer" :`Your answer is "A","B","C","D","E"`\} ```\\\\
-% Context: '''\\
-% You are likely to find a canal around in venice\\
-% Venice has many canals\\
-% '''\\
-% Question: Where in Southern Europe would you find many canals?\\
-% A. michigan\\
-% B. new york\\
-% C. amsterdam\\
-% D. venice\\
-% E. other\\
-% Answer: }\\\\
-% \textbf{Answer:} \textit{\{ "answer": "D" \} Venice}
+\begin{landscape}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.1}
+\begin{longtable}{|p{2.2cm}|p{4.2cm}|p{2.8cm}|p{4.0cm}|p{5.0cm}|p{3.6cm}|}
+    \caption{Summary of persona generation, coordination mechanisms, evaluation, and tested language models.}
+    \label{tab:apx-persona-studies} \\
+    \hline
+    \textbf{Study} & \textbf{Persona / stakeholder generation} & \textbf{Number of agents} & \textbf{Coordination / interaction} & \textbf{Impact on performance / key findings} & \textbf{LLMs tested} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Study} & \textbf{Persona / stakeholder generation} & \textbf{Number of agents} & \textbf{Coordination / interaction} & \textbf{Impact on performance / key findings} & \textbf{LLMs tested} \\
+    \hline
+    \endhead
+    Persona Policies (PPol)~\cite{chopra2026beyond} &
+    Evolutionary program search (OpenEvolve) optimizing a Python generator to discover behavioral axes (e.g.\ bursty, information gating) and expand them into task-preserving role-play policies &
+    A population of $N$ persona policies per task ($N = 5, 8, 10$) &
+    Multi-turn dialogue between persona-conditioned user simulator and a fixed assistant; Random Forest discriminator (human-likeness) and Chamfer distance (coverage) with reflection feedback &
+    33--62\% absolute gains in fitness over default simulators; 80.4\% rated human in blinded evaluation; training on PPol traces raises out-of-distribution task success by 17\% &
+    DeepSeek-V3.1, Qwen3-Next-80B, GPT-5.4-Mini; Gemma 4 31B; Gemini 3 Flash \\
+    \hline
+    Social Agents~\cite{bhattacharyya2026social} &
+    Persona Agent Factory conditioning personas on demographic (age, gender, location) and psychographic (values, interests, lifestyle) attributes &
+    $N = 10$ by default, up to 100 in scaling tests &
+    Prompted independently without inter-agent communication to prevent groupthink; predictions aggregated by mean by a moderator &
+    Better predictions on 11 tasks; +30.5\% on low-level and +9.9\% on high-level tasks; outperforms no-persona baselines and fine-tuned models &
+    GPT-4o, LLaMA 3.x, Qwen3, Qwen2.5 VL \\
+    \hline
+    LLM Generated Persona~\cite{li2026persona} &
+    Four tiers: meta (sampled census distributions), objective tabular, subjective tabular, descriptive (free-form narrative) &
+    About 1{,}000 personas per state, 1{,}000{,}000 in total &
+    Independent forced-choice survey simulation per persona; statistical population weighting; Wasserstein distance &
+    More LLM-generated detail systematically increases bias and homogeneity, with a strong leftward political drift; overly positive profiles &
+    Athene-70B, LLaMA-3.1-8B/70B, Mixtral-8x7B, Nemotron-70B, Qwen-2.5-72B, Yi-34B \\
+    \hline
+    PersonaGym~\cite{samuel2025personagym} &
+    Persona agents initialized with persona-specific system prompts, evaluated in 150 persona-relevant environments &
+    200 personas on 10{,}000 questions &
+    Independent evaluation per question by an ensemble of two LLM evaluators guided by rubrics &
+    PersonaScore; model size does not guarantee persona adherence; correlates with human judgment (Spearman 75.1\%) &
+    GPT-3.5/4.1/4.5, LLaMA-2/3, Claude 3 Haiku, Claude 3.5 Sonnet, DeepSeek-V3 \\
+    \hline
+    MAJ-EVAL~\cite{chen2026majeval} &
+    Two steps: extract evaluative dimensions and evidence from literature, then construct personas with demographics, evaluative dimension, specialty, psychological traits and social relationships &
+    Panels organized by stakeholder groups (teachers, parents, children, clinicians, \ldots) &
+    Independent evaluation, in-group free debate led by a moderator, out-group aggregator &
+    Better alignment with human experts than ROUGE-L, BERTScore, G-Eval and ChatEval; in-group debate helps 15 of 20 stakeholder groups &
+    Claude 3.7 Sonnet, Qwen-3-235B, GPT-4 \\
+    \hline
+\end{longtable}
+\end{landscape}
 
-% \section{KG-based RAG Prompt Generation}
-% \textbf{Prompt}: \textit{As a good AI assistant, your mission is to based on the given relations to answer the question, your format answer is a dictionary like ```json \{ "answer" :`Your answer is "A","B","C","D","E"` \} ```\\\\
-% Relations: '''\\
-% Venice-location\_of-canal\\
-% Venice-is\_part\_of-Veneto\\
-% Veneto-is\_part\_of-Italy\\
-% Southern Europe-related\_to-Italy\\
-% Southern Europe-related\_to-Portuga\\
-% '''\\
-% Question: Where in Southern Europe would you find many canals?\\
-% A. michigan\\
-% B. new york\\
-% C. amsterdam\\
-% D. venice\\
-% E. other\\
-% Answer: }\\\\
-% \textbf{Answer:} \textit{\{ "answer": "D" \} based on the provided information, Venice is located in Southern Europe and is famous for its canals.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Agent Prompts}
+\label{apx:prompts}
+\todo{Prompt of each agent role (or the analyst prompt as a complete example and a summary of the others), from \texttt{backend/src/khoailanggraph/agents/requirements\_engineering/prompts/}.}
 
-\chapter{2024 Annual Conference of the North American Chapter of the Association for Computational Linguistics}
-\label{apd:B}
-% the \\ insures the section title is centered below the phrase: Appendix B
-A paper that we submitted to the 2024 Annual Conference of the North American Chapter of the Association for Computational Linguistics that demonstrate our work was accepted . The url of the paper: \url{https://arxiv.org/abs/2403.02715}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Table of Workload}
+\label{apx:workload}
 
+\begin{table}[H]
+    \centering
+    \caption{Workload of the team members.}
+    \label{tab:apx-workload}
+    \begin{tabularx}{\linewidth}{|l|l|X|c|}
+        \hline
+        \textbf{Member} & \textbf{Student ID} & \textbf{Tasks} & \textbf{Contribution} \\
+        \hline
+        Pham Khanh Duy & 2310510 & \todo{tasks} & \todo{\%} \\
+        \hline
+        Nguyen Tran Yen Nhi & 2312506 & \todo{tasks} & \todo{\%} \\
+        \hline
+        Tang Hong Ai & 2310167 & \todo{tasks} & \todo{\%} \\
+        \hline
+    \end{tabularx}
+\end{table}
 
 \end{appendices}
