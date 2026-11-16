@@ -185,7 +185,36 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Agent Prompts}
 \label{apx:prompts}
-\todo{Prompt of each agent role (or the analyst prompt as a complete example and a summary of the others), from \texttt{backend/src/khoailanggraph/agents/requirements\_engineering/prompts/}.}
+Every agent role has one versioned prompt file in the \texttt{prompts/} folder of the agent workflow (\texttt{agents/requirements\_engineering/}) in the system repository, with the structure described in Section~\ref{sec:impl-prompts}. Every role also receives the output language. Table~\ref{tab:apx-prompts} summarizes the prompts; the analyst prompt is reproduced in full as an example.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Prompts of the agent roles.}
+    \label{tab:apx-prompts}
+    \begin{tabularx}{\linewidth}{|l|c|X|p{3.4cm}|}
+        \hline
+        \textbf{Role} & \textbf{Version} & \textbf{Inputs} & \textbf{Output} \\
+        \hline
+        Planner & 1 & Intent & Elicitation plan \\ \hline
+        Corpus builder & 1 & Intent, plan, number of sources, search results & Source documents \\ \hline
+        Stakeholder miner & 1 & Intent, source, document text & Stakeholder observations \\ \hline
+        Persona generator & 2 & Intent, plan, observations, number of personas & Stakeholder groups, personas \\ \hline
+        Interviewer & 1 & Plan, persona, transcript, turn, turn limit reached, directive & Question or stop with summary \\ \hline
+        Persona agent & 1 & Persona, question, conversation & Answer \\ \hline
+        Analyst & 1 & Topics, personas, transcripts, current analysis, directive & Analysis items \\ \hline
+        Requirement engineer & 1 & Analyzed requirements, latent needs, assumptions, conflicts, current specification, directive & Specification requirements \\ \hline
+        Backlog manager & 1 & Specification, current backlog, directive & Epics and user stories \\ \hline
+        Validator & 1 & Specification, backlog, open issues, iteration & Verdict, validation issues \\ \hline
+        Intent router & 1 & Pending messages, specification, backlog & Target node, instruction \\ \hline
+    \end{tabularx}
+\end{table}
+
+\section{Analyst Prompt}
+\label{apx:analyst-prompt}
+{\setstretch{1.0}
+\lstinputlisting[style=prompt]{backmatter/prompts/analyst.v1.md}
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Table of Workload}
