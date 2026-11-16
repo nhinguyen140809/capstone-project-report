@@ -1,0 +1,59 @@
+\section{Use Cases}
+\label{sec:sd-use-cases}
+
+\subsection{Use Case Diagram}
+\label{sec:sd-uc-diagram}
+\todo{Draw the use case diagram (draw.io, source in \texttt{figures/system-design/src/}) with the actors of Table~\ref{tab:sd-actors} and the use cases below, grouped by package: Account, Project, Requirements engineering run, Review, Artifacts and traceability, Export, Experiments.}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\linewidth]{system-design/use-case-diagram.pdf}
+%     \caption{Use case diagram.}
+%     \label{fig:sd-use-case}
+% \end{figure}
+
+\subsection{Use Case Specifications}
+\label{sec:sd-uc-specs}
+\todo{One specification per main use case. Two examples follow.}
+
+\begin{usecase}{Start a requirements engineering run}
+    \addrow{Use case ID}{UC-01}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user describes a product idea in a thread and the system runs the agent workflow on it.}
+    \addrow{Related requirements}{FR-05, FR-06, FR-07}
+    \addrow{Preconditions}{The user is logged in, is a member of the project, and has a model configured for every agent role.}
+    \addrow{Trigger}{The user sends the first message of a thread.}
+    \addmulrow{Normal flow}{
+        \item The user opens a project and creates a thread.
+        \item The user enters the product idea and, optionally, changes the run settings.
+        \item The system creates a run, starts it in the background and opens its event stream.
+        \item The system shows the current stage on the workflow graph and the artifacts as the agents produce them.
+        \item The run pauses at the persona checkpoint (UC-02).
+    }
+    \addmulrow{Alternative flows}{
+        \item[3a.] The cost limit is reached: the run stops with an error and the user may raise the limit and retry.
+        \item[4a.] The user closes the browser: the run continues; when the user returns, the stream replays the missed events.
+    }
+    \addrow{Postconditions}{A run exists with status \texttt{running}, \texttt{interrupted} or \texttt{succeeded}.}
+\end{usecase}
+
+\begin{usecase}{Review an artifact at a checkpoint}
+    \addrow{Use case ID}{UC-02}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user reviews the artifact under review and chooses an option; the run continues along it.}
+    \addrow{Related requirements}{FR-10, FR-12}
+    \addrow{Preconditions}{A run of the thread is interrupted at a checkpoint.}
+    \addrow{Trigger}{The system shows a review request.}
+    \addmulrow{Normal flow}{
+        \item The system shows the artifact under review, the options and the questions of the checkpoint.
+        \item The user edits the artifact if the checkpoint allows edits.
+        \item The user chooses an option and, when the option requires it, writes feedback.
+        \item The system records the decision and resumes the run on the edge of the chosen option.
+    }
+    \addmulrow{Alternative flows}{
+        \item[3a.] The user rejects the analysis with re-interview: the run goes back to the interviews with the personas named by the rework directive.
+    }
+    \addrow{Postconditions}{A human decision is stored and the run is running again.}
+\end{usecase}
+
+\todo{Further use cases: UC-03 Send a message during a run, UC-04 Edit items and trace links, UC-05 Export the requirements, UC-06 Configure models and credentials, UC-07 Upload project documents, UC-08 Run an experiment.}

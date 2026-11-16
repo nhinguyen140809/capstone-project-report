@@ -1,0 +1,11 @@
+\section{Evaluation of Generated Requirements}
+\label{sec:bg-metrics}
+
+\todo{Present only the metrics used in Chapter~\ref{chap:evaluation}. Candidates taken from the baselines:}
+\begin{itemize}
+    \item \textbf{Reference-based:} precision, recall and F1 against reference requirements, with semantic matching by BERTScore~\cite{zhang2020bertscore}.
+    \item \textbf{Coverage and diversity in embedding space:} Convex Hull Volume (CHV), Mean Distance to Centroid (MDC)~\cite{ataei2025elicitron, jin2025iredev}, Vendi Score~\cite{friedman2023vendi}.
+    \item \textbf{Rubric-based:} ISO/IEC/IEEE 29148 quality characteristics~\cite{iso29148} and INVEST for backlog items, scored by LLM-as-a-judge~\cite{zheng2023judging, liu2023geval} and by human raters.
+    \item \textbf{Cost and latency:} tokens, cost in USD and duration, per run and per agent role.
+\end{itemize}
+\todo{Give the formula of each metric used.}

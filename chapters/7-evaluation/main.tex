@@ -1,0 +1,64 @@
+\chapter{Experiments and Evaluation}
+\label{chap:evaluation}
+\textit{This chapter evaluates \sysname{}: the research questions, the datasets and baselines, the metrics and the experimental setup, followed by the results and their discussion.}
+
+\section{Research Questions}
+\label{sec:eval-rq}
+\todo{Restate RQ1--RQ3 from Section~\ref{sec:problem-statement}.}
+
+\section{Experimental Setup}
+\label{sec:eval-setup}
+
+\subsection{Datasets}
+\label{sec:eval-datasets}
+\todo{Benchmark software systems, e.g.\ the cases of MARE (ATM, Cafeteria Ordering, Library, \ldots)~\cite{mare2024}, iReDev (Bookkeeping, Roll Call, \ldots)~\cite{jin2025iredev}, VibeIntent~\cite{vibeintent2026}; reference requirements; dev and test split.}
+
+\subsection{Baselines and Variants}
+\label{sec:eval-baselines}
+\todo{Single-agent LLM baseline; re-implementation or reported numbers of MARE and iReDev; ablations of \sysname{}: ungrounded personas (workflow version 1) vs.\ grounded personas (version 2), without rework loop, with role-only stakeholders.}
+
+\subsection{Evaluation Harness}
+\label{sec:eval-harness}
+Experiments run the same agent workflow as the product through an evaluation harness, without the web app or the database (Figure~\ref{fig:eval-harness}). A review policy answers the checkpoints (scripted answers, always approve, or an LLM reviewer), and one record is written per run with its steps, usage and artifacts.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{evaluation/experiment-harness.pdf}
+    \caption{Evaluation harness.}
+    \label{fig:eval-harness}
+\end{figure}
+
+\subsection{Metrics}
+\label{sec:eval-metrics}
+\todo{Metrics of Section~\ref{sec:bg-metrics} for each research question: quality, coverage and diversity, cost, latency, reliability.}
+
+\subsection{Implementation Details}
+\label{sec:eval-details}
+\todo{Models per role, temperature, run parameters, number of repeats, judge model.}
+
+\section{Results}
+\label{sec:eval-results}
+
+\subsection{Requirement Coverage and Diversity}
+\label{sec:eval-coverage}
+\todo{Table: CHV, MDC, Vendi Score, number of requirements, recall against the reference, per system and variant.}
+
+\subsection{Specification Quality}
+\label{sec:eval-quality}
+\todo{Table: ISO/IEC/IEEE 29148 and INVEST scores by LLM-as-a-judge and by human raters.}
+
+\subsection{Ablation Study}
+\label{sec:eval-ablation}
+\todo{Effect of grounding, of the rework loop and of the number of personas.}
+
+\subsection{Cost and Latency}
+\label{sec:eval-cost}
+\todo{Tokens, cost and duration per run and per agent role.}
+
+\subsection{Case Study}
+\label{sec:eval-case-study}
+\todo{One run end to end: idea, personas with their evidence, an excerpt of an interview, a latent need found, the requirement and the user story it leads to, traced back.}
+
+\section{Discussion}
+\label{sec:eval-discussion}
+\todo{Answer each research question; threats to validity (LLM-as-a-judge bias, benchmark leakage, non-determinism).}

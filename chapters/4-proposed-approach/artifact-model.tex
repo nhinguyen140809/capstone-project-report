@@ -1,0 +1,48 @@
+\section{Artifact and Traceability Model}
+\label{sec:pa-artifacts}
+
+The output of the workflow has two levels: \emph{artifacts}, the work products, and the \emph{items} inside them. Items and the typed trace links between them form a property graph, so every specification requirement and backlog item can be followed back to the interview statements, personas and source documents it comes from. Table~\ref{tab:pa-artifacts} lists the artifact kinds and Table~\ref{tab:pa-links} the link types.
+
+\begin{table}[H]
+    \centering
+    \caption{Artifact kinds and the item kinds they contain.}
+    \label{tab:pa-artifacts}
+    \begin{tabularx}{\linewidth}{|l|X|l|}
+        \hline
+        \textbf{Artifact kind} & \textbf{Item kinds} & \textbf{Per project} \\
+        \hline
+        Elicitation plan & -- & One \\
+        Research corpus & Source document, stakeholder observation & One \\
+        Persona catalog & Section, persona & One \\
+        Interview transcript & Interview message & One per persona \\
+        Requirements analysis & Section, raw requirement, analyzed requirement, latent need, assumption, ambiguity issue, conflict & One \\
+        Requirement specification & Section, specification requirement & One \\
+        Product backlog & Section, backlog item & One \\
+        Validation report & Section, validation issue & Many \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Trace link types between items.}
+    \label{tab:pa-links}
+    \begin{tabularx}{\linewidth}{|l|X|X|}
+        \hline
+        \textbf{Link type} & \textbf{Source} & \textbf{Target} \\
+        \hline
+        \texttt{evidenced\_by} & Raw requirement, latent need; stakeholder observation & Interview message; source document \\
+        \texttt{grounded\_in} & Persona & Stakeholder observation \\
+        \texttt{stated\_by} & Raw requirement & Persona \\
+        \texttt{involves} & Analyzed requirement, latent need, conflict & Persona \\
+        \texttt{derived\_from} & Analyzed req.; specification req.; backlog item & Raw req., latent need; analyzed req.; specification req. \\
+        \texttt{concerns} & Assumption, ambiguity issue, conflict & Raw, analyzed or specification requirement \\
+        \texttt{resolved\_by} & Ambiguity issue, conflict & Interview message \\
+        \texttt{flags} & Validation issue & Any item \\
+        \texttt{depends\_on} & Specification requirement, backlog item & Item of the same kind \\
+        \texttt{duplicates}, \texttt{supersedes} & Any item & Item of the same kind \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\todo{Integrity rules (no cycles in \texttt{derived\_from} and \texttt{depends\_on}, content checked against a versioned schema); versioning of artifacts and items; the traceability matrix export.}

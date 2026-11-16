@@ -1,0 +1,31 @@
+\section{Non-Linear Deliberation Workflow}
+\label{sec:pa-deliberation}
+
+\subsection{Automatic Rework}
+\label{sec:pa-rework}
+When the analyst's result is not OK, because issues need a stakeholder's answer, the \texttt{rework\_elicitation} control node writes a rework directive and the interview continues with the personas it names. The number of rework loops is bounded by \texttt{max\_iterations}.
+
+\subsection{Human Review Checkpoints}
+\label{sec:pa-checkpoints}
+At a checkpoint the run pauses and waits for the user (Table~\ref{tab:pa-checkpoints}).
+
+\begin{table}[H]
+    \centering
+    \caption{Human review checkpoints and their options.}
+    \label{tab:pa-checkpoints}
+    \begin{tabularx}{\linewidth}{|l|X|X|}
+        \hline
+        \textbf{Checkpoint} & \textbf{Reviewed artifact} & \textbf{Options and next node} \\
+        \hline
+        \texttt{checkpoint\_personas} & Persona catalog, editable & Approve (after edits) $\rightarrow$ interviewer \\
+        \texttt{checkpoint\_analysis} & Requirements analysis, editable & Accept $\rightarrow$ requirement engineer; reject and re-analyse $\rightarrow$ analyst; reject and re-interview $\rightarrow$ rework elicitation \\
+        \texttt{checkpoint\_spec} & Requirement specification & OK $\rightarrow$ backlog manager; not OK $\rightarrow$ requirement engineer \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{Incremental Intent Routing}
+\label{sec:pa-intent-router}
+A message the user sends while the run works is taken in at the next safe point, after a node finishes: the intent router decides which node should handle it (planner, interviewer, analyst, requirement engineer or backlog manager) and the run continues there. A later run of the same thread starts at the intent router; only the first run of a project starts at the planner.
+
+\todo{Example of a late change of intent and the node it is routed to.}

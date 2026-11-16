@@ -1,0 +1,27 @@
+\section{Agent Roles}
+\label{sec:pa-agent-roles}
+
+Table~\ref{tab:pa-agent-roles} lists the agent roles of the workflow and the artifact each one produces. Each role has its own versioned prompt (Appendix~\ref{apx:prompts}) and its own structured output schema; the model of each role is chosen by configuration, so different roles may run on different LLMs.
+
+\begin{table}[H]
+    \centering
+    \caption{Agent roles of the workflow and the artifacts they produce.}
+    \label{tab:pa-agent-roles}
+    \begin{tabularx}{\linewidth}{|l|X|X|}
+        \hline
+        \textbf{Agent role} & \textbf{Responsibility} & \textbf{Produces} \\
+        \hline
+        Planner & Turns the product idea into an elicitation plan: objectives, topics and stakeholder types & Elicitation plan \\
+        Corpus builder & Chooses the real-world documents the personas are based on, from member uploads first and web search after & Research corpus (source documents) \\
+        Stakeholder miner & Finds what each kind of stakeholder cares about in those documents, with a verbatim evidence quote & Stakeholder observations \\
+        Persona generator & Creates the personas from the evidence found in those documents & Persona catalog \\
+        Interviewer & Asks interview questions to one persona at a time & Interview questions \\
+        Persona agent & Answers as one persona & Interview answers \\
+        Analyst & Extracts and analyzes requirements from the transcripts & Raw and analyzed requirements, latent needs, assumptions, ambiguity issues, conflicts \\
+        Requirement engineer & Writes the requirement specification & Requirement specification \\
+        Backlog manager & Writes the product backlog as user stories & Product backlog \\
+        Validator & Checks the outputs and reports issues & Validation report \\
+        Intent router & Decides which node a message sent by the user should go to & Intent directive \\
+        \hline
+    \end{tabularx}
+\end{table}

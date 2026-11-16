@@ -1,0 +1,18 @@
+\section{Multi-Agent Collaboration and Coordination}
+\label{sec:rw-coordination}
+
+Another line of work focuses on how specialized or persona-based agents coordinate their outputs. This issue applies both to agents responsible for different stages of the RE workflow and to agents representing different stakeholder or persona perspectives.
+
+In MARE, coordination is primarily artifact-mediated. Specialized agents responsible for elicitation, modeling, verification, and specification exchange intermediate requirements artifacts through a shared workspace. When verification identifies problems, earlier agents can revise their outputs and trigger subsequent processing stages~\cite{mare2024}.
+
+iReDev similarly adopts artifact-mediated coordination, but uses an event-driven communication mechanism. Its shared artifact pool stores intermediate and final requirements artifacts, while specialized agents continuously monitor changes and trigger subsequent actions accordingly~\cite{jin2025iredev}. This mechanism supports coordination across requirements-development stages without requiring unrestricted conversational interaction among all agents.
+
+VibeIntent also coordinates specialized agents through structured intermediate artifacts. Visionary, Agenda, Interviewer, EndUser, Distiller, Sprint Manager, and Analyst agents progressively transform an initial project idea into Agile-ready requirements. In particular, the Distiller extracts requirements from different perspectives, consolidates related items, and adjudicates conflicts before the resulting requirements are transformed into backlog items~\cite{vibeintent2026}.
+
+Coordination among persona agents can follow a different pattern. Social Agents deliberately prevents direct communication among its persona agents in order to preserve independent perspectives. Their outputs are instead combined through a moderator using an aggregation mechanism~\cite{bhattacharyya2026social}. Thus, coordination occurs at the aggregation level rather than through inter-agent deliberation.
+
+MAJ-EVAL introduces explicit deliberation among stakeholder-aligned persona agents. Each agent first performs an independent evaluation, after which agents belonging to the same stakeholder group participate in a moderated free-form debate. An aggregator then combines qualitative feedback and quantitative judgments across stakeholder groups~\cite{chen2026majeval}. The framework therefore demonstrates how independently constructed stakeholder perspectives can be refined through multi-agent discussion before aggregation.
+
+QUARE provides an explicit negotiation mechanism within requirements engineering. Its quality-specialized agents independently generate requirements, after which semantically overlapping or conflicting requirements are identified. Agents then engage in multi-round proposal, critique, and synthesis to resolve cross-quality conflicts before integration into a unified requirements model~\cite{cheng2026quare}. Unlike persona-oriented systems, however, the interacting agents represent software quality dimensions rather than human stakeholder perspectives.
+
+These studies demonstrate several coordination patterns: artifact-mediated workflow collaboration, event-driven orchestration, independent aggregation, deliberative debate, and explicit negotiation. However, these mechanisms are usually developed either for RE-task agents or for persona-based agents. The systematic integration of stakeholder modeling with downstream multi-agent requirements development and coordination remains limited.

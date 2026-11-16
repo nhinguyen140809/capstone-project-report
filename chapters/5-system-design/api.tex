@@ -1,0 +1,22 @@
+\section{API Design}
+\label{sec:sd-api}
+
+\todo{Design drivers: the server holds all state, a run is a resource rather than a request, events go through a durable log, the server-to-client direction is a stream, agent output is structured.}
+
+\begin{table}[H]
+    \centering
+    \caption{Main resources of the REST API (under \texttt{/api/v1}).}
+    \label{tab:sd-api}
+    \begin{tabularx}{\linewidth}{|l|X|}
+        \hline
+        \textbf{Resource} & \textbf{Main endpoints} \\
+        \hline
+        Auth and account & \texttt{POST /auth/register}, \texttt{POST /auth/login}, \texttt{GET /me}, \texttt{GET /me/model-settings} \\
+        Projects & \texttt{GET /projects}, \texttt{GET /projects/\{id\}/artifacts}, \texttt{GET /projects/\{id\}/documents} \\
+        Threads and runs & \texttt{GET /threads/\{id\}/messages}, \texttt{GET /runs/\{id\}}, \texttt{GET /runs/\{id\}/stream}, \texttt{GET /runs/\{id\}/interrupts} \\
+        Artifacts and items & \texttt{GET /artifacts/\{id\}/items}, \texttt{PATCH /items/\{id\}}, \texttt{GET /items/\{id\}/trace} \\
+        Traceability & \texttt{GET /projects/\{id\}/traceability/matrix}, \texttt{GET /projects/\{id\}/traceability/coverage} \\
+        Workflow & \texttt{GET /workflow/definition}, \texttt{GET /artifact-kinds} \\
+        \hline
+    \end{tabularx}
+\end{table}

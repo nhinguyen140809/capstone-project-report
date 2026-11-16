@@ -1,0 +1,48 @@
+\chapter{Implementation}
+\label{chap:implementation}
+\textit{This chapter describes how \sysname{} is implemented: the technology stack, the agent workflow on LangGraph, the backend, the web app, and the testing and continuous integration process.}
+
+\section{Technology Stack}
+\label{sec:impl-stack}
+
+\begin{table}[H]
+    \centering
+    \caption{Technology stack.}
+    \label{tab:impl-stack}
+    \begin{tabularx}{\linewidth}{|l|X|}
+        \hline
+        \textbf{Concern} & \textbf{Choice} \\
+        \hline
+        Agent orchestration & LangGraph, LangChain Core \\
+        LLM abstraction & LangChain \texttt{init\_chat\_model} with provider packages (OpenAI, Anthropic, Google, Ollama) \\
+        Backend & Python 3.12, FastAPI, Uvicorn, Pydantic v2 \\
+        Database & PostgreSQL with pgvector, SQLAlchemy 2 (async), Alembic; LangGraph Postgres checkpointer \\
+        Object storage & S3-compatible (MinIO) \\
+        Frontend & Next.js 16, React 19, TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query, Zustand \\
+        API client & Generated from the OpenAPI schema of the backend \\
+        Observability & structlog; Langfuse or LangSmith for LLM traces \\
+        Quality & Ruff, mypy (strict), import-linter, pytest; ESLint, Prettier, Vitest, Playwright \\
+        \hline
+    \end{tabularx}
+\end{table}
+\todo{Justify the main choices (why LangGraph, why a modular monolith, why PostgreSQL rather than a graph database).}
+
+\section{Agent Workflow Implementation}
+\label{sec:impl-agents}
+\todo{State schema and reducers; nodes; conditional routing functions; interrupts for the checkpoints; the versioned workflow definition and how nodes and edges are read from the compiled graph; prompts as versioned Markdown files with front matter; structured output models; the model layer resolving a role to a model.}
+
+\section{Backend Implementation}
+\label{sec:impl-backend}
+\todo{Feature packages; background run executor; event log and the server-sent event stream; persistence of artifacts, items and trace links with the integrity checks of \texttt{domain/}; export.}
+
+\section{Web Application}
+\label{sec:impl-frontend}
+\todo{Pages; drawing the workflow graph and run progress from the workflow definition; review forms generated from the checkpoint options and questions; artifact viewers and editors; mock mode with MSW.}
+
+\section{Testing and Continuous Integration}
+\label{sec:impl-testing}
+\todo{Unit tests of the domain rules, tests of the graph with fake models, API tests, frontend unit and end-to-end tests; the CI workflow; numbers of tests and coverage.}
+
+\section{Deployment}
+\label{sec:impl-deployment}
+\todo{Docker Compose setup, environment variables, how to run the system (refer to the repository).}

@@ -1,0 +1,37 @@
+\section{Overview of the Framework}
+\label{sec:pa-overview}
+
+\sysname{} takes a short product idea from the user and produces a validated requirement specification and product backlog. One workflow graph covers the whole requirements engineering process: planning, evidence collection, persona construction, elicitation by interviews, analysis, specification, backlog writing and validation (Figure~\ref{fig:pa-workflow}). The workflow is executed as a state graph~\cite{langgraph}: every node is an LLM agent, a human review checkpoint or a control node, and every agent reads from and writes to a shared set of artifacts rather than to a conversation history.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.75\textheight]{proposed-approach/workflow-v2.pdf}
+    \caption{Main flow of the agent workflow (workflow definition version 2).}
+    \label{fig:pa-workflow}
+\end{figure}
+
+The workflow differs from a sequential pipeline in three ways, detailed in Section~\ref{sec:pa-deliberation}:
+\begin{itemize}
+    \item \textbf{Loops.} The analyst sends the process back to the interview when open issues need a stakeholder's answer; the validator sends it back to the requirement engineer when the specification fails validation.
+    \item \textbf{Human review.} The run pauses at three checkpoints, where the user approves, edits or rejects the personas, the analysis and the specification.
+    \item \textbf{Incremental intent.} A message the user sends while the run works, or in a later run, is routed by an intent router to the node that should handle it.
+\end{itemize}
+
+\todo{Name and motivate the design principles: grounding before simulation, artifacts instead of chat history, bounded loops (Table~\ref{tab:pa-run-parameters}).}
+
+\begin{table}[H]
+    \centering
+    \caption{Run parameters that bound the workflow.}
+    \label{tab:pa-run-parameters}
+    \begin{tabularx}{\linewidth}{|l|X|c|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Meaning} & \textbf{Range} & \textbf{Default} \\
+        \hline
+        \texttt{target\_personas\_num} & Number of personas interviewed & 1--10 & 3 \\
+        \texttt{max\_personas} & Largest number of personas that may be interviewed & 1--10 & 3 \\
+        \texttt{max\_turns} & Longest interview per persona, in questions and answers & 1--20 & 6 \\
+        \texttt{max\_iterations} & Number of revisions allowed after a review & 0--5 & 2 \\
+        \texttt{target\_sources\_num} & Number of research documents kept as evidence & 1--10 & 3 \\
+        \hline
+    \end{tabularx}
+\end{table}

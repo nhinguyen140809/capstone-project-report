@@ -1,0 +1,29 @@
+\section{Non-Functional Requirements}
+\label{sec:sd-nfr}
+
+\todo{Make every requirement measurable; check against the implementation.}
+
+\begingroup\setstretch{1.15}
+\begin{longtable}{|p{0.1\linewidth}|p{0.22\linewidth}|p{0.58\linewidth}|}
+    \caption{Non-functional requirements.}
+    \label{tab:sd-nfr} \\
+    \hline
+    \textbf{ID} & \textbf{Category} & \textbf{Requirement} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{ID} & \textbf{Category} & \textbf{Requirement} \\
+    \hline
+    \endhead
+    NFR-01 & Reliability & A closed browser does not stop a run; a reconnecting client receives every event it missed. \\ \hline
+    NFR-02 & Reliability & After a failure, a run continues from its last saved checkpoint without repeating the LLM calls of earlier steps. \\ \hline
+    NFR-03 & Performance & The event stream sends a heartbeat every 15 seconds; streamed tokens appear in the web app as they are generated. \\ \hline
+    NFR-04 & Cost & Cost limits per run are checked before every model call; usage, including prompt cache reads and writes, is recorded for every step. \\ \hline
+    NFR-05 & Security & Sessions use an httpOnly, Secure, SameSite cookie; provider keys are stored encrypted and never returned by the API; a resource without access answers 404. \\ \hline
+    NFR-06 & Modifiability & Models and providers are switched by configuration, per agent role; a change of the workflow is a new versioned workflow definition with no database migration. \\ \hline
+    NFR-07 & Data integrity & Every artifact and item is validated against its versioned content schema and the integrity rules before it is saved. \\ \hline
+    NFR-08 & Reproducibility & Experiments import the same agent code as the product and record the workflow version, prompt versions, models and commit of every run. \\ \hline
+    NFR-09 & Observability & Every agent step can be inspected in the LLM tracing tool. \\ \hline
+    NFR-10 & Usability & \todo{Usability requirement of the web app.} \\ \hline
+\end{longtable}
+\endgroup

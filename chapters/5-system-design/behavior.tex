@@ -1,0 +1,18 @@
+\section{Behavioral Design}
+\label{sec:sd-behavior}
+
+\subsection{Run Lifecycle}
+\label{sec:sd-run-lifecycle}
+A run is a resource with a lifecycle (Figure~\ref{fig:sd-run-lifecycle}): it is created \texttt{queued}, becomes \texttt{running}, pauses as \texttt{interrupted} at a checkpoint, and ends \texttt{succeeded}, \texttt{failed} or \texttt{cancelled}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{system-design/runtime-run-lifecycle.pdf}
+    \caption{State diagram of a run.}
+    \label{fig:sd-run-lifecycle}
+\end{figure}
+\todo{Check the state names against the figure.}
+
+\subsection{Activity and Sequence Diagrams}
+\label{sec:sd-sequence}
+\todo{Activity diagram of the whole requirements engineering process from the user's point of view; sequence diagram of UC-01 (web app $\rightarrow$ API $\rightarrow$ run executor $\rightarrow$ graph $\rightarrow$ LLM provider, events back through the event log and the stream); sequence diagram of UC-02 (resume after a decision). Source diagrams in \texttt{khoai-lang-graph/docs/architecture/runtime.md}.}

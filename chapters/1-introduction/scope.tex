@@ -1,8 +1,12 @@
 \section{Scope}
-This project focuses on improving the factual accuracy of LLMs in English one-hop question answering tasks. The research will be conducted within the following constraints:
+\label{sec:scope}
+
+\todo{Confirm the scope with the supervisors. Draft based on the current implementation:}
 \begin{itemize}
-\item One-Hop Question Answering: The project will solely focus on questions answerable through a single relationship traversal within the knowledge graph. Multi-hop reasoning or questions requiring complex inference beyond one hop are outside the scope
-\item English Language: The project will be limited to English text and knowledge graphs. Multilingual question answering or knowledge graphs with other languages will not be considered
-\item Static Knowledge Graph: The knowledge graph utilized in this project will be static. Dynamically updating the knowledge graph with new information or incorporating a knowledge graph completion component is beyond the scope
-\item Limited Computational Resources: Due to computational resource limitations, the size of the knowledge graph and the scale of the LLM used may be constrained
+    \item \textbf{RE activities.} The system covers elicitation, analysis, specification and validation of requirements, and the derivation of a product backlog for Agile development. Requirements management after delivery (change control, release planning) is out of scope.
+    \item \textbf{Input.} A natural-language product idea, optionally with documents uploaded by the project members. Existing code bases or legacy specifications are not used as input.
+    \item \textbf{Stakeholders.} Stakeholders are simulated by LLM agents grounded in public documents; interviews with real stakeholders are not part of the workflow. A human user supervises the process at review checkpoints.
+    \item \textbf{Language.} Artifacts are produced in English. \todo{Vietnamese output?}
+    \item \textbf{Evaluation.} Benchmark software systems used by prior work (e.g.\ the cases of MARE and iReDev); no industrial user study in this phase.
+    \item \textbf{Phase.} This report covers the specialized project phase. \todo{Which parts move to the capstone (thesis) phase.}
 \end{itemize}

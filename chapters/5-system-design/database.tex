@@ -1,0 +1,17 @@
+\section{Database Design}
+\label{sec:sd-database}
+
+The schema has 36 tables in five groups (Figure~\ref{fig:sd-database}): identity and settings, workspace, conversation and execution, artifacts and trace, and supporting tables.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{system-design/database-overview.pdf}
+    \caption{Overview of the database schema.}
+    \label{fig:sd-database}
+\end{figure}
+
+\subsection{Artifact Storage}
+\label{sec:sd-artifact-storage}
+Requirements engineering output has two levels, each in its own generic table: \texttt{artifacts} and \texttt{artifact\_items}, with the fields of each kind in a JSON \texttt{content} column validated against a versioned content schema. The items and the \texttt{trace\_links} between them form a property graph.
+
+\todo{Explain the decisions and their trade-offs: generic tables vs.\ one table per kind; workflow vocabulary as text checked against the workflow definition vs.\ database enums; relational database (PostgreSQL with pgvector) vs.\ graph database. Include the ER diagram of the \texttt{artifacts\_and\_trace} group.}

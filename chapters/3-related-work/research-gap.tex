@@ -1,0 +1,46 @@
+\section{Research Gap and Positioning}
+\label{sec:rw-gap}
+
+The reviewed studies reveal a separation among three capabilities that are individually well explored but only partially integrated.
+
+First, existing LLM-based RE research demonstrates substantial progress in automating requirements activities, including elicitation, analysis, specification, validation, backlog construction, and requirements quality analysis. Multi-stage systems support several of these activities, while frameworks such as MARE, iReDev, and VibeIntent provide broader end-to-end requirements-development workflows. However, stakeholder agents in these systems are generally introduced as functional roles within the workflow rather than as stakeholder representations whose construction and behavioral validity are themselves systematically studied.
+
+Second, persona-oriented research demonstrates that stakeholder simulation raises challenges beyond simply generating several role descriptions. Elicitron, Social Agents, PPol, PersonaGym, and related work show that how personas are constructed can affect the diversity, behavior, adherence, and representativeness of simulated users. These studies, however, generally stop at simulation, prediction, evaluation, or elicitation rather than integrating validated synthetic stakeholders into a broader requirements-development lifecycle.
+
+Third, multi-agent research provides increasingly sophisticated coordination mechanisms, ranging from artifact sharing and aggregation to debate and explicit negotiation. Yet the agents participating in these mechanisms are often either engineering-role agents or domain-specialized agents. Mechanisms for systematically coordinating multiple grounded stakeholder personas throughout an end-to-end requirements-engineering workflow remain comparatively underexplored.
+
+Accordingly, the gap is not the absence of LLM-based requirements engineering, stakeholder/persona simulation, or multi-agent coordination individually. Rather, the reviewed literature suggests a lack of systematic integration among these capabilities within a stakeholder-centered, end-to-end requirements-engineering process.
+
+To compare the representative approaches, we consider five dimensions. \emph{Multi-stage RE} denotes support for multiple RE activities or stages, whereas \emph{End-to-End RE} denotes broader coverage of the requirements-development process from initial stakeholder or requirements input toward downstream requirements artifacts. \emph{Stakeholder / Persona Modeling} refers to explicit modeling or simulation of human stakeholders, end-users, or personas; partial support indicates role-based stakeholder agents without systematic persona construction or evaluation. \emph{Multi-Agent Coordination} refers to mechanisms such as shared artifacts, orchestration, aggregation, or interaction among multiple agents. Finally, \emph{Deliberation / Negotiation} refers specifically to mechanisms for handling disagreement or conflict through debate, adjudication, critique, or negotiation. Table~\ref{tab:rw-positioning} summarizes the comparison.
+
+\newcommand{\yes}{$\checkmark$}
+\newcommand{\partly}{$\triangle$}
+\newcommand{\no}{--}
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \caption{Positioning of representative studies across requirements engineering, stakeholder modeling, and multi-agent coordination.}
+    \label{tab:rw-positioning}
+    \begin{tabular}{|l|c|c|c|c|c|}
+        \hline
+        \textbf{Approach} & \textbf{\makecell{Multi-\\stage RE}} & \textbf{\makecell{End-to-\\End RE}} & \textbf{\makecell{Stakeholder /\\Persona\\Modeling}} & \textbf{\makecell{Multi-Agent\\Coordi-\\nation}} & \textbf{\makecell{Delibe-\\ration /\\Negotiation}} \\
+        \hline
+        MARE~\cite{mare2024} & \yes & \yes & \partly & \yes & \no \\
+        iReDev~\cite{jin2025iredev} & \yes & \yes & \partly & \yes & \no \\
+        VibeIntent~\cite{vibeintent2026} & \yes & \yes & \partly & \yes & \partly \\
+        Elicitron~\cite{ataei2025elicitron} & \no & \no & \yes & \no & \no \\
+        Social Agents~\cite{bhattacharyya2026social} & \no & \no & \yes & \yes & \no \\
+        Persona Policies (PPol)~\cite{chopra2026beyond} & \no & \no & \yes & \no & \no \\
+        PersonaGym~\cite{samuel2025personagym} & \no & \no & \yes & \no & \no \\
+        LLM Generated Persona~\cite{li2026persona} & \no & \no & \yes & \no & \no \\
+        MAJ-EVAL~\cite{chen2026majeval} & \no & \no & \yes & \yes & \yes \\
+        QUARE~\cite{cheng2026quare} & \yes & \no & \no & \yes & \yes \\
+        \hline
+        \textbf{Our approach} & \yes & \yes & \yes & \yes & \yes \\
+        \hline
+    \end{tabular}
+
+    \vspace{0.2cm}
+    \footnotesize Note: \yes{} = explicit support; \partly{} = partial or indirect support; \no{} = not explicitly addressed.
+\end{table}
