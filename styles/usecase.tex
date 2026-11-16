@@ -4,8 +4,7 @@
 \newcommand\tabularhead[1]{
 % \begin{table}[h]
   \begin{longtable}{|p{0.3\linewidth}|p{0.55\linewidth}|}
-  \caption{Use-case #1}
-    
+  \caption{Use case: #1} \\
     \hline
     \textbf{Use-case} & {\textbf{#1}} \\
     \hline}
@@ -19,6 +18,6 @@
      &  \begin{enumerate}\setcounter{enumi}{\value{tmp}} #1  \end{enumerate}  \\ \hline}
   
  
-  \newenvironment{usecase}{\tabularhead}
-{\end{longtable}}
+  \newenvironment{usecase}{\begingroup\setstretch{1.15}\tabularhead}
+{\end{longtable}\endgroup}
 % \end{table}}

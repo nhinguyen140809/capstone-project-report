@@ -55,6 +55,14 @@
 \usepackage{longfbox}
 \usepackage{float}
 \usepackage{pdfpages}
+\usepackage{pdflscape}	% landscape pages for wide tables in the appendix
+\usepackage{makecell}	% \makecell{...\\...} for multi-line table headers
+\usepackage{etoolbox}
+\AtBeginEnvironment{table}{\setstretch{1.15}}	% tables use tighter line spacing than the 1.5 of the body text
+
+% \todo{...} marks text still to be written. It prints in red so that it is visible in every draft PDF.
+% Before a submission, search the sources for \todo to find what is left.
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
 
 \usetikzlibrary{arrows,snakes,backgrounds,calc}
 \usepackage{hyperref}
@@ -157,7 +165,7 @@
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 \newcommand\blank[1]{\rule[-.2ex]{#1}{.4pt}}
 \makeatother
-% \input{styles/usecase} % usecase environment for use case specification tables, uncomment when needed
+\input{styles/usecase} % usecase environment for use case specification tables
 \setlength{\floatsep}{5pt plus 2pt minus 2pt}
 \setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
 \setlength{\intextsep}{10pt plus 2pt minus 2pt}
