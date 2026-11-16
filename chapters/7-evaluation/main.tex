@@ -1,25 +1,64 @@
 \chapter{Experiments and Evaluation}
 \label{chap:evaluation}
-\textit{This chapter evaluates \sysname{}: the research questions, the datasets and baselines, the metrics and the experimental setup, followed by the results and their discussion.}
+\textit{This chapter presents how \sysname{} is evaluated with respect to RQ1: the evaluation questions, the scenarios and baselines, the metrics and the experimental setup, a case study of one run, and the results. The experiments are conducted in parallel with the writing of this report; the parts that depend on them are marked as being updated.}
 
-\section{Research Questions}
+\section{Evaluation Questions}
 \label{sec:eval-rq}
-\todo{Restate RQ1--RQ3 from Section~\ref{sec:problem-statement}.}
+
+The evaluation of this phase addresses RQ1 (Section~\ref{sec:research-questions}): \emph{to what extent can multiple stakeholder agents with different perspectives contribute to requirements elicitation and refinement?} It is refined into the following questions:
+\begin{itemize}
+    \item \textbf{EQ1 (coverage and diversity).} Do multiple persona agents expand the explored requirement space compared with eliciting from a single perspective, or generating the requirements directly from the idea?
+    \item \textbf{EQ2 (grounding).} Do personas grounded in evidence (workflow version 2) lead to more relevant and more diverse requirements than personas generated from the idea alone (workflow version 1)?
+    \item \textbf{EQ3 (quality).} Are the specification and the backlog produced by the multi-agent workflow of higher quality, with respect to ISO/IEC/IEEE 29148 and INVEST, than those of the baselines?
+    \item \textbf{EQ4 (cost).} What do these gains cost, in tokens, money and time, per run and per agent role?
+\end{itemize}
+\updating{the final list of evaluation questions.}
 
 \section{Experimental Setup}
 \label{sec:eval-setup}
 
-\subsection{Datasets}
+\subsection{Scenarios}
 \label{sec:eval-datasets}
-\todo{Benchmark software systems, e.g.\ the cases of MARE (ATM, Cafeteria Ordering, Library, \ldots)~\cite{mare2024}, iReDev (Bookkeeping, Roll Call, \ldots)~\cite{jin2025iredev}, VibeIntent~\cite{vibeintent2026}; reference requirements; dev and test split.}
+
+The candidate dataset is a set of eight author-defined product scenarios across different domains, which vary domain, risk, data sensitivity, number of stakeholders, workflow complexity and ambiguity while keeping each input short enough that every method receives exactly the same evidence (Table~\ref{tab:eval-scenarios}). Each scenario has a one-sentence intent, a short context, the expected stakeholder types, constraints, goals, in-scope items and an ambiguity level. The benchmark cases used by prior multi-agent RE frameworks, such as those of MARE~\cite{mare2024} and iReDev~\cite{jin2025iredev}, are candidates for a comparison with reported results.
+
+\begin{table}[H]
+    \centering
+    \caption{Candidate scenarios of the evaluation.}
+    \label{tab:eval-scenarios}
+    \begin{tabularx}{\linewidth}{|l|l|X|}
+        \hline
+        \textbf{ID} & \textbf{Domain} & \textbf{Scenario} \\
+        \hline
+        \texttt{it\_incident\_response} & Information technology & Shared IT incident response hub \\
+        \texttt{healthcare\_care\_coordination} & Healthcare & Care coordination \\
+        \texttt{finance\_small\_business\_books} & Finance & Bookkeeping for small businesses \\
+        \texttt{education\_feedback} & Education & Educational feedback \\
+        \texttt{ecommerce\_circular\_marketplace} & E-commerce & Circular marketplace \\
+        \texttt{government\_permit\_portal} & Public services & Permit portal \\
+        \texttt{mobility\_fleet\_charging} & Transportation & Fleet charging \\
+        \texttt{hr\_onboarding} & Human resources & Employee onboarding \\
+        \hline
+    \end{tabularx}
+\end{table}
+\updating{the final set of scenarios: scenarios may be added or removed, and the cases of MARE and iReDev may be included, while the experiments are in progress.}
 
 \subsection{Baselines and Variants}
 \label{sec:eval-baselines}
-\todo{Single-agent LLM baseline; re-implementation or reported numbers of MARE and iReDev; ablations of \sysname{}: ungrounded personas (workflow version 1) vs.\ grounded personas (version 2), without rework loop, with role-only stakeholders.}
+
+The candidate methods are compared on the same scenarios:
+\begin{itemize}
+    \item \textbf{Direct prompting}: one LLM call generates the requirements and the backlog from the scenario.
+    \item \textbf{Single agent}: one agent elicits from a single generic user and writes the specification and the backlog.
+    \item \textbf{Agentic, ungrounded}: the full workflow with personas generated from the idea alone (workflow version 1).
+    \item \textbf{Agentic, grounded}: the full workflow with evidence-grounded personas (workflow version 2), the proposed method.
+\end{itemize}
+Further variants study the number of personas and the effect of the rework loop. \updating{the final set of baselines and ablations.}
 
 \subsection{Evaluation Harness}
 \label{sec:eval-harness}
-Experiments run the same agent workflow as the product through an evaluation harness, without the web app or the database (Figure~\ref{fig:eval-harness}). A review policy answers the checkpoints (scripted answers, always approve, or an LLM reviewer), and one record is written per run with its steps, usage and artifacts.
+
+Experiments run the same agent workflow as the product through an evaluation harness, without the web app or the database (Figure~\ref{fig:eval-harness}). A review policy answers the checkpoints (scripted answers, always approve, or an LLM reviewer), and one record is written per run with its steps, usage and artifacts. The metrics are computed in a separate step from the records, so that a metric or a judge rubric can change without running the workflow again.
 
 \begin{figure}[H]
     \centering
@@ -30,35 +69,65 @@ Experiments run the same agent workflow as the product through an evaluation har
 
 \subsection{Metrics}
 \label{sec:eval-metrics}
-\todo{Metrics of Section~\ref{sec:bg-metrics} for each research question: quality, coverage and diversity, cost, latency, reliability.}
+
+The metrics of Section~\ref{sec:bg-metrics} are mapped to the evaluation questions as follows:
+\begin{itemize}
+    \item \textbf{EQ1, EQ2}: number of distinct requirements, Mean Distance to Centroid, Convex Hull Volume and Vendi Score of the requirement embeddings; number of latent needs; number of stakeholder types covered; recall against reference requirements where a reference exists.
+    \item \textbf{EQ3}: ISO/IEC/IEEE 29148 characteristics of the specification requirements and INVEST criteria of the user stories, scored by an LLM-as-a-judge and checked on a sample by human raters.
+    \item \textbf{EQ4}: input, output and cached tokens, cost and duration per run and per agent role.
+\end{itemize}
+\updating{the final metrics and the judge rubric.}
 
 \subsection{Implementation Details}
 \label{sec:eval-details}
-\todo{Models per role, temperature, run parameters, number of repeats, judge model.}
+\updating{the model of each agent role, the temperature, the run parameters (Table~\ref{tab:pa-run-parameters}), the number of repeats per scenario, and the judge model.}
+
+\section{Case Study}
+\label{sec:eval-case-study}
+
+This section follows one run of the system through the HTTP API of the backend, with real LLM calls and real search, on the idea ``\textit{Build a platform that helps university students find career mentors}''. The project was created with Vietnamese as output language, and the members uploaded one short document of notes collected at a university. The run took about 33 minutes. \updating{the case study will be replaced by a complete run, with its requirements, specification and backlog.}
+
+\paragraph{Plan.} The planner listed six stakeholder types: students seeking career guidance, potential mentors, career services staff, university administrators, platform administrators, and employers and industry partners. Its topics include the current channels students use and their frustrations, the outcomes expected from mentoring, matching criteria, interaction formats, and credential verification.
+
+\paragraph{Corpus and observations.} The corpus builder kept three documents: the uploaded notes, a journal article on the impact of mentoring in higher education on student careers, and an article on developing strategic partnerships between companies and universities. The stakeholder miner extracted eight observations, each with a verbatim quote, for example:
+\begin{itemize}
+    \item students, \emph{advisor matching by field and free time}: ``Tim co van theo nganh nghe va gio ranh'' (find an advisor by field and free time);
+    \item students, \emph{quick booking in a few clicks}: ``Book lich nhanh trong vai cu bam'' (book a session in a few clicks);
+    \item advisors, \emph{filtering requests before accepting}: ``Loc yeu cau truoc khi nhan'' (filter requests before accepting them);
+    \item companies, \emph{difficulty establishing and running university partnerships}: ``However, companies often struggle to establish and run university partnerships effectively.''
+\end{itemize}
+
+\paragraph{Personas.} The persona generator built three personas, each grounded in two observations:
+\begin{itemize}
+    \item \textbf{Linh}, 21, third-year marketing student who commutes and works part-time, grounded in the observations on matching by field and free time and on quick booking. Her goals are to find an advisor in marketing or branding whose hours fit around her classes and shifts, and to get a confirmed session in a few clicks.
+    \item \textbf{Minh}, 29, senior software engineer and alumnus who mentors in his spare time, grounded in the observations on filtering requests and on a conflict-free schedule.
+    \item \textbf{Huong}, 38, university relations manager at a technology company, grounded in the two observations on university partnerships.
+\end{itemize}
+The three personas carry different, partly conflicting priorities: the student wants fast booking, while the mentor wants to filter every request before accepting it.
+
+\paragraph{Interview.} The interviews produced 22 messages. The first question to Linh asked what she did after two internship rejections, whom she turned to, and how long she waited for a useful answer. In her answer, the persona described turning first to her class group chat, where replies came quickly but were ``mostly sympathy'', and later explained that a mentor profile is only credible to her when it shows a specific title and company: ``If it just says `Marketing professional, 8 years experience' with no company --- skip.'' This statement is a requirement on mentor profiles that the plan did not contain.
+
+\paragraph{Honesty checks.} On the data of this run, every observation quote was found word for word in its source document (8 of 8), every observation named an existing source (8 of 8), every web source had a real URL (3 of 3), and every evidence quote of a persona matched its observation exactly (6 of 6). The check that the stakeholder type of each persona is one of the types of the plan failed for the three personas: the personas restated the type as a sentence instead of copying the term of the plan. \todo{Confirm that this check passes in the version used for the evaluation.}
 
 \section{Results}
 \label{sec:eval-results}
 
 \subsection{Requirement Coverage and Diversity}
 \label{sec:eval-coverage}
-\todo{Table: CHV, MDC, Vendi Score, number of requirements, recall against the reference, per system and variant.}
+\updating{table of the number of requirements, MDC, CHV, Vendi Score, latent needs and covered stakeholder types, per scenario and method.}
 
-\subsection{Specification Quality}
+\subsection{Effect of Grounding}
+\label{sec:eval-grounding}
+\updating{comparison of workflow versions 1 and 2.}
+
+\subsection{Specification and Backlog Quality}
 \label{sec:eval-quality}
-\todo{Table: ISO/IEC/IEEE 29148 and INVEST scores by LLM-as-a-judge and by human raters.}
-
-\subsection{Ablation Study}
-\label{sec:eval-ablation}
-\todo{Effect of grounding, of the rework loop and of the number of personas.}
+\updating{ISO/IEC/IEEE 29148 and INVEST scores by the LLM judge and by human raters.}
 
 \subsection{Cost and Latency}
 \label{sec:eval-cost}
-\todo{Tokens, cost and duration per run and per agent role.}
-
-\subsection{Case Study}
-\label{sec:eval-case-study}
-\todo{One run end to end: idea, personas with their evidence, an excerpt of an interview, a latent need found, the requirement and the user story it leads to, traced back.}
+\updating{tokens, cost and duration per run and per agent role.}
 
 \section{Discussion}
 \label{sec:eval-discussion}
-\todo{Answer each research question; threats to validity (LLM-as-a-judge bias, benchmark leakage, non-determinism).}
+\updating{answer to RQ1 from EQ1--EQ4.} The threats to validity to discuss include the bias of an LLM judge towards outputs of its own model family~\cite{zheng2023judging}, the possibility that the scenarios or the benchmark cases are known to the models, the non-determinism of the models, which requires repeated runs, and the dependence of the grounded personas on the quality of the documents that the search returns.
