@@ -1,6 +1,30 @@
 \section{Personas in Requirements Engineering}
 \label{sec:bg-personas}
 
-\todo{Definition and origin of personas~\cite{cooper2004inmates}; what a persona for RE should contain~\cite{karolita2023what}; how personas are built (qualitative data, data-driven, crowdsourced~\cite{alvertis2016using}); use of personas across RE activities~\cite{karolita2023personas}; practitioners' perspective~\cite{wang2025personas}.}
+\subsection{Definition and Origin}
+\label{sec:bg-persona-definition}
 
-\todo{Introduce the distinction used later: a \emph{role} (``end user'', ``admin'') versus a \emph{persona} (a concrete person with goals, context, frustrations and a communication style), and a \emph{grounded} persona whose attributes are backed by evidence.}
+A \emph{persona} is a fictional but realistic description of a typical user of a product. The concept was introduced by Alan Cooper as a design tool: instead of designing for an abstract and elastic ``user'', the team designs for a few concrete characters, each with a name, a background, goals and frustrations, who stand for groups of real users that share similar goals and behaviors~\cite{cooper2004inmates}. Because a persona is specific, it makes the needs of users discussable and keeps them at the center of decisions.
+
+\subsection{Personas in the Requirements Engineering Process}
+\label{sec:bg-persona-re}
+
+A systematic mapping study by Karolita et al.\ shows that personas are used in RE mostly during elicitation and analysis, where they help to understand end users, to identify requirements and to communicate with stakeholders~\cite{karolita2023personas}. Their main benefit is to reduce \emph{assumption bias}: requirements are derived from what users need rather than from what engineers assume they need. Refining abstract roles into several concrete personas also exposes a wider range of needs and behaviors early in the process~\cite{sim2014empowering}.
+
+Several studies examine what a persona for RE should contain. Karolita et al.\ identify, besides demographic information, the goals, the tasks and context of use, the pain points, the skills and domain knowledge, and the human aspects of the user, such as personality, emotions and attitude to technology~\cite{karolita2023what}. Personas may be built from qualitative research (interviews, observation), derived from quantitative data, or crowdsourced and anonymized from real users~\cite{alvertis2016using}.
+
+\subsection{Limitations}
+\label{sec:bg-persona-limitations}
+
+Building good personas is expensive: it requires data from representative users, there is no common standard for their content, and they add time and effort to the RE process~\cite{karolita2023personas}. Practitioners report uneven adoption across organizations and descriptions that often leave the human aspects out~\cite{wang2025personas}. A persona that is not based on data, finally, merely encodes the assumptions of its author, which defeats its purpose.
+
+\subsection{Roles, Personas and Grounded Personas}
+\label{sec:bg-persona-grounding}
+
+This report distinguishes three levels of stakeholder representation:
+\begin{itemize}
+    \item A \textbf{role} is a label such as ``end user'', ``administrator'' or ``deployer''. Most multi-agent RE frameworks assign their stakeholder agents a role (Chapter~\ref{chap:related-work}).
+    \item A \textbf{persona} is a concrete person with demographics, goals, constraints, priorities, concerns and a behavior, for example ``Maya, 21, third-year biology student commuting 35 minutes''.
+    \item A \textbf{grounded persona} is a persona whose evaluative dimensions are each backed by evidence: a verbatim statement, recorded in a real document, of a stakeholder group that the persona represents.
+\end{itemize}
+The proposed framework generates grounded personas, so that what a simulated stakeholder says in an interview can be traced back to what real stakeholders of the domain have said.

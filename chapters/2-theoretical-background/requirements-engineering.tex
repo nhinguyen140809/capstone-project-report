@@ -3,24 +3,76 @@
 
 \subsection{Requirements and Their Types}
 \label{sec:bg-requirement-types}
-\todo{Define a requirement; user vs.\ system requirements; functional vs.\ non-functional requirements; domain requirements~\cite{sommerville2015software}.}
+
+A \emph{requirement} is a description of a service that a system should provide or of a constraint on its operation~\cite{sommerville2015software}. Requirements are written at different levels of detail. \emph{User requirements} are statements in natural language, often with diagrams, of what the system is expected to provide to its users and of the constraints under which it must operate. \emph{System requirements} are more detailed descriptions of the functions, services and operational constraints of the system, precise enough to serve as a contract between the client and the developers.
+
+Requirements are further classified by what they describe:
+\begin{itemize}
+    \item \textbf{Functional requirements} state the services the system should provide, how it should react to particular inputs and how it should behave in particular situations, for example ``The system shall release a booking when the student has not checked in within the grace period''.
+    \item \textbf{Non-functional requirements} state constraints on the services or on the system as a whole, such as performance, security, usability, reliability, maintainability, compatibility or portability. A non-functional requirement is only useful when it is \emph{measurable}, that is, when it carries a fit criterion that a test can check.
+    \item \textbf{Constraints} are limits imposed on the solution from outside, such as a mandated technology, a regulation or an existing system that must remain in use.
+\end{itemize}
+
+The proposed workflow uses exactly these three types for the requirements of its specification, and the quality categories of its non-functional requirements follow the list above.
 
 \subsection{The Requirements Engineering Process}
 \label{sec:bg-re-process}
-\todo{Elicitation and analysis, specification, validation, management~\cite{sommerville2015software, pohl2010requirements}. Explain why the process is iterative (spiral view) rather than sequential, since the proposed workflow is built on that view.}
+
+Requirements engineering is the process of discovering, analyzing, documenting and checking the requirements of a system~\cite{sommerville2015software, pohl2010requirements}. It comprises four core activities:
+\begin{enumerate}
+    \item \textbf{Elicitation and analysis}: discovering requirements by interacting with stakeholders, then classifying and organizing them, prioritizing them, and negotiating the conflicts between them.
+    \item \textbf{Specification}: writing the requirements down in a standard form, as a requirements document or a backlog.
+    \item \textbf{Validation}: checking that the requirements define the system the customer really wants, and that they are consistent, complete, realistic and verifiable.
+    \item \textbf{Management}: keeping track of requirements as they change during development.
+\end{enumerate}
+
+In practice these activities are not performed once in sequence. Sommerville describes the process as a spiral in which each round of elicitation, specification and validation deepens the understanding of the system, and in which the problems found by validation send the process back to elicitation or analysis~\cite{sommerville2015software}. This iterative view is the basis of the non-linear workflow proposed in Chapter~\ref{chap:proposed-approach}, whose loops return from analysis to elicitation and from validation to specification.
 
 \subsection{Requirements Elicitation Techniques}
 \label{sec:bg-elicitation}
-\todo{Interviews (closed, open), scenarios, observation; problems of elicitation: stakeholders do not know what they want, tacit knowledge, conflicting requirements, latent needs.}
+
+The most widely used elicitation technique is the \emph{interview}. In a \emph{closed} interview the stakeholder answers a predefined set of questions; in an \emph{open} interview the engineer explores a range of issues with the stakeholder without a fixed agenda. Most interviews mix both: they follow a plan of topics but adapt the next question to the previous answer. Other techniques include scenarios and use cases, observation of the work (ethnography), workshops, questionnaires and prototyping~\cite{pohl2010requirements}.
+
+Elicitation is difficult for well-known reasons~\cite{sommerville2015software}:
+\begin{itemize}
+    \item stakeholders often do not know what they want from a system, or find it hard to articulate;
+    \item they express requirements in their own terms and with implicit knowledge of their work (\emph{tacit knowledge});
+    \item different stakeholders have different, sometimes conflicting requirements;
+    \item some needs are never stated at all, because stakeholders take them for granted. Such \emph{latent needs} must be inferred from what stakeholders do say.
+\end{itemize}
+The quality of elicitation therefore depends on reaching a diverse set of stakeholders and on asking follow-up questions that expose implicit expectations, which is what the persona-based interviews of the proposed framework aim at.
 
 \subsection{Requirements Specification and Quality}
 \label{sec:bg-specification}
-\todo{Software Requirements Specification (SRS); quality characteristics of individual requirements and of a set of requirements in ISO/IEC/IEEE 29148~\cite{iso29148}: necessary, unambiguous, complete, consistent, feasible, verifiable, traceable.}
+
+A \emph{Software Requirements Specification} (SRS) is the official statement of what the developers should implement. ISO/IEC/IEEE 29148~\cite{iso29148} defines the characteristics that each individual requirement should have:
+\begin{itemize}
+    \item \textbf{Necessary}: it expresses a capability or a constraint that is really needed.
+    \item \textbf{Unambiguous}: it can be interpreted in only one way.
+    \item \textbf{Complete}: it needs no further amplification to be understood.
+    \item \textbf{Singular}: it states a single capability or constraint.
+    \item \textbf{Feasible}: it can be realized within the constraints of the project.
+    \item \textbf{Verifiable}: there is a means to prove that the system satisfies it.
+    \item \textbf{Correct} and \textbf{conforming}: it is an accurate representation of the stakeholder need and follows the agreed template.
+\end{itemize}
+The standard also defines characteristics of the \emph{set} of requirements: complete, consistent, feasible, comprehensible and able to be validated. These characteristics are used both by the validator agent of the proposed workflow and as a rubric in the evaluation.
+
+Ambiguity is a frequent defect of natural-language requirements. It is usually classified as \emph{lexical} (a word with several meanings), \emph{syntactic} (a sentence with several parses), \emph{semantic} (several interpretations in context), \emph{vague} (a term without a precise boundary, such as ``fast'') or \emph{incomplete} (a needed detail is missing). The analyst agent records ambiguity issues with this classification.
 
 \subsection{User Stories and the Product Backlog}
 \label{sec:bg-user-stories}
-\todo{User story template ``As a \ldots{} I want \ldots{} so that \ldots{}'', acceptance criteria, the INVEST criteria~\cite{cohn2004user}, product backlog in Scrum.}
+
+In Agile development, requirements are commonly expressed as \emph{user stories}, short descriptions of a feature from the point of view of the person who wants it~\cite{cohn2004user}:
+\begin{center}
+    \textit{As a} $\langle$role$\rangle$, \textit{I want} $\langle$goal$\rangle$, \textit{so that} $\langle$benefit$\rangle$.
+\end{center}
+Each story carries \emph{acceptance criteria}, often written in the Given/When/Then form, which define when the story is done. Large stories that serve one goal are grouped under an \emph{epic}. A good story satisfies the INVEST criteria: Independent, Negotiable, Valuable, Estimable, Small and Testable~\cite{cohn2004user}.
+
+The \emph{product backlog} of Scrum is the ordered list of all the work needed for the product. Its items are ordered by priority, commonly with the MoSCoW scheme (Must have, Should have, Could have, Won't have this time), and estimated in story points. The backlog manager agent of the proposed workflow writes such a backlog from the specification, and uses MoSCoW for the priorities of both the requirements and the stories.
 
 \subsection{Requirements Traceability}
 \label{sec:bg-traceability}
-\todo{Forward and backward traceability; trace links between stakeholder statements, requirements and backlog items. The artifact model of Chapter~\ref{chap:proposed-approach} is a trace graph.}
+
+\emph{Traceability} is the ability to follow the life of a requirement in both directions~\cite{pohl2010requirements}. \emph{Backward} traceability links a requirement to its origin: the stakeholder who stated it and the statement or document it comes from. \emph{Forward} traceability links it to the artifacts that realize it: design elements, backlog items, code and tests. Traceability supports impact analysis when a requirement changes, justifies every requirement by a source, and reveals requirements without a source or without an implementation. A \emph{traceability matrix} presents these links as a table.
+
+In the proposed framework, traceability is not documented after the fact but produced by the agents themselves: every item they create carries typed links to the items it comes from, so that the output forms a trace graph from source documents to backlog items (Section~\ref{sec:pa-artifacts}).

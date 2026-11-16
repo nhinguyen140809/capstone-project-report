@@ -1,11 +1,47 @@
 \section{Evaluation of Generated Requirements}
 \label{sec:bg-metrics}
 
-\todo{Present only the metrics used in Chapter~\ref{chap:evaluation}. Candidates taken from the baselines:}
+Generated requirements are evaluated from three complementary angles: against reference requirements, by the coverage and diversity of the requirement set, and by their quality as judged against a rubric. Cost and latency complete the picture for an LLM-based system.
+
+\subsection{Reference-Based Metrics}
+\label{sec:bg-metrics-reference}
+
+When a set of reference requirements $R$ written by experts is available, the generated set $G$ is compared with it by matching each generated requirement to a reference requirement. Since the same requirement can be phrased in many ways, matching is semantic rather than exact. With $M \subseteq G$ the generated requirements that match a reference and $M_R \subseteq R$ the reference requirements that are matched,
+\begin{equation}
+    \mathrm{Precision} = \frac{|M|}{|G|}, \qquad
+    \mathrm{Recall} = \frac{|M_R|}{|R|}, \qquad
+    F_1 = \frac{2 \cdot \mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}.
+\end{equation}
+BERTScore~\cite{zhang2020bertscore} provides a graded similarity: it embeds the tokens of a candidate $x$ and a reference $y$ with a pre-trained encoder and matches each token to its most similar token of the other text by cosine similarity,
+\begin{equation}
+    P_{\mathrm{BERT}} = \frac{1}{|x|}\sum_{x_i \in x} \max_{y_j \in y} \mathbf{x}_i^\top \mathbf{y}_j, \qquad
+    R_{\mathrm{BERT}} = \frac{1}{|y|}\sum_{y_j \in y} \max_{x_i \in x} \mathbf{x}_i^\top \mathbf{y}_j,
+\end{equation}
+with $F_{\mathrm{BERT}}$ their harmonic mean.
+
+\subsection{Coverage and Diversity Metrics}
+\label{sec:bg-metrics-diversity}
+
+Reference requirements are rarely complete, and a good elicitation may find valid requirements that the reference lacks. Coverage and diversity metrics therefore measure how much of the requirement space a set explores, without a reference. Each requirement $i$ of a set of $n$ requirements is embedded as a vector $\mathbf{e}_i$ by a sentence encoder.
 \begin{itemize}
-    \item \textbf{Reference-based:} precision, recall and F1 against reference requirements, with semantic matching by BERTScore~\cite{zhang2020bertscore}.
-    \item \textbf{Coverage and diversity in embedding space:} Convex Hull Volume (CHV), Mean Distance to Centroid (MDC)~\cite{ataei2025elicitron, jin2025iredev}, Vendi Score~\cite{friedman2023vendi}.
-    \item \textbf{Rubric-based:} ISO/IEC/IEEE 29148 quality characteristics~\cite{iso29148} and INVEST for backlog items, scored by LLM-as-a-judge~\cite{zheng2023judging, liu2023geval} and by human raters.
-    \item \textbf{Cost and latency:} tokens, cost in USD and duration, per run and per agent role.
+    \item \textbf{Mean Distance to Centroid (MDC)}~\cite{ataei2025elicitron, jin2025iredev} is the average distance of the requirements to their mean $\bar{\mathbf{e}} = \frac{1}{n}\sum_i \mathbf{e}_i$:
+    \begin{equation}
+        \mathrm{MDC} = \frac{1}{n}\sum_{i=1}^{n} \left\lVert \mathbf{e}_i - \bar{\mathbf{e}} \right\rVert .
+    \end{equation}
+    \item \textbf{Convex Hull Volume (CHV)}~\cite{ataei2025elicitron, jin2025iredev} is the volume of the smallest convex set that contains all embeddings, after a reduction to a few dimensions (for example by principal component analysis), since a convex hull in the original high-dimensional space is degenerate. A larger volume means the requirements spread over a larger region of the space.
+    \item \textbf{Vendi Score}~\cite{friedman2023vendi} is the effective number of distinct requirements. With the similarity matrix $K_{ij} = \mathrm{sim}(\mathbf{e}_i, \mathbf{e}_j)$ and $\lambda_1, \dots, \lambda_n$ the eigenvalues of $K/n$,
+    \begin{equation}
+        \mathrm{VS} = \exp\!\left(-\sum_{i=1}^{n} \lambda_i \log \lambda_i\right),
+    \end{equation}
+    which equals $n$ when all requirements are dissimilar and $1$ when they are all the same.
 \end{itemize}
-\todo{Give the formula of each metric used.}
+
+\subsection{Rubric-Based Evaluation and LLM-as-a-Judge}
+\label{sec:bg-metrics-judge}
+
+Quality characteristics such as unambiguity, verifiability or the INVEST criteria cannot be computed from text statistics. They are scored on a rubric, for example on a scale from 1 to 5 for each ISO/IEC/IEEE 29148 characteristic~\cite{iso29148} of a requirement and each INVEST criterion of a user story. Human raters are the reference, but they are slow and expensive; an \emph{LLM-as-a-judge} scores the artifacts with a strong model and a detailed rubric~\cite{zheng2023judging}. G-Eval asks the judge for step-by-step evaluation steps before the score and improves agreement with humans~\cite{liu2023geval}. Known biases of LLM judges, such as a preference for longer answers and for outputs of their own model family~\cite{zheng2023judging}, require that the judge model differ from the generating models and that a sample of judgments be checked against human raters, for example by the intraclass correlation coefficient.
+
+\subsection{Cost and Latency}
+\label{sec:bg-metrics-cost}
+
+For an LLM-based system, the number of input, output and cached tokens, the cost in US dollars and the duration of a run are measured per run and per agent role. They show the price of the quality gained by more agents, more personas or more loops.
