@@ -1,21 +1,24 @@
 \section{Problem Statement}
 \label{sec:problem-statement}
 
-% TODO: The current draft states the problem inside the motivation. Following the reference reports,
-% this section restates it as a precise problem and the research questions the evaluation answers.
-
-\todo{State the problem precisely: given a short product idea (one or a few sentences), produce a validated set of software requirements (requirement specification and product backlog) whose coverage of real stakeholder needs is as close as possible to what a requirements engineer would elicit from real stakeholders.}
-
-The gaps identified in Chapter~\ref{chap:related-work} lead to the following problems:
+Given a short description of a product idea, the task is to elicit and refine the requirements of the product and to deliver them as a requirement specification and a prioritized product backlog that a development team can build from. In current practice this task depends on access to a broad and diverse set of stakeholders, which is costly and often unavailable early in a project; when it is automated with LLMs, the result is limited by how the stakeholders are represented. The gaps identified in Chapter~\ref{chap:related-work} lead to three concrete problems:
 \begin{itemize}
-    \item \textbf{Ungrounded stakeholders.} Stakeholder agents in existing multi-agent RE frameworks are functional roles rather than representations of real stakeholder groups, so the needs they express reflect the model's assumptions.
-    \item \textbf{Rigid workflows.} Most frameworks execute a fixed, sequential pipeline; new information or user feedback that arrives late cannot send the process back to the stage that should handle it.
-    \item \textbf{Weak traceability.} Requirements are produced as documents, without links from each requirement back to the interview statement and the stakeholder that motivated it.
+    \item \textbf{Ungrounded stakeholders.} Stakeholder agents in existing multi-agent RE frameworks are functional roles rather than representations of real stakeholder groups, so the needs they express reflect the assumptions of the model instead of the evidence of the domain.
+    \item \textbf{Single-perspective deliberation.} Elicitation and refinement are usually driven by one interviewer and one generic user, or by engineering-role agents, so conflicting goals, concerns and constraints of different stakeholders are rarely surfaced and negotiated.
+    \item \textbf{Weak traceability and unclear human role.} Requirements are produced as documents without links back to the statements and sources that motivated them, and it is unclear at which points a human should review the process.
 \end{itemize}
 
-\todo{Research questions, to be fixed together with Chapter~\ref{chap:evaluation}, for example:}
+\subsection{Research Questions}
+\label{sec:research-questions}
+
+The project addresses two research questions:
 \begin{itemize}
-    \item \textbf{RQ1.} Do evidence-grounded personas expand the explored requirement space (coverage and diversity) compared with ungrounded role-based stakeholder agents?
-    \item \textbf{RQ2.} Does the non-linear deliberation workflow (rework loops, human checkpoints, intent routing) improve the quality of the specification compared with a sequential pipeline?
-    \item \textbf{RQ3.} What is the cost and latency of the workflow, per agent role?
+    \item \textbf{RQ1.} To what extent can multiple stakeholder agents with different perspectives contribute to requirements elicitation and refinement?
+    \item \textbf{RQ2.} At which stages of requirements elicitation and refinement is human involvement most valuable?
 \end{itemize}
+This specialized project focuses on \textbf{RQ1}: it builds the multi-agent framework with stakeholder agents grounded in evidence and evaluates their contribution to elicitation and refinement. The human review checkpoints of the framework are already part of the system, and the systematic study of RQ2 is planned for the capstone (thesis) phase (Section~\ref{sec:conc-future}).
+
+\subsection{Novelty Statement}
+\label{sec:novelty}
+
+We propose a multi-agent AI framework with a user-friendly interface for requirements engineering that uses multi-perspective deliberation to generate requirements and a prioritized backlog. The framework synthesizes interview evidence and knowledge from trustworthy sources into structured stakeholder goals, concerns, and constraints to construct personas, preserving traceability to source evidence and decisions.
