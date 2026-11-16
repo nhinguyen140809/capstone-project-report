@@ -1,0 +1,76 @@
+% UML notation for the diagrams of the report, drawn with TikZ.
+% Sequence diagrams use pgf-umlsd, class diagrams pgf-umlcd; every other kind uses the styles below.
+% Each diagram is a file in figures/<chapter>/uml/<name>.tex, \input inside a figure environment.
+\usetikzlibrary{shapes.geometric, shapes.misc, shapes.multipart, arrows.meta, fit, positioning, calc, backgrounds}
+\usepackage[underline=false]{pgf-umlsd}
+\usepackage{pgf-umlcd}
+% black and white class diagrams, as in the rest of the report
+\renewcommand{\umltextcolor}{black}
+\renewcommand{\umlfillcolor}{white}
+\renewcommand{\umldrawcolor}{black}
+
+\tikzset{
+    uml/.style={font=\scriptsize, >={Stealth[length=2mm]}},
+    % --- use case diagrams
+    usecase/.style={ellipse, draw, thick, align=center, minimum height=0.8cm, inner sep=1pt, text width=2.6cm},
+    sysbound/.style={draw, thick, inner sep=0.35cm},
+    assoc/.style={-, thick},
+    include/.style={->, dashed, >={Straight Barb[length=2mm]}},
+    % --- activity diagrams
+    action/.style={rectangle, rounded corners=2.5mm, draw, thick, align=center, minimum height=0.7cm, minimum width=2.2cm, inner sep=3pt},
+    objnode/.style={rectangle, draw, thick, align=center, minimum height=0.6cm, inner sep=3pt},
+    initial/.style={circle, fill=black, minimum size=3mm, inner sep=0},
+    final/.style={circle, draw, thick, minimum size=4mm, inner sep=0, path picture={\fill[black] (path picture bounding box.center) circle (1.2mm);}},
+    decision/.style={diamond, draw, thick, minimum size=5mm, inner sep=0, aspect=1},
+    bar/.style={rectangle, fill=black, minimum width=2.4cm, minimum height=1mm, inner sep=0},
+    flow/.style={->, thick},
+    guard/.style={font=\tiny, fill=white, inner sep=1pt},
+    partition/.style={draw, thin, inner sep=0.25cm},
+    % --- state machine diagrams
+    state/.style={rectangle, rounded corners=2.5mm, draw, thick, align=center, minimum height=0.7cm, minimum width=1.8cm},
+    trans/.style={->, thick},
+    % --- component, package and deployment diagrams
+    component/.style={rectangle, draw, thick, align=center, minimum height=1.0cm, minimum width=2.6cm, inner sep=4pt,
+        path picture={
+            \coordinate (ne) at (path picture bounding box.north east);
+            \draw[thin] ($(ne)+(-0.42,-0.10)$) rectangle ++(0.28,-0.30);
+            \draw[thin, fill=white] ($(ne)+(-0.48,-0.15)$) rectangle ++(0.13,-0.06);
+            \draw[thin, fill=white] ($(ne)+(-0.48,-0.29)$) rectangle ++(0.13,-0.06);}},
+    package/.style={rectangle, draw, thick, align=center, minimum height=0.9cm, minimum width=2.2cm, inner sep=4pt,
+        append after command={
+            (\tikzlastnode.north west) edge[-, thick] ($(\tikzlastnode.north west)+(0,0.22)$)
+            ($(\tikzlastnode.north west)+(0,0.22)$) edge[-, thick] ($(\tikzlastnode.north west)+(0.8,0.22)$)
+            ($(\tikzlastnode.north west)+(0.8,0.22)$) edge[-, thick] ($(\tikzlastnode.north west)+(0.8,0)$)}},
+    depnode/.style={rectangle, draw, thick, align=center, minimum height=1.0cm, minimum width=2.6cm, inner sep=4pt,
+        append after command={
+            (\tikzlastnode.north west) edge[-, thick] ($(\tikzlastnode.north west)+(0.2,0.2)$)
+            ($(\tikzlastnode.north west)+(0.2,0.2)$) edge[-, thick] ($(\tikzlastnode.north east)+(0.2,0.2)$)
+            (\tikzlastnode.north east) edge[-, thick] ($(\tikzlastnode.north east)+(0.2,0.2)$)
+            ($(\tikzlastnode.north east)+(0.2,0.2)$) edge[-, thick] ($(\tikzlastnode.south east)+(0.2,0.2)$)
+            (\tikzlastnode.south east) edge[-, thick] ($(\tikzlastnode.south east)+(0.2,0.2)$)}},
+    umlclass/.style={rectangle split, rectangle split parts=2, draw, thick, align=center, text width=2.9cm, font=\scriptsize, inner sep=3pt, rectangle split part align={center, left}},
+    nav/.style={->, thick, >={Straight Barb[length=2mm]}},
+    linklabel/.style={font=\tiny\ttfamily, fill=white, inner sep=1pt},
+    note/.style={draw, thick, align=left, font=\tiny, inner sep=3pt, text width=3.0cm,
+        path picture={\fill[white] ($(path picture bounding box.north east)+(-0.2,0)$) -- (path picture bounding box.north east) -- ++(0,-0.2) -- cycle;
+            \draw ($(path picture bounding box.north east)+(-0.2,0)$) -- ++(0,-0.2) -- ++(0.2,0);}},
+    interface/.style={circle, draw, thick, fill=white, minimum size=2.2mm, inner sep=0},
+    artifact/.style={rectangle, draw, align=center, minimum height=0.5cm, inner sep=3pt, font=\tiny},
+    dep/.style={->, dashed, >={Straight Barb[length=2mm]}},
+    commpath/.style={-, thick},
+    realize/.style={->, dashed, >={Triangle[open, length=2mm]}},
+}
+
+% A UML actor: stick figure with its name below. Usage: \umlactor{name}{(x,y)}{Label}
+\newcommand{\umlactor}[3]{%
+    \begin{scope}[shift={#2}, thick]
+        \draw (0,0.55) circle (0.13);
+        \draw (0,0.42) -- (0,0.05);
+        \draw (-0.22,0.30) -- (0.22,0.30);
+        \draw (0,0.05) -- (-0.18,-0.25);
+        \draw (0,0.05) -- (0.18,-0.25);
+        \node[coordinate] (#1) at (0,0.2) {};
+        \node[align=center, font=\scriptsize, anchor=north] (#1-label) at (0,-0.28) {#3};
+    \end{scope}}
+% Stereotype line above a name, e.g. \stereo{component}
+\newcommand{\stereo}[1]{{\fontencoding{T1}\selectfont\guillemotleft}#1{\fontencoding{T1}\selectfont\guillemotright}}

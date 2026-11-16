@@ -1,0 +1,31 @@
+% UML package diagram of the web app (Section 5.6.3).
+\begin{tikzpicture}[uml]
+    \node[package, minimum width=10cm] (app) at (2.2,2.2) {app \quad\tiny routes, layouts and app setup};
+    \node[package, minimum width=1.6cm] (m1) at (-1.6,0.6) {project};
+    \node[package, minimum width=1.6cm] (m2) at (0.3,0.6) {thread};
+    \node[package, minimum width=1.6cm] (m3) at (2.2,0.6) {run};
+    \node[package, minimum width=1.6cm] (m4) at (4.1,0.6) {review};
+    \node[package, minimum width=1.6cm] (m5) at (6.0,0.6) {artifact};
+    \node[package, minimum width=1.6cm] (m6) at (-1.6,-0.7) {workflow};
+    \node[package, minimum width=1.6cm] (m7) at (0.3,-0.7) {activity};
+    \node[package, minimum width=1.6cm] (m8) at (2.2,-0.7) {user};
+    \node[package, minimum width=1.6cm] (m9) at (4.1,-0.7) {auth};
+    \node[draw, thick, fit=(m1)(m9)(m5), inner sep=0.35cm, label={[anchor=north west, font=\scriptsize]north west:modules}] (modules) {};
+    \draw[thick] (modules.north west) rectangle ++(1.2,0.25);
+
+    % layers inside each module
+    \node[package, minimum width=2.4cm] (widgets) at (10.2,1.4) {widgets\\\tiny UI blocks};
+    \node[package, minimum width=2.4cm] (feat) at (10.2,0.0) {features\\\tiny user actions};
+    \node[package, minimum width=2.4cm] (ent) at (10.2,-1.4) {entities\\\tiny data models, API calls};
+    \node[draw, thick, dashed, fit=(widgets)(ent), inner sep=0.3cm, label={[font=\scriptsize]above:layers of each module}] (layers) {};
+    \draw[dep] (widgets) -- node[guard, right] {\stereo{import}} (feat);
+    \draw[dep] (feat) -- node[guard, right] {\stereo{import}} (ent);
+
+    \node[package, minimum width=10cm] (shared) at (2.2,-2.9) {shared \quad\tiny reusable UI and utilities, no business logic};
+    \node[package, minimum width=3.2cm] (client) at (10.2,-3.6) {api client\\\tiny generated from OpenAPI};
+
+    \draw[dep] (app) -- node[guard, right] {\stereo{import}} (modules.north -| app);
+    \draw[dep] (modules.south -| app) -- node[guard, right] {\stereo{import}} (shared);
+    \draw[dep] (ent.south) -- node[guard, right] {\stereo{import}} (client);
+    \draw[dep] (modules.east) -- node[guard, above] {each has} (layers.west);
+\end{tikzpicture}

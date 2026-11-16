@@ -1,0 +1,37 @@
+% UML activity diagram of one node of a run (Section 5.5.2).
+\begin{tikzpicture}[uml, node distance=0.55cm]
+    \node[initial] (init) {};
+    \node[decision, below=of init] (merge) {};
+    \node[decision, below=of merge] (llm) {};
+    \node[decision, below=0.7cm of llm] (budget) {};
+    \node[action, below=0.7cm of budget, text width=3.4cm] (work) {Call the model, write items through the checks, append events};
+    \node[decision, below=of work] (cp) {};
+    \node[action, right=1.6cm of cp, text width=2.6cm] (wait) {Wait until the user chooses an option};
+    \node[action, below=0.7cm of cp] (save) {Save the checkpoint (safe point)};
+    \node[decision, below=of save] (pending) {};
+    \node[action, left=1.6cm of pending] (route) {Intent router chooses the next node};
+    \node[decision, below=0.7cm of pending] (end) {};
+    \node[action, right=1.6cm of end] (next) {Take the next node along the edges};
+    \node[final, below=0.7cm of end] (fin) {};
+    \node[final, right=1.6cm of budget] (fail) {};
+    \node[guard, below=1pt of fail] {run fails};
+    \node[guard, below=1pt of fin] {run succeeds};
+
+    \draw[flow] (init) -- (merge);
+    \draw[flow] (merge) -- (llm);
+    \draw[flow] (llm) -- node[guard, right] {[calls an LLM]} (budget);
+    \draw[flow] (llm.west) -- ++(-1.2,0) |- node[guard, pos=0.25, left] {[no LLM]} (work.west);
+    \draw[flow] (budget) -- node[guard, right] {[within the cost limit]} (work);
+    \draw[flow] (budget) -- node[guard, above] {[over the limit]} (fail);
+    \draw[flow] (work) -- (cp);
+    \draw[flow] (cp) -- node[guard, above] {[checkpoint]} (wait);
+    \draw[flow] (wait) |- (save);
+    \draw[flow] (cp) -- node[guard, right] {[else]} (save);
+    \draw[flow] (save) -- (pending);
+    \draw[flow] (pending) -- node[guard, above] {[messages pending]} (route);
+    \draw[flow] (route) |- (merge);
+    \draw[flow] (pending) -- node[guard, right] {[none]} (end);
+    \draw[flow] (end) -- node[guard, above] {[not the end]} (next);
+    \draw[flow] (next.east) -- ++(0.6,0) |- (merge.east);
+    \draw[flow] (end) -- node[guard, right] {[end of workflow]} (fin);
+\end{tikzpicture}

@@ -1,0 +1,38 @@
+% UML sequence diagram of starting a run and answering a checkpoint (UC-01 and UC-02), Section 5.5.4.
+{\scriptsize
+\begin{sequencediagram}
+    \newthread[white]{web}{:Web app}
+    \newinst[1.6]{api}{:API}
+    \newthread[white]{exe}{:Run executor}
+    \newinst[1.6]{graph}{:Workflow graph}
+    \newinst[1.6]{llm}{:LLM provider}
+    \newinst[1.6]{db}{:Database}
+
+    \begin{call}{web}{POST /threads/\{id\}/messages}{api}{201 run, queued}
+        \begin{callself}{api}{store message, create run}{}
+        \end{callself}
+        \mess{api}{start in background}{exe}
+    \end{call}
+    \begin{call}{web}{GET /runs/\{id\}/stream}{api}{}
+    \end{call}
+    \begin{call}{exe}{invoke from checkpoint}{graph}{interrupted at checkpoint}
+        \begin{sdblock}{loop}{[each node until a checkpoint]}
+            \begin{call}{graph}{structured call}{llm}{output, usage}
+            \end{call}
+            \mess{graph}{items, links, events, checkpoint}{db}
+        \end{sdblock}
+    \end{call}
+    \mess{exe}{run interrupted, interrupt}{db}
+    \begin{call}{api}{read event log}{db}{events}
+    \end{call}
+    \mess{api}{events, review request via SSE}{web}
+    \begin{call}{web}{POST decision}{api}{200}
+        \mess{api}{store decision}{db}
+        \mess{api}{resume}{exe}
+    \end{call}
+    \begin{call}{exe}{continue on the edge of the option}{graph}{end of workflow}
+    \end{call}
+    \mess{exe}{run succeeded}{db}
+    \mess{api}{run finished via SSE}{web}
+\end{sequencediagram}
+}

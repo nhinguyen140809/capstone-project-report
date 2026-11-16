@@ -1,0 +1,22 @@
+% UML component diagram of the building blocks (Section 5.6.1).
+\begin{tikzpicture}[uml]
+    \node[component] (web) at (0,0) {\stereo{component}\\Web app};
+    \node[component] (api) at (5.8,0) {\stereo{component}\\API application};
+    \node[component] (db) at (3.6,-2.6) {\stereo{component}\\Database};
+    \node[component] (files) at (7.2,-2.6) {\stereo{component}\\File storage};
+    \node[component] (llm) at (10.6,0.9) {\stereo{external system}\\LLM providers};
+    \node[component] (trace) at (10.6,-0.9) {\stereo{system}\\LLM tracing tool};
+
+    % interfaces provided by the API (lollipops), required by the web app (dependencies)
+    \node[interface, label={[guard]above:REST \texttt{/api/v1}}] (rest) at ($(api.west)+(-1.2,0.25)$) {};
+    \node[interface, label={[guard]below:event stream (SSE)}] (sse) at ($(api.west)+(-1.2,-0.25)$) {};
+    \draw[thick] (rest) -- (api.west |- rest);
+    \draw[thick] (sse) -- (api.west |- sse);
+    \draw[dep] (web.east |- rest) -- node[guard, above] {\stereo{use}} (rest);
+    \draw[dep] (web.east |- sse) -- node[guard, below] {\stereo{use}} (sse);
+
+    \draw[dep] (api.south west) -- node[guard, left] {reads and writes} (db.north);
+    \draw[dep] (api.south east) -- node[guard, right] {stores and reads files} (files.north);
+    \draw[dep] (api.east |- 0,0.25) -- node[guard, above, sloped] {chat model calls} (llm.west);
+    \draw[dep] (api.east |- 0,-0.25) -- node[guard, below, sloped] {traces} (trace.west);
+\end{tikzpicture}

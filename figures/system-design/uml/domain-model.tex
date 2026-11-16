@@ -1,0 +1,91 @@
+% UML class diagram of the main persistent entities (Section 5.7).
+\begin{tikzpicture}[uml]
+    \begin{class}[text width=2.9cm]{User}{0,0}
+        \attribute{id : UUID}
+        \attribute{email : String}
+        \attribute{display\_name : String}
+    \end{class}
+    \begin{class}[text width=3.1cm]{Project}{5.2,0}
+        \attribute{id : UUID}
+        \attribute{name : String}
+        \attribute{initial\_message\_id : UUID [0..1]}
+    \end{class}
+    \begin{class}[text width=2.9cm]{SourceDocument}{10.4,0}
+        \attribute{id : UUID}
+        \attribute{title : String}
+        \attribute{text : String}
+    \end{class}
+    \begin{class}[text width=2.9cm]{Thread}{0,-3.4}
+        \attribute{id : UUID}
+        \attribute{title : String}
+        \attribute{current\_stage : String}
+    \end{class}
+    \begin{class}[text width=2.9cm]{Message}{0,-7.6}
+        \attribute{id : UUID}
+        \attribute{role : MessageRole}
+        \attribute{content : String}
+        \attribute{delivery : DeliveryStatus}
+    \end{class}
+    \begin{class}[text width=3.1cm]{Run}{5.2,-3.4}
+        \attribute{id : UUID}
+        \attribute{status : RunStatus}
+        \attribute{workflow\_name : String}
+        \attribute{workflow\_version : Integer}
+        \attribute{run\_config : JSON}
+    \end{class}
+    \begin{class}[text width=3.1cm]{RunStep}{3.9,-7.6}
+        \attribute{sequence : Integer}
+        \attribute{node : String}
+        \attribute{agent\_role : String [0..1]}
+        \attribute{usage : Usage}
+    \end{class}
+    \begin{class}[text width=2.9cm]{RunEvent}{7.3,-7.6}
+        \attribute{sequence : Integer}
+        \attribute{type : String}
+        \attribute{payload : JSON}
+    \end{class}
+    \begin{class}[text width=2.9cm]{Interrupt}{10.7,-7.6}
+        \attribute{node : String}
+        \attribute{options : JSON}
+        \attribute{status : InterruptStatus}
+    \end{class}
+    \begin{class}[text width=2.9cm]{HumanDecision}{10.7,-10.8}
+        \attribute{option : String}
+        \attribute{feedback : String [0..1]}
+        \attribute{answers : JSON}
+    \end{class}
+    \begin{class}[text width=3.0cm]{Artifact}{10.4,-3.4}
+        \attribute{kind : String}
+        \attribute{version : Integer}
+        \attribute{review\_status : ReviewStatus}
+        \attribute{content : JSON}
+    \end{class}
+    \begin{class}[text width=3.0cm]{ArtifactItem}{14.6,-3.4}
+        \attribute{kind : String}
+        \attribute{key : String}
+        \attribute{version : Integer}
+        \attribute{content : JSON}
+    \end{class}
+    \begin{class}[text width=3.0cm]{TraceLink}{14.6,-7.6}
+        \attribute{link\_type : String}
+        \attribute{source\_quote : String [0..1]}
+        \attribute{target\_quote : String [0..1]}
+    \end{class}
+
+    \association{User}{members}{*}{Project}{projects}{*}
+    \composition{Project}{}{*}{SourceDocument}
+    \composition{Project}{}{*}{Thread}
+    \composition{Thread}{}{*}{Message}
+    \composition{Thread}{}{*}{Run}
+    \composition{Run}{}{*}{RunStep}
+    \composition{Run}{}{*}{Interrupt}
+    \association{Interrupt}{}{1}{HumanDecision}{}{0..1}
+    \composition{Project}{}{*}{Artifact}
+    \composition{Artifact}{}{*}{ArtifactItem}
+    \composition{Run}{}{*}{RunEvent}
+    \draw[thick] (ArtifactItem.north) -- ++(0,0.5) -| node[pos=0.25, above, font=\tiny] {parent 0..1} ($(ArtifactItem.north)+(-0.9,0)$);
+    \draw[thick, ->] ($(TraceLink.north)+(-0.5,0)$) -- node[left, font=\tiny] {source 1} ($(ArtifactItem.south)+(-0.5,0)$);
+    \draw[thick, ->] ($(TraceLink.north)+(0.5,0)$) -- node[right, font=\tiny] {target 1} ($(ArtifactItem.south)+(0.5,0)$);
+    \node[font=\tiny] at ($(TraceLink.north)+(-0.75,0.25)$) {*};
+    \node[font=\tiny] at ($(TraceLink.north)+(0.75,0.25)$) {*};
+\end{tikzpicture}

@@ -1,0 +1,96 @@
+% UML activity diagram of the agent workflow, definition version 2 (Section 4.1).
+% Partitions: the agents of the workflow and the user who answers the checkpoints.
+\begin{tikzpicture}[uml, action/.append style={text width=3.0cm, minimum width=3.3cm}]
+    \def\Y#1{-#1*1.05}
+    % --- agents partition: main column x = 0
+    \node[initial] (init) at (0,0) {};
+    \node[decision] (d0) at (0,\Y{0.8}) {};
+    \node[decision] (mplan) at (0,\Y{1.6}) {};
+    \node[action] (plan) at (0,\Y{2.4}) {Plan the elicitation\\\tiny planner};
+    \node[action] (corpus) at (0,\Y{3.5}) {Build the research corpus\\\tiny corpus builder};
+    \node[action] (mine) at (0,\Y{4.6}) {Mine stakeholder observations\\\tiny stakeholder miner};
+    \node[action] (gen) at (0,\Y{5.7}) {Generate grounded personas\\\tiny persona generator};
+    \node[decision] (mint) at (0,\Y{6.9}) {};
+    \node[action] (ask) at (0,\Y{7.7}) {Ask the next question or stop\\\tiny interviewer};
+    \node[decision] (d1) at (0,\Y{8.7}) {};
+    \node[action] (answer) at (3.9,\Y{8.7}) {Answer as the persona\\\tiny persona agent};
+    \node[decision] (man) at (0,\Y{9.6}) {};
+    \node[action] (analyze) at (0,\Y{10.4}) {Analyze the requirements\\\tiny analyst};
+    \node[decision] (d2) at (0,\Y{11.4}) {};
+    \node[action] (rework) at (-3.7,\Y{11.4}) {Write the rework directive\\\tiny control node};
+    \node[decision] (mspec) at (0,\Y{13.2}) {};
+    \node[action] (spec) at (0,\Y{14.0}) {Write the specification\\\tiny requirement engineer};
+    \node[decision] (mback) at (0,\Y{15.6}) {};
+    \node[action] (backlog) at (0,\Y{16.4}) {Write the product backlog\\\tiny backlog manager};
+    \node[action] (validate) at (0,\Y{17.5}) {Validate specification and backlog\\\tiny validator};
+    \node[decision] (d5) at (0,\Y{18.5}) {};
+    \node[final] (fin) at (0,\Y{19.3}) {};
+    \node[action] (router) at (-3.7,\Y{0.8}) {Route the user's message\\\tiny intent router};
+
+    % --- user partition: x = 8.4
+    \node[action] (rpers) at (8.4,\Y{5.7}) {Review and edit the personas};
+    \node[action] (ran) at (8.4,\Y{11.4}) {Review the analysis};
+    \node[decision] (d3) at (8.4,\Y{12.4}) {};
+    \node[action] (rspec) at (8.4,\Y{14.0}) {Review the specification};
+    \node[decision] (d4) at (8.4,\Y{15.0}) {};
+
+    % --- partitions, with the same top and bottom
+    \coordinate (top) at (0,0.5);
+    \coordinate (bottom) at (0,\Y{19.8});
+    \begin{scope}[on background layer]
+        \draw[thin] (-6.3,0.5) rectangle (6.1,\Y{19.8});
+        \draw[thin] (6.1,0.5) rectangle (10.8,\Y{19.8});
+        \draw[thin] (-6.3,0.5) rectangle (6.1,1.0);
+        \draw[thin] (6.1,0.5) rectangle (10.8,1.0);
+    \end{scope}
+    \node[font=\scriptsize\bfseries] at (-0.1,0.75) {Agents};
+    \node[font=\scriptsize\bfseries] at (8.45,0.75) {User};
+
+    % --- flows of the main path
+    \draw[flow] (init) -- (d0);
+    \draw[flow] (d0) -- node[guard, right] {[first run]} (mplan);
+    \draw[flow] (d0) -- node[guard, above] {[later run]} (router);
+    \draw[flow] (mplan) -- (plan);
+    \draw[flow] (plan) -- (corpus);
+    \draw[flow] (corpus) -- (mine);
+    \draw[flow] (mine) -- (gen);
+    \draw[flow] (gen) -- (rpers);
+    \draw[flow] (rpers.south) |- node[guard, pos=0.25, right] {[approved]} (mint.east);
+    \draw[flow] (mint) -- (ask);
+    \draw[flow] (ask) -- (d1);
+    \draw[flow] (d1) -- node[guard, above] {[question]} (answer);
+    \draw[flow] (answer.north) |- (mint.north east);
+    \draw[flow] (d1) -- node[guard, right] {[all personas interviewed]} (man);
+    \draw[flow] (man) -- (analyze);
+    \draw[flow] (analyze) -- (d2);
+
+    % --- analysis: automatic rework or human review
+    \draw[flow] (d2) -- node[guard, above] {[needs interviews]} (rework);
+    \draw[flow] (rework.north) |- (mint.south west);
+    \draw[flow] (d2) -- node[guard, above] {[OK]} (ran);
+    \draw[flow] (ran) -- (d3);
+    \draw[flow] (d3.east) -- ++(1.95,0) |- node[guard, pos=0.25, right] {[re-analyse]} (man.east);
+    \draw[flow] (d3.south) |- node[guard, pos=0.7, above] {[accept]} ($(mspec.north)+(0,0.45)$) -- (mspec.north);
+    \draw[flow] (d3.west) -- node[guard, above, pos=0.12] {[re-interview]} (d3.west -| rework) -- (rework.south);
+
+    % --- specification: human review, then backlog and validation
+    \draw[flow] (mspec) -- (spec);
+    \draw[flow] (spec) -- (rspec);
+    \draw[flow] (rspec) -- (d4);
+    \draw[flow] (d4) |- node[guard, pos=0.25, right] {[OK]} (mback.east);
+    \draw[flow] (d4.east) -- ++(1.95,0) |- node[guard, pos=0.25, right] {[not OK]} ($(mspec.east)+(2.4,0)$) -- (mspec.east);
+    \draw[flow] (mback) -- (backlog);
+    \draw[flow] (backlog) -- (validate);
+    \draw[flow] (validate) -- (d5);
+    \draw[flow] (d5) -- node[guard, right] {[pass or iteration limit]} (fin);
+    \draw[flow] (d5.west) -- ++(-2.4,0) |- node[guard, pos=0.25, left] {[fail]} (mspec.south west);
+
+    % --- the intent router enters the workflow at five nodes
+    \draw[thick] (router.west) -- (-5.8,\Y{0.8});
+    \draw[flow] (-5.8,\Y{0.8}) |- (mplan.west);
+    \draw[flow] (-5.8,\Y{0.8}) |- (mint.west);
+    \draw[flow] (-5.8,\Y{0.8}) |- (man.west);
+    \draw[flow] (-5.8,\Y{0.8}) |- (mspec.west);
+    \draw[flow] (-5.8,\Y{0.8}) |- (mback.west);
+    \node[guard, rotate=90, anchor=south] at (-5.8,\Y{4.2}) {[routed target]};
+\end{tikzpicture}

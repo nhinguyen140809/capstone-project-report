@@ -61,7 +61,12 @@
 \lstdefinestyle{prompt}{basicstyle=\ttfamily\scriptsize, breaklines=true, breakatwhitespace=false, columns=fullflexible, keepspaces=true, frame=single, inputencoding=utf8, extendedchars=true, literate={—}{{---}}1 {–}{{--}}1 {’}{{'}}1 {“}{{``}}1 {”}{{''}}1}
 \usepackage{etoolbox}
 \AtBeginEnvironment{table}{\setstretch{1.15}}	% tables use tighter line spacing than the 1.5 of the body text
-\AtBeginEnvironment{figure}{\setstretch{1.0}}	% so do the labels of TikZ figures
+% Figures use single spacing and the font sizes of a 10pt document, so that the UML diagrams in
+% figures/*/uml/ look the same as when they are drawn alone (the body text is 12pt).
+\AtBeginEnvironment{figure}{\setstretch{1.0}%
+    \def\tiny{\fontsize{5}{6}\selectfont}\def\scriptsize{\fontsize{7}{8}\selectfont}%
+    \def\footnotesize{\fontsize{8}{9.5}\selectfont}\def\small{\fontsize{9}{11}\selectfont}%
+    \def\normalsize{\fontsize{10}{12}\selectfont}\normalsize}
 \setlength{\emergencystretch}{3em}	% let paragraphs with long identifiers stretch instead of overflowing
 
 % \todo{...} marks text still to be written. It prints in red so that it is visible in every draft PDF.
@@ -170,6 +175,7 @@
 \newcommand\blank[1]{\rule[-.2ex]{#1}{.4pt}}
 \makeatother
 \input{styles/usecase} % usecase environment for use case specification tables
+\input{styles/uml} % UML notation for the diagrams (TikZ, pgf-umlsd, pgf-umlcd)
 \setlength{\floatsep}{5pt plus 2pt minus 2pt}
 \setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
 \setlength{\intextsep}{10pt plus 2pt minus 2pt}

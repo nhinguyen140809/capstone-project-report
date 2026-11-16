@@ -1,0 +1,28 @@
+% UML activity diagram with object flows of the persona construction (Section 4.3).
+% The trace links between the objects are shown in the class diagram of the trace model.
+\begin{tikzpicture}[uml, action/.append style={text width=2.2cm, minimum width=2.4cm}, objnode/.append style={text width=2.5cm, font=\scriptsize}]
+    \node[initial] (init) at (-1.7,0) {};
+    \node[action] (plan) at (0,0) {Plan the elicitation};
+    \node[objnode] (oplan) at (3.2,0) {\underline{:ElicitationPlan}\\\tiny stakeholder types, topics};
+    \node[action] (corpus) at (6.4,0) {Build the research corpus};
+    \node[objnode] (osrc) at (9.6,0) {\underline{:SourceDocument}\\\tiny [\texttt{target\_sources\_num}]};
+    \node[action] (mine) at (9.6,-2.0) {Mine each document};
+    \node[objnode] (oobs) at (6.4,-2.0) {\underline{:StakeholderObservation}\\\tiny [*] dimension, evidence};
+    \node[action] (gen) at (3.2,-2.0) {Cluster and build the personas};
+    \node[objnode] (oper) at (0,-2.0) {\underline{:Persona}\\\tiny [\texttt{target\_personas\_num}]};
+    \node[final] (fin) at (-1.7,-2.0) {};
+    \node[objnode, text width=2.1cm] (up) at (5.0,1.6) {\underline{:UploadedDocument}\\\tiny [*] from members};
+    \node[objnode, text width=2.1cm] (hits) at (7.8,1.6) {\underline{:SearchHit}\\\tiny [*] web, OpenAlex, arXiv};
+
+    \draw[flow] (init) -- (plan);
+    \draw[flow] (plan) -- (oplan);
+    \draw[flow] (oplan) -- (corpus);
+    \draw[flow] (up) -- (corpus);
+    \draw[flow] (hits) -- (corpus);
+    \draw[flow] (corpus) -- (osrc);
+    \draw[flow] (osrc) -- (mine);
+    \draw[flow] (mine) -- (oobs);
+    \draw[flow] (oobs) -- (gen);
+    \draw[flow] (gen) -- (oper);
+    \draw[flow] (oper) -- (fin);
+\end{tikzpicture}

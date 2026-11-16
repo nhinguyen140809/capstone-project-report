@@ -1,0 +1,19 @@
+% UML state machine diagram of a user message (Section 5.5.3).
+\begin{tikzpicture}[uml]
+    \node[initial] (init) at (0,0) {};
+    \node[decision] (choice) at (1.6,0) {};
+    \node[state] (started) at (5.4,1.4) {started\_run};
+    \node[state] (pending) at (5.4,-0.6) {pending};
+    \node[state] (delivered) at (9.6,0.2) {delivered};
+    \node[state] (undelivered) at (9.6,-1.6) {undelivered};
+    \node[final] (fin) at (12.0,0) {};
+
+    \draw[trans] (init) -- node[guard, above] {sent} (choice);
+    \draw[trans] (choice) |- node[guard, pos=0.7, above] {[no unfinished run] / start a run} (started);
+    \draw[trans] (choice) |- node[guard, pos=0.7, below] {[a run is unfinished]} (pending);
+    \draw[trans] (pending) -- node[guard, above, sloped] {taken in by the intent router} (delivered.west);
+    \draw[trans] (pending) -- node[guard, below, sloped] {run failed or cancelled} (undelivered.west);
+    \draw[trans] (started.east) -| (fin);
+    \draw[trans] (delivered.east) -- (fin);
+    \draw[trans] (undelivered.east) -| (fin);
+\end{tikzpicture}
