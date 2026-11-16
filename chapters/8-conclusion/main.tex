@@ -4,12 +4,25 @@
 
 \section{Summary}
 \label{sec:conc-summary}
-\todo{What was done: survey, proposed framework, system analysis and design, implementation, evaluation; the main findings.}
+This specialized project addressed the elicitation and refinement of software requirements from a short product idea with an LLM-based multi-agent system. It reviewed LLM-based requirements engineering, persona-based stakeholder simulation and multi-agent coordination, and identified the lack of their integration in a stakeholder-centered, end-to-end process. It proposed \sysname{}, a multi-agent framework whose personas are grounded in evidence mined from uploaded and public documents, and whose workflow combines persona-based interviews, analysis, specification, a prioritized backlog and validation with rework loops, human review checkpoints and intent routing, while keeping every requirement traceable to its sources. The system was analyzed and designed following software engineering practice, implemented as a web application with a modular backend and an evaluation harness that runs the same workflow, and evaluated with respect to RQ1. \updating{the main findings of the evaluation.}
 
 \section{Limitations}
 \label{sec:conc-limitations}
-\todo{Simulated rather than real stakeholders; dependence on the quality of public documents; cost; evaluation on small benchmark systems; LLM-as-a-judge.}
+The work has the following limitations:
+\begin{itemize}
+    \item \textbf{Simulated stakeholders.} The personas are grounded in documents, but they are still simulated by LLMs; their answers may differ from those of real stakeholders, and no study with real stakeholders has been made.
+    \item \textbf{Dependence on the sources.} The quality and the coverage of the personas depend on the documents found or uploaded. A domain with few public documents, or with documents that do not record stakeholder voices, yields fewer and less diverse observations, and some stakeholder types of the plan may remain uncovered.
+    \item \textbf{Cost and latency.} A complete run makes many LLM calls and takes tens of minutes, which limits the number of experiments and the use of the system in short iterations.
+    \item \textbf{Evaluation.} The evaluation uses a limited number of scenarios and relies in part on an LLM judge, whose scores are only partly checked by human raters.
+    \item \textbf{Deployment.} The current implementation runs on SQLite in one process; the production layout with PostgreSQL, object storage and tracing is designed but not yet deployed.
+\end{itemize}
 
 \section{Future Work}
 \label{sec:conc-future}
-\todo{Plan for the capstone (thesis) phase, with a timeline if required by the faculty.}
+The capstone (thesis) phase will continue the work in the following directions:
+\begin{itemize}
+    \item \textbf{RQ2: the value of human involvement.} Study at which stages of elicitation and refinement human involvement is most valuable, by comparing runs with different sets of review checkpoints turned on, and with scripted, LLM-simulated and real human reviewers.
+    \item \textbf{Evaluation.} Extend the scenarios, complete the comparison with the baselines and the prior frameworks, and validate the judge with human raters.
+    \item \textbf{Deliberation.} Strengthen the negotiation of conflicts between personas, for example by explicit debate rounds between the personas involved in a conflict.
+    \item \textbf{Product.} Complete the features that are only designed (project members, comments and notifications, provider credentials, tracing), and deploy the production layout.
+\end{itemize}
