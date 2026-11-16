@@ -1,36 +1,36 @@
 \section{Functional Requirements}
 \label{sec:sd-fr}
 
-\todo{Review the list against the implemented features; give each an id used by the use cases.}
+The \emph{Status} column records whether each requirement is met by the current implementation: \emph{Done} when the backend exposes the feature, \emph{Partial} when only part of it exists, and \emph{Planned} when it is designed but not implemented. \todo{Status checked against the backend API only (commit 89c0449 of the system repository); review it against the web app. FR-02: model settings exist, storing provider credentials does not. FR-03: no endpoint to invite members. FR-14: comments and notifications not implemented. FR-17: the benchmark runs through notebooks; the research package is not built yet.}
 
 \begingroup\setstretch{1.15}
-\begin{longtable}{|p{0.1\linewidth}|p{0.22\linewidth}|p{0.58\linewidth}|}
+\begin{longtable}{|p{0.1\linewidth}|p{0.17\linewidth}|p{0.5\linewidth}|p{0.11\linewidth}|}
     \caption{Functional requirements.}
     \label{tab:sd-fr} \\
     \hline
-    \textbf{ID} & \textbf{Group} & \textbf{Requirement} \\
+    \textbf{ID} & \textbf{Group} & \textbf{Requirement} & \textbf{Status} \\
     \hline
     \endfirsthead
     \hline
-    \textbf{ID} & \textbf{Group} & \textbf{Requirement} \\
+    \textbf{ID} & \textbf{Group} & \textbf{Requirement} & \textbf{Status} \\
     \hline
     \endhead
-    FR-01 & Account & The user can register, log in, log out and manage their sessions. \\ \hline
-    FR-02 & Account & The user can store their own LLM provider credentials and choose a model for each agent role. \\ \hline
-    FR-03 & Project & The user can create, rename and delete a project and invite other members. \\ \hline
-    FR-04 & Project & The user can upload documents to a project; the corpus builder uses them before web search. \\ \hline
-    FR-05 & Conversation & The user can open a thread in a project and describe a product idea in a chat message, which starts a run of the workflow. \\ \hline
-    FR-06 & Run & The user can follow a run live: the current stage on the workflow graph, the agent steps, the streamed output and the artifacts as they change. \\ \hline
-    FR-07 & Run & The user can configure a run: number of personas, turns per persona, review rounds, research documents, the checkpoints to stop at, the output language and cost limits. \\ \hline
-    FR-08 & Run & The user can cancel a run and retry a failed run from its last completed step. \\ \hline
-    FR-09 & Run & The user can send a message during a run or in a later run; the system routes it to the node that should handle it. \\ \hline
-    FR-10 & Review & At a checkpoint the user can approve, edit, or reject an artifact with feedback, and the run continues along the chosen option. \\ \hline
-    FR-11 & Artifact & The user can view every artifact (plan, corpus, personas, transcripts, analysis, specification, backlog, validation report) and its items. \\ \hline
-    FR-12 & Artifact & The user can edit, add, reorder and delete items, see their revisions and restore an earlier version. \\ \hline
-    FR-13 & Traceability & The user can see and edit the trace links of an item, view the traceability matrix and the coverage of the project. \\ \hline
-    FR-14 & Collaboration & Members can comment on artifacts and items and receive notifications. \\ \hline
-    FR-15 & Export & The user can export the specification, the backlog, the traceability matrix, the transcripts or the whole project. \\ \hline
-    FR-16 & Usage & The user can see token usage and cost per run, project and agent role. \\ \hline
-    FR-17 & Research & The researcher can run the workflow on a dataset with an experiment configuration and obtain run records and metrics, without the web app. \\ \hline
+    FR-01 & Account & The user can register, log in, log out and manage their sessions. & Done \\ \hline
+    FR-02 & Account & The user can store their own LLM provider credentials and choose a model for each agent role. & Partial \\ \hline
+    FR-03 & Project & The user can create, rename and delete a project and invite other members. & Partial \\ \hline
+    FR-04 & Project & The user can upload documents to a project; the corpus builder uses them before web search. & Done \\ \hline
+    FR-05 & Conversation & The user can open a thread in a project and describe a product idea in a chat message, which starts a run of the workflow. & Done \\ \hline
+    FR-06 & Run & The user can follow a run live: the current stage on the workflow graph, the agent steps, the streamed output and the artifacts as they change. & Done \\ \hline
+    FR-07 & Run & The user can configure a run: number of personas, turns per persona, review rounds, research documents, the checkpoints to stop at, the output language and cost limits. & Done \\ \hline
+    FR-08 & Run & The user can cancel a run and retry a failed run from its last completed step. & Done \\ \hline
+    FR-09 & Run & The user can send a message during a run or in a later run; the system routes it to the node that should handle it. & Done \\ \hline
+    FR-10 & Review & At a checkpoint the user can approve, edit, or reject an artifact with feedback, and the run continues along the chosen option. & Done \\ \hline
+    FR-11 & Artifact & The user can view every artifact (plan, corpus, personas, transcripts, analysis, specification, backlog, validation report) and its items. & Done \\ \hline
+    FR-12 & Artifact & The user can edit, add, reorder and delete items, see their revisions and restore an earlier version. & Done \\ \hline
+    FR-13 & Traceability & The user can see and edit the trace links of an item, view the traceability matrix and the coverage of the project. & Done \\ \hline
+    FR-14 & Collaboration & Members can comment on artifacts and items and receive notifications. & Planned \\ \hline
+    FR-15 & Export & The user can export the specification, the backlog, the traceability matrix, the transcripts or the whole project. & Done \\ \hline
+    FR-16 & Usage & The user can see token usage and cost per run, project and agent role. & Done \\ \hline
+    FR-17 & Research & The researcher can run the workflow on a dataset with an experiment configuration and obtain run records and metrics, without the web app. & Partial \\ \hline
 \end{longtable}
 \endgroup
