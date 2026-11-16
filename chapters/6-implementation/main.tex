@@ -1,6 +1,6 @@
 \chapter{Implementation}
 \label{chap:implementation}
-\textit{This chapter describes how \sysname{} is implemented: the technology stack, the agent workflow on LangGraph, the backend, the web app, and the testing and continuous integration process.}
+\textit{This chapter describes how \sysname{} is implemented: the technology stack, the agent workflow on LangGraph, the backend, the web app, and the testing and continuous integration process. The source code is in the \texttt{khoai-lang-graph} repository.}
 
 \section{Technology Stack}
 \label{sec:impl-stack}
@@ -14,35 +14,83 @@
         \textbf{Concern} & \textbf{Choice} \\
         \hline
         Agent orchestration & LangGraph, LangChain Core \\
-        LLM abstraction & LangChain \texttt{init\_chat\_model} with provider packages (OpenAI, Anthropic, Google, Ollama) \\
-        Backend & Python 3.12, FastAPI, Uvicorn, Pydantic v2 \\
-        Database & PostgreSQL with pgvector, SQLAlchemy 2 (async), Alembic; LangGraph Postgres checkpointer \\
-        Object storage & S3-compatible (MinIO) \\
-        Frontend & Next.js 16, React 19, TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query, Zustand \\
+        LLM access & LangChain chat models with provider packages (OpenAI, Anthropic, Google, Ollama); OpenAI-compatible gateways \\
+        Research search & Tavily web search, or a keyless chain of DuckDuckGo and Wikipedia; OpenAlex and arXiv for paper abstracts \\
+        Backend & Python 3.12, FastAPI, Uvicorn, Pydantic v2, structlog \\
+        Persistence & SQLAlchemy 2 and Alembic migrations on SQLite (aiosqlite); LangGraph SQLite checkpointer. PostgreSQL with pgvector is the production target \\
+        Frontend & Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS v4, shadcn/ui, TanStack Query, Zustand, React Hook Form with Zod \\
         API client & Generated from the OpenAPI schema of the backend \\
-        Observability & structlog; Langfuse or LangSmith for LLM traces \\
-        Quality & Ruff, mypy (strict), import-linter, pytest; ESLint, Prettier, Vitest, Playwright \\
+        Quality & Ruff, mypy (strict), import-linter, pytest; ESLint, Prettier, Vitest with Testing Library and MSW, Playwright \\
+        Tooling & uv, pnpm, Docker Compose, GitHub Actions \\
         \hline
     \end{tabularx}
 \end{table}
-\todo{Justify the main choices (why LangGraph, why a modular monolith, why PostgreSQL rather than a graph database).}
+
+The main choices are motivated as follows:
+\begin{itemize}
+    \item \textbf{LangGraph} represents the workflow as an explicit state graph with conditional edges and a checkpointer (Section~\ref{sec:bg-langgraph}). The loops, the checkpoints and the resume after a failure come from the runtime instead of custom code, and the graph can be run and tested without the API.
+    \item A \textbf{modular monolith} keeps one deployable backend while enforcing module boundaries with import rules. For a team of three, it avoids the operational cost of services while keeping the agents independent of the web layer, which the evaluation harness requires.
+    \item A \textbf{relational database} holds the users, runs, events, checkpoints and the trace graph in one store (Section~\ref{sec:sd-database}). SQLite keeps the development setup to one file; the models and migrations do not depend on it.
+    \item \textbf{Generated API types} make the web app and the backend agree on every request and response at compile time.
+\end{itemize}
 
 \section{Agent Workflow Implementation}
 \label{sec:impl-agents}
-\todo{State schema and reducers; nodes; conditional routing functions; interrupts for the checkpoints; the versioned workflow definition and how nodes and edges are read from the compiled graph; prompts as versioned Markdown files with front matter; structured output models; the model layer resolving a role to a model.}
+
+\subsection{State and Graph}
+\label{sec:impl-graph}
+
+The workflow state is a typed dictionary (\texttt{REState}). It holds the inputs of the run (the project, the initial intent, the frozen run configuration), \emph{references} to the artifacts and items of the run at the version a step used, the current stage, the status and the error of the run, and a few runtime channels read by the routing functions: the outcomes of the checkpoints, the verdicts of the analyst and the validator, and the target chosen by the intent router. The content of artifacts lives in the artifact store, never in the state, so the state stays small and every checkpoint stays readable.
+
+The graph is assembled by \texttt{build\_re\_graph} from the seventeen nodes of workflow definition version~2 and their 27 edges. Plain edges connect the research pipeline (planner $\rightarrow$ corpus builder $\rightarrow$ stakeholder miner $\rightarrow$ persona generator); conditional edges call routing functions, which are pure functions of the state, for example:
+\begin{itemize}
+    \item after the interviewer: to the persona agent for a new turn, or to the analyst when all interviews are complete;
+    \item after the analyst: to \texttt{rework\_elicitation} when the analysis needs interviews, otherwise to the analysis checkpoint;
+    \item after a checkpoint: along the edge of the option the user chose;
+    \item after the validator: to the end on a pass or when \texttt{max\_iterations} is reached, otherwise back to the requirement engineer.
+\end{itemize}
+Every routing function first drains a failed or interrupted run to the end of the graph: a checkpoint does not block inside the graph but ends the walk with the status \texttt{interrupted} and a review payload. The run executor stores the interrupt and, when the user answers, starts a new walk at the node named by the chosen option. This keeps a waiting run free of any open connection or thread.
+
+The nodes and edges of the graph are the source of truth for the structure of the workflow: the workflow definition served to the web app reads them from the compiled graph and adds the labels, stages, agent roles and checkpoint options, and a test checks that the two agree.
+
+\subsection{Prompts}
+\label{sec:impl-prompts}
+
+Every agent role and prompt version has one Markdown file with YAML front matter, kept beside the graph and versioned like code (Appendix~\ref{apx:prompts}). The front matter names the role, the version, the output model and the inputs. The body has a \emph{System} part, with the required sections Role, Goal, Inputs, Procedure and Rules and the optional Output and Examples, and a \emph{User} part with the sections Context and Task. The system part is fixed for every call of a role, so that it is served from the prompt cache of the provider; the user part carries the changing data inside tags such as \texttt{<transcripts>}, and every prompt states that text inside the tags is data, not instructions. The loader validates the structure of every file and fills the placeholders. The version of each role comes from the workflow definition, so one role can move to a new prompt version, as the persona generator did for version~2, while the others keep theirs.
+
+\subsection{Model Layer and Structured Output}
+\label{sec:impl-llm}
+
+Agents never name a model: they ask for a model by role, and the model layer resolves the role to a \texttt{provider:model} identifier by merging the defaults and role overrides of a configuration file with the settings of the user and of the run, then freezes the result in the run configuration. Each call asks the model for structured output conforming to the Pydantic output model of the role. A usage gate around every call checks the cost limit of the run and the budget of the user before the call and records the token usage, including prompt cache reads and writes, after it. A response that cannot be parsed, for example a streamed generation that degenerates into a truncated tool call, is retried once before the step fails.
+
+After the call, the node turns the output into items and links and writes them through the artifact port; the integrity checks of \texttt{domain/} reject an inconsistent output. Some nodes add checks of their own, such as the corpus builder, which rejects a document whose URL the search did not return.
 
 \section{Backend Implementation}
 \label{sec:impl-backend}
-\todo{Feature packages; background run executor; event log and the server-sent event stream; persistence of artifacts, items and trace links with the integrity checks of \texttt{domain/}; export.}
+
+The backend follows the modules of Section~\ref{sec:sd-backend-modules}. Each feature package (\texttt{auth} and \texttt{me}, \texttt{projects}, \texttt{threads}, \texttt{runs}, \texttt{artifacts}, \texttt{documents}, \texttt{exports}) contains a FastAPI router, Pydantic request and response schemas, a service with the business logic, and SQLAlchemy models; the schema is created by Alembic migrations.
+
+\paragraph{Run execution.} Posting the first message of a thread creates a run in status \texttt{queued} and returns at once. A run executor executes it as a background task: it resolves the run configuration, injects the dependencies of the graph through the LangGraph configurable (the artifact sink, the research search, the project documents, the usage gate), and walks the graph from the saved checkpoint. For every step it records a run step with its node, stage, model, usage and the items it produced. On startup, the executor recovers the runs left by a stopped process as described in Section~\ref{sec:sd-failures}.
+
+\paragraph{Event log and streaming.} Every event of a run (a token, a step started or finished, an artifact changed, a review requested, the run finished) is appended to the run event table with an increasing sequence number. The stream endpoint reads the table and sends the events as Server-Sent Events; a client that reconnects passes the last sequence number it received and gets the events after it.
+
+\paragraph{Artifacts and traceability.} The artifact service validates every write with the domain checks and stores a new revision. The traceability endpoints compute the trace of an item, the traceability matrix and the coverage of a project from the trace links. Exports render the specification, the backlog, the matrix and the transcripts into files.
 
 \section{Web Application}
 \label{sec:impl-frontend}
-\todo{Pages; drawing the workflow graph and run progress from the workflow definition; review forms generated from the checkpoint options and questions; artifact viewers and editors; mock mode with MSW.}
+
+The web app follows the layers of Section~\ref{sec:sd-frontend}. Its main screens are the project list, the project page with its threads and documents, and the thread page, which combines the chat, the workflow graph with the progress of the current run, the review of a pending checkpoint, and an artifact panel. The graph, its stages and the review forms are generated from the workflow definition: a checkpoint's options become buttons and its questions become form fields, with the validation rules of the definition. The artifact panel renders each artifact kind from its content schema, with editors for the items and the links. In mock mode, MSW handlers answer the API in the browser, which is used both for development and for the end-to-end tests. Screenshots are shown in Section~\ref{sec:sd-ui}.
 
 \section{Testing and Continuous Integration}
 \label{sec:impl-testing}
-\todo{Unit tests of the domain rules, tests of the graph with fake models, API tests, frontend unit and end-to-end tests; the CI workflow; numbers of tests and coverage.}
+
+\paragraph{Backend.} The backend has 247 pytest tests in 27 files. They cover the domain rules and content models without infrastructure; the consistency of the workflow definition with the graph, the content schemas and the prompts; the workflow itself, run with fake chat models; the research tool; the decision layer; and the API end to end, including authentication, editing, exports, the event stream with interrupts, and the run executor. Static checks use Ruff, mypy in strict mode, and import-linter, which enforces the import rules between the modules.
+
+\paragraph{Frontend.} The web app has unit and component tests with Vitest, Testing Library and MSW, and 27 end-to-end test files with Playwright. The GitHub Actions workflow of the frontend runs the type check, the linter and the formatter, the unit tests in four shards with a merged coverage report commented on the pull request, the production build, and the end-to-end tests; a second workflow captures screenshots of the screens.
+
+\todo{Add the coverage figures and decide whether a CI workflow for the backend is added before submission.}
 
 \section{Deployment}
 \label{sec:impl-deployment}
-\todo{Docker Compose setup, environment variables, how to run the system (refer to the repository).}
+
+For development, a Docker Compose file starts the API and the web app, each reloading on a change of its source; the web app is served on port 3000 and the API on port 8000, and the database is a SQLite file in a volume. Secrets, such as the provider API keys, are read from an environment file that is never committed. The models available to the agents are listed in a model configuration file, which can point to the public providers or to an OpenAI-compatible gateway. A seed script creates a demo user and sample projects. The production layout of Section~\ref{sec:sd-deployment} is the target of the next phase.
