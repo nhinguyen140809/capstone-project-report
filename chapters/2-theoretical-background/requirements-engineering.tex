@@ -10,7 +10,7 @@ Requirements are further classified by what they describe:
 \begin{itemize}
     \item \textbf{Functional requirements} state the services the system should provide, how it should react to particular inputs and how it should behave in particular situations, for example ``The system shall release a booking when the student has not checked in within the grace period''.
     \item \textbf{Non-functional requirements} state constraints on the services or on the system as a whole, such as performance, security, usability, reliability, maintainability, compatibility or portability. A non-functional requirement is only useful when it is \emph{measurable}, that is, when it carries a fit criterion that a test can check.
-    \item \textbf{Constraints} are limits imposed on the solution from outside, such as a mandated technology, a regulation or an existing system that must remain in use.
+    \item \textbf{Constraints} are limits imposed on the solution from outside, such as a mandated technology, a regulation or an existing system that must remain in use~\cite{iso29148}.
 \end{itemize}
 
 The proposed workflow uses exactly these three types for the requirements of its specification, and the quality categories of its non-functional requirements follow the list above.
@@ -37,9 +37,9 @@ Elicitation is difficult for well-known reasons~\cite{sommerville2015software}:
 \begin{itemize}
     \item stakeholders often do not know what they want from a system, or find it hard to articulate;
     \item they express requirements in their own terms and with implicit knowledge of their work (\emph{tacit knowledge});
-    \item different stakeholders have different, sometimes conflicting requirements;
-    \item some needs are never stated at all, because stakeholders take them for granted. Such \emph{latent needs} must be inferred from what stakeholders do say.
+    \item different stakeholders have different, sometimes conflicting requirements.
 \end{itemize}
+In addition, some needs are never stated at all, because stakeholders take them for granted or are not aware of them. Such \emph{latent needs} must be inferred from what stakeholders do say or do; uncovering them is a main goal of LLM-simulated user interviews such as Elicitron~\cite{ataei2025elicitron}.
 The quality of elicitation therefore depends on reaching a diverse set of stakeholders and on asking follow-up questions that expose implicit expectations, which is what the persona-based interviews of the proposed framework aim at.
 
 \subsection{Requirements Specification and Quality}
@@ -48,6 +48,7 @@ The quality of elicitation therefore depends on reaching a diverse set of stakeh
 A \emph{Software Requirements Specification} (SRS) is the official statement of what the developers should implement. ISO/IEC/IEEE 29148~\cite{iso29148} defines the characteristics that each individual requirement should have:
 \begin{itemize}
     \item \textbf{Necessary}: it expresses a capability or a constraint that is really needed.
+    \item \textbf{Appropriate}: its amount of detail and level of abstraction suit the level of the entity it refers to.
     \item \textbf{Unambiguous}: it can be interpreted in only one way.
     \item \textbf{Complete}: it needs no further amplification to be understood.
     \item \textbf{Singular}: it states a single capability or constraint.
@@ -57,7 +58,7 @@ A \emph{Software Requirements Specification} (SRS) is the official statement of 
 \end{itemize}
 The standard also defines characteristics of the \emph{set} of requirements: complete, consistent, feasible, comprehensible and able to be validated. These characteristics are used both by the validator agent of the proposed workflow and as a rubric in the evaluation.
 
-Ambiguity is a frequent defect of natural-language requirements. It is usually classified as \emph{lexical} (a word with several meanings), \emph{syntactic} (a sentence with several parses), \emph{semantic} (several interpretations in context), \emph{vague} (a term without a precise boundary, such as ``fast'') or \emph{incomplete} (a needed detail is missing). The analyst agent records ambiguity issues with this classification.
+Ambiguity is a frequent defect of natural-language requirements. Berry et al.\ distinguish \emph{lexical} ambiguity (a word with several meanings), \emph{syntactic} ambiguity (a sentence with several parses), \emph{semantic} ambiguity (several interpretations in context) and \emph{vagueness} (a term without a precise boundary, such as ``fast'')~\cite{berry2003ambiguity}. The analyst agent of the proposed workflow uses these four types and adds a fifth, \emph{incomplete}, for a statement that lacks a needed detail.
 
 \subsection{User Stories and the Product Backlog}
 \label{sec:bg-user-stories}
@@ -66,9 +67,9 @@ In Agile development, requirements are commonly expressed as \emph{user stories}
 \begin{center}
     \textit{As a} $\langle$role$\rangle$, \textit{I want} $\langle$goal$\rangle$, \textit{so that} $\langle$benefit$\rangle$.
 \end{center}
-Each story carries \emph{acceptance criteria}, often written in the Given/When/Then form, which define when the story is done. Large stories that serve one goal are grouped under an \emph{epic}. A good story satisfies the INVEST criteria: Independent, Negotiable, Valuable, Estimable, Small and Testable~\cite{cohn2004user}.
+Each story carries \emph{acceptance criteria}, which define when the story is done and are often written in the Given/When/Then form of behaviour-driven development~\cite{north2006bdd}. Large stories that serve one goal are grouped under an \emph{epic}. A good story satisfies the INVEST criteria, proposed by Wake~\cite{wake2003invest} and popularized by Cohn~\cite{cohn2004user}: Independent, Negotiable, Valuable, Estimable, Small and Testable.
 
-The \emph{product backlog} of Scrum is the ordered list of all the work needed for the product. Its items are ordered by priority, commonly with the MoSCoW scheme (Must have, Should have, Could have, Won't have this time), and estimated in story points. The backlog manager agent of the proposed workflow writes such a backlog from the specification, and uses MoSCoW for the priorities of both the requirements and the stories.
+The \emph{product backlog} of Scrum is the ordered list of all the work needed for the product. Its items are ordered by priority, commonly with the MoSCoW scheme (Must have, Should have, Could have, Won't have this time) that originates in the Dynamic Systems Development Method~\cite{clegg1994moscow}, and estimated in story points. The backlog manager agent of the proposed workflow writes such a backlog from the specification, and uses MoSCoW for the priorities of both the requirements and the stories.
 
 \subsection{Requirements Traceability}
 \label{sec:bg-traceability}
