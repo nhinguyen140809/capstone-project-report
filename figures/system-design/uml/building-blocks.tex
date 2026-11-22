@@ -8,7 +8,7 @@
     \node[component] (trace) at (10.6,-0.9) {\stereo{system}\\LLM tracing tool};
 
     % interfaces provided by the API (lollipops), required by the web app (dependencies)
-    \node[interface, label={[guard]above:REST \texttt{/api/v1}}] (rest) at ($(api.west)+(-1.2,0.25)$) {};
+    \node[interface, label={[guard]above:REST API}] (rest) at ($(api.west)+(-1.2,0.25)$) {};
     \node[interface, label={[guard]below:event stream (SSE)}] (sse) at ($(api.west)+(-1.2,-0.25)$) {};
     \draw[thick] (rest) -- (api.west |- rest);
     \draw[thick] (sse) -- (api.west |- sse);

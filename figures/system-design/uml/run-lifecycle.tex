@@ -14,7 +14,7 @@
     \draw[trans] (running.north west) to[bend left=20] node[guard, left] {checkpoint reached} (interrupted.south west);
     \draw[trans] (interrupted.south east) to[bend left=20] node[guard, right] {decision received} (running.north east);
     \draw[trans] (running) -- node[guard, above, sloped] {end of workflow} (succeeded.west);
-    \draw[trans] (running) -- node[guard, below, sloped] {step failed / server\_restarted} (failed.west);
+    \draw[trans] (running) -- node[guard, below, sloped] {step failed / server restarted} (failed.west);
     \draw[trans] (running) -- node[guard, above, sloped, pos=0.8] {cancel} (cancelled.south west);
     \draw[trans] (queued.north) |- node[guard, pos=0.75, above] {cancel} ($(cancelled.north)+(0,0.6)$) -- (cancelled.north);
     \draw[trans] (interrupted.east) -- node[guard, above] {cancel} (cancelled.west);
