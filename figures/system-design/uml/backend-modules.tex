@@ -1,27 +1,27 @@
 % UML package diagram of the backend modules and their allowed imports (Section 5.6.2).
 % domain and settings are imported by almost every package; only their package is drawn.
 \begin{tikzpicture}[uml, imp/.style={dep}]
-    \node[package] (api) at (0,3.2) {api};
-    \node[package] (features) at (0,1.6) {features};
-    \node[package] (agents) at (0,0) {agents};
-    \node[package] (llm) at (-3.4,-1.6) {llm};
-    \node[package] (tools) at (3.4,-1.6) {tools};
-    \node[package] (platform) at (3.4,1.6) {platform};
-    \node[package] (integrations) at (6.4,-1.6) {integrations};
-    \node[package] (research) at (-3.4,0) {research\\\tiny(separate package)};
-    \node[package, minimum width=9.6cm] (domain) at (1.2,-3.4) {domain \quad\tiny(imports nothing)};
-    \node[package, minimum width=9.6cm] (settings) at (1.2,-4.9) {settings};
+    \node[package, minimum width=2.6cm] (api) at (0,3.2) {API layer};
+    \node[package, minimum width=2.6cm] (features) at (0,1.6) {Feature modules};
+    \node[package, minimum width=2.6cm] (agents) at (0,0) {Agent workflow};
+    \node[package, minimum width=2.6cm] (llm) at (-3.4,-1.6) {Model access};
+    \node[package, minimum width=2.6cm] (tools) at (3.4,-1.6) {Agent tools};
+    \node[package, minimum width=2.6cm] (platform) at (3.4,1.6) {Platform services};
+    \node[package, minimum width=2.6cm] (integrations) at (7.2,-1.6) {External integrations};
+    \node[package, minimum width=2.6cm] (research) at (-3.4,0) {Evaluation harness\\\tiny(separate package)};
+    \node[package, minimum width=9.6cm] (domain) at (1.2,-3.4) {Domain rules \quad\tiny(imports nothing)};
+    \node[package, minimum width=9.6cm] (settings) at (1.2,-4.9) {Settings};
 
     \draw[imp] (api) -- node[guard, right] {\stereo{import}} (features);
     \draw[imp] (features) -- node[guard, right] {\stereo{import}} (agents);
     \draw[imp] (features) -- node[guard, above] {\stereo{import}} (platform);
     \draw[imp] (agents) -- node[guard, above, sloped] {\stereo{import}} (llm);
     \draw[imp] (agents) -- node[guard, above, sloped] {\stereo{import}} (tools);
-    \draw[imp] (tools.north) to[bend right=25] node[guard, right] {\stereo{import} ports only} (agents.east);
+    \draw[imp] (tools.north) to[bend right=25] node[guard, right] {\stereo{import} interfaces only} (agents.east);
     \draw[imp] (tools) -- node[guard, above] {\stereo{import}} (integrations);
     \draw[imp] (research) -- node[guard, above] {\stereo{import}} (agents);
     \draw[imp] (research) -- node[guard, left] {\stereo{import}} (llm);
     \draw[imp] (agents) -- node[guard, right, pos=0.6] {\stereo{import}} (domain.north -| agents);
     \draw[imp] (domain) -- (settings) node[coordinate, midway] (m) {};
-    \node[guard, align=left, anchor=west] at (5.0,-4.15) {every package except domain\\\stereo{import}s settings};
+    \node[guard, align=left, anchor=west] at (5.0,-4.15) {every package except Domain rules\\\stereo{import}s Settings};
 \end{tikzpicture}

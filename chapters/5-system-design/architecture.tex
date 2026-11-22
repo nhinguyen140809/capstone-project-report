@@ -40,15 +40,15 @@ The API application is one deployable unit, a modular monolith. Figure~\ref{fig:
         \hline
         \textbf{Module} & \textbf{Responsibility} \\
         \hline
-        \texttt{api/} & Mounts the feature routers under \texttt{/api/v1}; maps domain errors to HTTP responses \\
-        \texttt{features/} & One package per business feature (auth, projects, threads, runs, artifacts, model settings), each with a router, schemas, a service, a repository and models \\
-        \texttt{agents/} & The workflow graph: state, nodes, prompts, ports, and the versioned workflow definition \\
-        \texttt{llm/} & The only place that creates chat models; resolves an agent role to a provider and a model; checks cost limits and records usage around every call \\
-        \texttt{tools/} & Tools that agents can call, such as research search \\
-        \texttt{platform/} & Database session, object storage client, background run executor \\
-        \texttt{domain/} & Business rules without infrastructure: content schemas, integrity rules, domain errors \\
-        \texttt{settings/} & Application settings and logging \\
-        \texttt{research/} & Evaluation harness, outside the backend, importing the same agents \\
+        API layer & Exposes the features as one REST API; turns business errors into HTTP responses \\
+        Feature modules & One module per business feature (accounts, projects, conversations, runs, artifacts, documents, exports, model settings), each with its endpoints, data formats, business logic and data access \\
+        Agent workflow & The workflow graph with its agents, prompts and the versioned workflow definition \\
+        Model access & The only place that calls language models; chooses the model of each agent role, checks cost limits and records usage \\
+        Agent tools & Tools that agents can use, such as the search for research documents \\
+        Platform services & Database access, file storage and the execution of runs in the background \\
+        Domain rules & Business rules that need no infrastructure: the formats of artifacts and items, and the integrity rules \\
+        Settings & Configuration and logging \\
+        Evaluation harness & Runs experiments with the same agent workflow, outside the web application \\
         \hline
     \end{tabularx}
 \end{table}
@@ -64,8 +64,8 @@ The API application is one deployable unit, a modular monolith. Figure~\ref{fig:
 \end{figure}
 The web app is organized in packages (Figure~\ref{fig:sd-frontend}), following a layered feature structure:
 \begin{itemize}
-    \item \textbf{Routes} (\texttt{app/}) follow the file-based routing of Next.js, grouped into authentication, home and project pages. A route only composes modules.
-    \item \textbf{Modules} (\texttt{modules/}) hold one feature each, such as the chat, the workflow graph, the run progress, the reviews, the artifact viewers and editors, the traceability view and the settings.
+    \item \textbf{Pages} follow the page structure of the web framework, grouped into authentication, home and project pages. A page only assembles modules.
+    \item \textbf{Modules} hold one feature each, such as the chat, the workflow graph, the run progress, the reviews, the artifact viewers and editors, the traceability view and the settings.
     \item \textbf{Shared} code holds the UI components, built on shadcn/ui, and the utilities used by several modules.
     \item The \textbf{API client} is generated from the OpenAPI schema of the backend, so that a change of the API is a type error in the web app rather than a failure at run time.
     \item \textbf{Server state}, the data that belongs to the backend, is cached and refreshed by TanStack Query, and updated from the event stream of a run; \textbf{client state}, such as the open panel or the selected item, lives in small Zustand stores.
@@ -81,7 +81,7 @@ The web app holds no business logic of the workflow. It draws the graph, the sta
     \caption{UML deployment diagram of the production baseline.}
     \label{fig:sd-deployment}
 \end{figure}
-The production baseline runs every service on one Linux host with Docker Compose behind a reverse proxy (Figure~\ref{fig:sd-deployment}). The reverse proxy is the only public entry: it terminates TLS and routes \texttt{/} to the web server and \texttt{/api} to the API. The API runs the agent workflow as background tasks; the database stores the application data, the run events and the workflow checkpoints; object storage keeps exported and uploaded files; and a tracing service stores a trace of every agent step. The layout imposes the following constraints:
+The production baseline runs every service on one Linux host with Docker Compose behind a reverse proxy (Figure~\ref{fig:sd-deployment}). The reverse proxy is the only public entry: it terminates TLS and routes page requests to the web server and API requests to the API. The API runs the agent workflow as background tasks; the database stores the application data, the run events and the workflow checkpoints; object storage keeps exported and uploaded files; and a tracing service stores a trace of every agent step. The layout imposes the following constraints:
 \begin{itemize}
     \item \textbf{Same origin}: the browser reaches the web app and the API through one host name, so the session cookie is sent on every request and no cross-origin configuration is needed.
     \item \textbf{One API process}: runs execute inside the API process, so there is exactly one; scaling out requires moving run execution to separate workers fed by a queue. Since events already pass through the event log, the web app and the API would not change.

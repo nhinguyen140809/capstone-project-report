@@ -185,7 +185,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Agent Prompts}
 \label{apx:prompts}
-Every agent role has one versioned prompt file in the \texttt{prompts/} folder of the agent workflow (\texttt{agents/requirements\_engineering/}) in the system repository, with the structure described in Section~\ref{sec:impl-prompts}. Every role also receives the output language. Table~\ref{tab:apx-prompts} summarizes the prompts; the analyst prompt is reproduced in full as an example.
+Every agent role has its own prompt, with a version number and the structure described in Section~\ref{sec:impl-prompts}. Every role also receives the output language. Table~\ref{tab:apx-prompts} summarizes the prompts; the prompt of the analyst is reproduced below as an example. Words in double braces, such as \{\{ transcripts \}\}, are replaced by the data of the run at each call.
 
 \begin{table}[H]
     \centering

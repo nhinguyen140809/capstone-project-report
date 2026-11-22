@@ -1,30 +1,30 @@
 \section{API Design}
 \label{sec:sd-api}
 
-The API is a REST API under \texttt{/api/v1} with JSON bodies, plus one Server-Sent Events (SSE) stream per run. Its design follows from a few drivers:
+The API is a versioned REST API with JSON bodies, plus one Server-Sent Events (SSE) stream per run. Its design follows from a few drivers:
 \begin{itemize}
-    \item \textbf{The server holds all state.} The browser cannot hold provider keys or run tools, so every screen can be rebuilt from \texttt{GET} requests and nothing is kept only in the browser.
-    \item \textbf{A run is a resource, not a request.} A workflow takes minutes and waits for a human, so it must survive a closed tab, a reload and a second device: \texttt{POST} creates a run, \texttt{GET} reads or streams it.
+    \item \textbf{The server holds all state.} The browser cannot hold provider keys or run tools, so every screen can be rebuilt from read requests and nothing is kept only in the browser.
+    \item \textbf{A run is a resource, not a request.} A workflow takes minutes and waits for a human, so it must survive a closed tab, a reload and a second device: one request creates a run, and others read or stream it.
     \item \textbf{Events go through a durable log.} Replay after a reconnection, resume after hours, cost tracking and debugging use the same ordered record of events.
     \item \textbf{Server to client is a stream, client to server is plain requests.} During a run nearly all data flows down, while the user sends a few separate actions (a message, a decision, a cancellation).
     \item \textbf{Agent output is structured.} Artifacts and items are typed resources and a review request is a typed event, not a chat message, so that they can be rendered as forms and tables and traced.
 \end{itemize}
-Authentication uses an httpOnly session cookie. A resource the user has no access to answers \texttt{404}, as one that does not exist, so that identifiers cannot be probed, and every request other than \texttt{GET} must carry an \texttt{Origin} header equal to the application origin, which protects against cross-site request forgery.
+Authentication uses an httpOnly session cookie. A resource the user has no access to answers ``not found'', as one that does not exist, so that identifiers cannot be probed, and every request that changes data must come from the web application's own address, which protects against cross-site request forgery.
 
 \begin{table}[H]
     \centering
-    \caption{Main resources of the REST API (under \texttt{/api/v1}).}
+    \caption{Main resources of the REST API.}
     \label{tab:sd-api}
     \begin{tabularx}{\linewidth}{|l|X|}
         \hline
-        \textbf{Resource} & \textbf{Main endpoints} \\
+        \textbf{Resource} & \textbf{Main operations} \\
         \hline
-        Auth and account & \texttt{POST /auth/register}, \texttt{POST /auth/login}, \texttt{GET /me}, \texttt{GET /me/model-settings} \\
-        Projects & \texttt{GET /projects}, \texttt{GET /projects/\{id\}/artifacts}, \texttt{GET /projects/\{id\}/documents} \\
-        Threads and runs & \texttt{GET /threads/\{id\}/messages}, \texttt{GET /runs/\{id\}}, \texttt{GET /runs/\{id\}/stream}, \texttt{GET /runs/\{id\}/interrupts} \\
-        Artifacts and items & \texttt{GET /artifacts/\{id\}/items}, \texttt{PATCH /items/\{id\}}, \texttt{GET /items/\{id\}/trace} \\
-        Traceability & \texttt{GET /projects/\{id\}/traceability/matrix}, \texttt{GET /projects/\{id\}/traceability/coverage} \\
-        Workflow & \texttt{GET /workflow/definition}, \texttt{GET /artifact-kinds} \\
+        Account & Register, log in and out, read the profile, read and change the model of each agent role \\
+        Projects & List and read projects, list their artifacts and documents, upload documents \\
+        Threads and runs & Read the messages of a thread, post a message (which starts or feeds a run), read a run, follow its event stream, read and answer its review requests, cancel and retry it \\
+        Artifacts and items & Read the items of an artifact, edit, add, reorder and delete items, read the trace of an item \\
+        Traceability & Read the traceability matrix and the coverage of a project \\
+        Workflow & Read the workflow definition and the formats of the artifact and item kinds \\
         \hline
     \end{tabularx}
 \end{table}

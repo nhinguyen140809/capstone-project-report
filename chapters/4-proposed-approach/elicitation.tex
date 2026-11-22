@@ -1,7 +1,7 @@
 \section{Persona-Based Elicitation Interviews}
 \label{sec:pa-elicitation}
 
-Each persona is interviewed by two agents that alternate: the \emph{interviewer} asks one question, the \emph{persona agent} answers it in the role of the persona. The interview of a persona ends when the interviewer decides that the plan is sufficiently covered for this persona, or when \texttt{max\_turns} is reached; then the next persona is interviewed. When all personas are done, the workflow moves to the analyst. Each interview is stored as an \emph{interview transcript} artifact, one per persona, whose items are the messages, each with a key such as \texttt{PER-001\#4} that later requirements cite as evidence.
+Each persona is interviewed by two agents that alternate: the \emph{interviewer} asks one question, the \emph{persona agent} answers it in the role of the persona. The interview of a persona ends when the interviewer decides that the plan is sufficiently covered for this persona, or when the maximum number of turns per interview is reached; then the next persona is interviewed. When all personas are done, the workflow moves to the analyst. Each interview is stored as an \emph{interview transcript} artifact, one per persona, whose items are the messages. Each message has a short identifier, shown to the user, that names the persona and the position of the message in the interview (for example, the fourth message of the first persona), so that later requirements can cite it as evidence.
 
 \subsection{Interviewer}
 \label{sec:pa-interviewer}

@@ -6,7 +6,7 @@
 
 Work starts from the chat box: creating a thread starts nothing, the first message does. The first run of a project begins at the planner, and every later run, in any thread of the project, begins at the intent router (Figure~\ref{fig:pa-workflow}).
 
-A run is a resource with a lifecycle (Figure~\ref{fig:sd-run-lifecycle}). It is \emph{unfinished} while it is \texttt{queued}, \texttt{running} or \texttt{interrupted}, and \emph{finished} once it is \texttt{succeeded}, \texttt{failed} or \texttt{cancelled}; a finished run never changes status again. An interrupted run waits for the user at a checkpoint with no time limit. A thread has at most one unfinished run.
+A run is a resource with a lifecycle (Figure~\ref{fig:sd-run-lifecycle}). It is \emph{unfinished} while it is \emph{queued}, \emph{running} or \emph{interrupted}, and \emph{finished} once it is \emph{succeeded}, \emph{failed} or \emph{cancelled}; a finished run never changes status again. An interrupted run waits for the user at a checkpoint with no time limit. A thread has at most one unfinished run.
 
 \begin{figure}[H]
     \centering
@@ -54,4 +54,4 @@ Figure~\ref{fig:sd-sequence} shows the interactions of use case UC-01 and UC-02.
 \subsection{Failures, Cancellation and Restarts}
 \label{sec:sd-failures}
 
-A step that fails, for example because a provider returns an error or an agent output fails the integrity checks, ends the run as \texttt{failed} with an error code. The user can retry it: the retry starts a new run from the last completed step, using the saved checkpoint, so the LLM calls of earlier steps are not made again. Cancellation stops the run at the next safe point. Since runs execute as tasks inside the API process, a restart of the process ends the steps in progress: on startup the API marks those runs as \texttt{failed} with the code \texttt{server\_restarted}, starts again the runs that were still \texttt{queued}, and leaves interrupted runs waiting for the user.
+A step that fails, for example because a provider returns an error or an agent output fails the integrity checks, ends the run as \emph{failed} with an error code. The user can retry it: the retry starts a new run from the last completed step, using the saved checkpoint, so the LLM calls of earlier steps are not made again. Cancellation stops the run at the next safe point. Since runs execute as tasks inside the API process, a restart of the process ends the steps in progress: on startup the API marks those runs as \emph{failed} with the code an error stating that the server restarted, starts again the runs that were still \emph{queued}, and leaves interrupted runs waiting for the user.

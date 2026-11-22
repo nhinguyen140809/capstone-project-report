@@ -8,12 +8,12 @@
     \newinst[1.6]{llm}{:LLM provider}
     \newinst[1.6]{db}{:Database}
 
-    \begin{call}{web}{POST /threads/\{id\}/messages}{api}{201 run, queued}
+    \begin{call}{web}{send the first message}{api}{201 run, queued}
         \begin{callself}{api}{store message, create run}{}
         \end{callself}
         \mess{api}{start in background}{exe}
     \end{call}
-    \begin{call}{web}{GET /runs/\{id\}/stream}{api}{}
+    \begin{call}{web}{open the event stream}{api}{}
     \end{call}
     \begin{call}{exe}{invoke from checkpoint}{graph}{interrupted at checkpoint}
         \begin{sdblock}{loop}{[each node until a checkpoint]}
@@ -26,7 +26,7 @@
     \begin{call}{api}{read event log}{db}{events}
     \end{call}
     \mess{api}{events, review request via SSE}{web}
-    \begin{call}{web}{POST decision}{api}{200}
+    \begin{call}{web}{send the decision}{api}{200}
         \mess{api}{store decision}{db}
         \mess{api}{resume}{exe}
     \end{call}

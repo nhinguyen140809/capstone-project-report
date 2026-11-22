@@ -3,7 +3,7 @@
 
 \subsection{Automatic Rework}
 \label{sec:pa-rework}
-When the analyst's result is not OK, because issues need a stakeholder's answer, the \texttt{rework\_elicitation} control node writes a \emph{rework directive}: a record that names the open ambiguity issues and conflicts to settle and the personas who can settle them. The interview continues with these personas; the interviewer reads the directive first and asks about the issues, and the new messages are appended to the same transcripts. The analyst then runs again on the current analysis and resolves the issues the new answers settle. The number of rework loops is bounded by \texttt{max\_iterations}.
+When the analyst's result is not OK, because issues need a stakeholder's answer, the rework control node writes a \emph{rework directive}: a record that names the open ambiguity issues and conflicts to settle and the personas who can settle them. The interview continues with these personas; the interviewer reads the directive first and asks about the issues, and the new messages are appended to the same transcripts. The analyst then runs again on the current analysis and resolves the issues the new answers settle. The number of rework loops is bounded by the maximum number of review rounds.
 
 \subsection{Human Review Checkpoints}
 \label{sec:pa-checkpoints}
@@ -17,9 +17,9 @@ At a checkpoint the run pauses and waits for the user (Table~\ref{tab:pa-checkpo
         \hline
         \textbf{Checkpoint} & \textbf{Reviewed artifact} & \textbf{Options and next node} \\
         \hline
-        \texttt{checkpoint\_personas} & Persona catalog, editable & Approve (after edits) $\rightarrow$ interviewer \\
-        \texttt{checkpoint\_analysis} & Requirements analysis, editable & Accept $\rightarrow$ requirement engineer; reject and re-analyse $\rightarrow$ analyst; reject and re-interview $\rightarrow$ rework elicitation \\
-        \texttt{checkpoint\_spec} & Requirement specification & OK $\rightarrow$ backlog manager; not OK $\rightarrow$ requirement engineer \\
+        Persona review & Persona catalog, editable & Approve (after edits) $\rightarrow$ interviewer \\
+        Analysis review & Requirements analysis, editable & Accept $\rightarrow$ requirement engineer; reject and re-analyse $\rightarrow$ analyst; reject and re-interview $\rightarrow$ rework elicitation \\
+        Specification review & Requirement specification & OK $\rightarrow$ backlog manager; not OK $\rightarrow$ requirement engineer \\
         \hline
     \end{tabularx}
 \end{table}
@@ -39,4 +39,4 @@ A message that only restates a wish already covered by the artifacts is routed t
 \subsection{Bounded Automatic Decisions}
 \label{sec:pa-decisions}
 
-Three gates of the workflow take a decision that is not a free generation: whether the interview of a persona should stop, whether a specified requirement has the right type and priority, and whether validation passed. At these gates the value written into the state can come from a separate, calibrated decision model instead of the agent alone. When the confidence of the decision model is high, its decision is applied automatically; between two thresholds the agent's own value is kept; below the low threshold the run asks the user through a review. The decision layer never changes the graph: the gates keep their edges, and only the value that the routing functions read can change. \todo{Not decided yet: whether the decision layer is used in the evaluation, and with which provider (Jev, an LLM, or the mock).}
+Three gates of the workflow take a decision that is not a free generation: whether the interview of a persona should stop, whether a specified requirement has the right type and priority, and whether validation passed. At these gates the decision can be taken by a separate, calibrated decision model instead of the agent alone. When the confidence of the decision model is high, its decision is applied automatically; between two thresholds the agent's own value is kept; below the low threshold the run asks the user through a review. The decision model never changes the workflow itself: it only decides which of the existing paths is taken. \todo{Not decided yet: whether the decision layer is used in the evaluation, and with which provider (a dedicated decision model or an LLM).}

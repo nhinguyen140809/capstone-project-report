@@ -3,12 +3,12 @@
     \begin{class}[text width=2.9cm]{User}{0,0}
         \attribute{id : UUID}
         \attribute{email : String}
-        \attribute{display\_name : String}
+        \attribute{display name : String}
     \end{class}
     \begin{class}[text width=3.1cm]{Project}{5.2,0}
         \attribute{id : UUID}
         \attribute{name : String}
-        \attribute{initial\_message\_id : UUID [0..1]}
+        \attribute{initial message id : UUID [0..1]}
     \end{class}
     \begin{class}[text width=2.9cm]{SourceDocument}{10.4,0}
         \attribute{id : UUID}
@@ -18,7 +18,7 @@
     \begin{class}[text width=2.9cm]{Thread}{0,-3.4}
         \attribute{id : UUID}
         \attribute{title : String}
-        \attribute{current\_stage : String}
+        \attribute{current stage : String}
     \end{class}
     \begin{class}[text width=2.9cm]{Message}{0,-7.6}
         \attribute{id : UUID}
@@ -29,14 +29,14 @@
     \begin{class}[text width=3.1cm]{Run}{5.2,-3.4}
         \attribute{id : UUID}
         \attribute{status : RunStatus}
-        \attribute{workflow\_name : String}
-        \attribute{workflow\_version : Integer}
-        \attribute{run\_config : JSON}
+        \attribute{workflow name : String}
+        \attribute{workflow version : Integer}
+        \attribute{run config : JSON}
     \end{class}
     \begin{class}[text width=3.1cm]{RunStep}{3.9,-7.6}
         \attribute{sequence : Integer}
         \attribute{node : String}
-        \attribute{agent\_role : String [0..1]}
+        \attribute{agent role : String [0..1]}
         \attribute{usage : Usage}
     \end{class}
     \begin{class}[text width=2.9cm]{RunEvent}{7.3,-7.6}
@@ -57,7 +57,7 @@
     \begin{class}[text width=3.0cm]{Artifact}{10.4,-3.4}
         \attribute{kind : String}
         \attribute{version : Integer}
-        \attribute{review\_status : ReviewStatus}
+        \attribute{review status : ReviewStatus}
         \attribute{content : JSON}
     \end{class}
     \begin{class}[text width=3.0cm]{ArtifactItem}{14.6,-3.4}
@@ -67,9 +67,9 @@
         \attribute{content : JSON}
     \end{class}
     \begin{class}[text width=3.0cm]{TraceLink}{14.6,-7.6}
-        \attribute{link\_type : String}
-        \attribute{source\_quote : String [0..1]}
-        \attribute{target\_quote : String [0..1]}
+        \attribute{link type : String}
+        \attribute{source quote : String [0..1]}
+        \attribute{target quote : String [0..1]}
     \end{class}
 
     \association{User}{members}{*}{Project}{projects}{*}

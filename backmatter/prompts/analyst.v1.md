@@ -1,29 +1,3 @@
----
-role: analyst
-version: 1
-description: Extracts and analyzes requirements from the interview transcripts, and updates the analysis on a rework loop.
-output: AnalystOutput
-inputs:
-  - name: output_language
-    part: system
-    description: Language of every text field of the output.
-  - name: topics
-    part: user
-    description: Topics of the elicitation plan, one per line.
-  - name: personas
-    part: user
-    description: Prompt views of the personas, one JSON object per line, sorted by key.
-  - name: transcripts
-    part: user
-    description: 'Interview messages grouped by persona, one message per line as "<key> <role>: <content>".'
-  - name: current_analysis
-    part: user
-    description: Prompt views of the items of the current requirements analysis, one JSON object per line, sorted by key. Empty on the first analysis.
-  - name: directive
-    part: user
-    description: Instruction of the rework directive or the review feedback of this loop. Empty on the first analysis.
----
-
 # System
 
 ## Role

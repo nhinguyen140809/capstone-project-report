@@ -2,37 +2,37 @@
 % Every class specializes ArtifactItem (Figure 5.x); link types are navigable associations.
 \newcommand{\cls}[4]{\node[umlclass] (#1) at (#2) {\textbf{#3}\nodepart{second}#4};}
 \begin{tikzpicture}[uml]
-    \cls{src}{0,0}{SourceDocument}{key : SRC-nnn\\title, url, text}
-    \cls{msg}{0,-2.6}{InterviewMessage}{key : PER-nnn\#k\\role, content}
+    \cls{src}{0,0}{SourceDocument}{title, address, text}
+    \cls{msg}{0,-2.6}{InterviewMessage}{speaker, content}
     \cls{lat}{0,-5.2}{LatentNeed}{reasoning, confidence\\disposition}
-    \cls{obs}{5.4,0}{StakeholderObservation}{stakeholder\_name\\dimension, evidence}
+    \cls{obs}{5.4,0}{StakeholderObservation}{stakeholder name\\dimension, evidence}
     \cls{raw}{5.4,-2.6}{RawRequirement}{statement, topic}
-    \cls{ana}{5.4,-5.2}{AnalyzedRequirement}{statement, type\\priority, quality\_category}
-    \cls{spec}{5.4,-7.8}{SpecRequirement}{statement, type\\acceptance\_criteria}
-    \cls{back}{5.4,-10.4}{BacklogItem}{as\_a, i\_want, so\_that\\acceptance\_criteria}
-    \cls{per}{10.8,-1.3}{Persona}{name, stakeholder\_type\\evaluative\_dimension}
-    \cls{ass}{10.8,-4.1}{Assumption}{statement\\validation\_status}
-    \cls{amb}{10.8,-5.9}{AmbiguityIssue}{ambiguity\_type\\status, resolution}
-    \cls{con}{10.8,-7.7}{Conflict}{conflict\_type, severity\\status, resolution}
+    \cls{ana}{5.4,-5.2}{AnalyzedRequirement}{statement, type\\priority, quality category}
+    \cls{spec}{5.4,-7.8}{SpecRequirement}{statement, type\\acceptance criteria}
+    \cls{back}{5.4,-10.4}{BacklogItem}{As a / I want / so that\\acceptance criteria}
+    \cls{per}{10.8,-1.3}{Persona}{name, stakeholder type\\evaluative dimension}
+    \cls{ass}{10.8,-4.1}{Assumption}{statement\\validation status}
+    \cls{amb}{10.8,-5.9}{AmbiguityIssue}{ambiguity type\\status, resolution}
+    \cls{con}{10.8,-7.7}{Conflict}{conflict type, severity\\status, resolution}
     \cls{val}{10.8,-10.4}{ValidationIssue}{category, severity\\suggestion}
 
-    \draw[nav] (obs) -- node[linklabel, above] {evidenced\_by} node[pos=0.9, above, font=\tiny] {1} (src);
-    \draw[nav] (per.north west) -- node[linklabel, sloped, above] {grounded\_in} node[pos=0.9, right, font=\tiny] {1..*} (obs.south east);
-    \draw[nav] (raw) -- node[linklabel, above] {evidenced\_by} node[pos=0.9, above, font=\tiny] {1..*} (msg);
-    \draw[nav] (raw.east) -- node[linklabel, sloped, above] {stated\_by} node[pos=0.9, below, font=\tiny] {1} (per.south west);
-    \draw[nav] (lat) -- node[linklabel, right] {evidenced\_by} node[pos=0.85, right, font=\tiny] {1..*} (msg);
-    \draw[nav] (ana) -- node[linklabel, right] {derived\_from} (raw);
-    \draw[nav] (ana) -- node[linklabel, above] {derived\_from} (lat);
+    \draw[nav] (obs) -- node[linklabel, above] {evidenced by} node[pos=0.9, above, font=\tiny] {1} (src);
+    \draw[nav] (per.north west) -- node[linklabel, sloped, above] {grounded in} node[pos=0.9, right, font=\tiny] {1..*} (obs.south east);
+    \draw[nav] (raw) -- node[linklabel, above] {evidenced by} node[pos=0.9, above, font=\tiny] {1..*} (msg);
+    \draw[nav] (raw.east) -- node[linklabel, sloped, above] {stated by} node[pos=0.9, below, font=\tiny] {1} (per.south west);
+    \draw[nav] (lat) -- node[linklabel, right] {evidenced by} node[pos=0.85, right, font=\tiny] {1..*} (msg);
+    \draw[nav] (ana) -- node[linklabel, right] {derived from} (raw);
+    \draw[nav] (ana) -- node[linklabel, above] {derived from} (lat);
     \draw[nav] (ana.north east) -- node[linklabel, sloped, above, pos=0.6] {involves} (per.south);
-    \draw[nav] (spec) -- node[linklabel, right] {derived\_from} node[pos=0.85, left, font=\tiny] {1..*} (ana);
-    \draw[nav] (back) -- node[linklabel, right] {derived\_from} node[pos=0.85, left, font=\tiny] {1..*} (spec);
+    \draw[nav] (spec) -- node[linklabel, right] {derived from} node[pos=0.85, left, font=\tiny] {1..*} (ana);
+    \draw[nav] (back) -- node[linklabel, right] {derived from} node[pos=0.85, left, font=\tiny] {1..*} (spec);
     \draw[nav] (ass.west) -- node[linklabel, above, sloped] {concerns} ($(ana.east)+(0,0.25)$);
     \draw[nav] (amb.west) -- node[linklabel, above, sloped] {concerns} (ana.east);
     \draw[nav] (con.west) -- node[linklabel, below, sloped] {concerns} ($(ana.east)+(0,-0.25)$);
-    \draw[nav] (amb.east) -- ++(0.5,0) |- node[linklabel, pos=0.75, below] {resolved\_by} ($(msg.west)+(-1.8,-8.8)$) |- ($(msg.west)+(0,-0.15)$);
+    \draw[nav] (amb.east) -- ++(0.5,0) |- node[linklabel, pos=0.75, below] {resolved by} ($(msg.west)+(-1.8,-8.8)$) |- ($(msg.west)+(0,-0.15)$);
     \draw[nav] (con.east) -- ++(0.3,0) |- ($(msg.west)+(-1.6,-8.6)$) |- ($(msg.west)+(0,0.15)$);
-    \draw[nav] (spec.west) -- ++(-0.4,0) -- ++(0,-0.45) -| node[linklabel, pos=0.25, below] {depends\_on} ($(spec.south)+(-0.8,0)$);
-    \draw[nav] (back.west) -- ++(-0.4,0) -- ++(0,-0.55) -| node[linklabel, pos=0.25, below] {depends\_on} ($(back.south)+(-0.8,0)$);
-    \node[note, anchor=north] (n) at ($(val.south)+(0,-0.5)$) {\texttt{flags} links a validation issue to any item; \texttt{duplicates} and \texttt{supersedes} link two items of the same kind.};
+    \draw[nav] (spec.west) -- ++(-0.4,0) -- ++(0,-0.45) -| node[linklabel, pos=0.25, below] {depends on} ($(spec.south)+(-0.8,0)$);
+    \draw[nav] (back.west) -- ++(-0.4,0) -- ++(0,-0.55) -| node[linklabel, pos=0.25, below] {depends on} ($(back.south)+(-0.8,0)$);
+    \node[note, anchor=north] (n) at ($(val.south)+(0,-0.5)$) {\emph{flags} links a validation issue to any item; \emph{duplicates} and \emph{supersedes} link two items of the same kind.};
     \draw[dashed] (n) -- (val);
 \end{tikzpicture}

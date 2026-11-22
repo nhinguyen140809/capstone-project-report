@@ -12,7 +12,7 @@ The schema has 36 tables in five groups: identity and settings, workspace, conve
 
 \subsection{Artifact Storage}
 \label{sec:sd-artifact-storage}
-Requirements engineering output has two levels, each in its own generic table: \texttt{artifacts} and \texttt{artifact\_items}, with the fields of each kind in a JSON \texttt{content} column validated against a versioned content schema. The items and the \texttt{trace\_links} between them form a property graph.
+Requirements engineering output has two levels, each in its own generic table: a table of artifacts and a table of artifact items, with the fields of each kind stored in a JSON content field validated against a versioned content schema. The items and the trace links between them form a property graph.
 
 The main design decisions and their trade-offs are summarized in Table~\ref{tab:sd-db-decisions}.
 
@@ -24,7 +24,7 @@ The main design decisions and their trade-offs are summarized in Table~\ref{tab:
         \hline
         \textbf{Question} & \textbf{Options considered} & \textbf{Decision} & \textbf{Trade-off} \\
         \hline
-        Fields of the artifact and item kinds & One table per kind with typed columns; generic tables with a JSON content column & Generic tables, one per level, with a JSON \texttt{content} column validated against a versioned content schema & A field change is a schema change in code, not a migration, which suits fields that change while prompts are tuned; the database does not check the fields, so the application must \\
+        Fields of the artifact and item kinds & One table per kind with typed columns; generic tables with a JSON content column & Generic tables, one per level, with a JSON content field validated against a versioned content schema & A field change is a schema change in code, not a migration, which suits fields that change while prompts are tuned; the database does not check the fields, so the application must \\
         \hline
         Names of the workflow (roles, nodes, options, kinds, link types) & Database enums; lookup tables; text checked against the workflow definition & Text checked against the versioned workflow definition; every run stores its workflow name and version & A new experiment is a new definition version with no migration, and old runs stay readable; every write must be checked by the application \\
         \hline
