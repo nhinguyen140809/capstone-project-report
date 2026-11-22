@@ -31,21 +31,21 @@ The output of the workflow has two levels: \emph{artifacts}, the work products, 
         \hline
         \textbf{Link type} & \textbf{Source} & \textbf{Target} \\
         \hline
-        \emph{evidenced by} & Raw requirement, latent need; stakeholder observation & Interview message; source document \\
-        \emph{grounded in} & Persona & Stakeholder observation \\
-        \emph{stated by} & Raw requirement & Persona \\
-        \emph{involves} & Analyzed requirement, latent need, conflict & Persona \\
-        \emph{derived from} & Analyzed req.; specification req.; backlog item & Raw req., latent need; analyzed req.; specification req. \\
-        \emph{concerns} & Assumption, ambiguity issue, conflict & Raw, analyzed or specification requirement \\
-        \emph{resolved by} & Ambiguity issue, conflict & Interview message \\
-        \emph{flags} & Validation issue & Any item \\
-        \emph{depends on} & Specification requirement, backlog item & Item of the same kind \\
-        \emph{duplicates}, \emph{supersedes} & Any item & Item of the same kind \\
+        Evidenced by & Raw requirement, latent need; stakeholder observation & Interview message; source document \\
+        Grounded in & Persona & Stakeholder observation \\
+        Stated by & Raw requirement & Persona \\
+        Involves & Analyzed requirement, latent need, conflict & Persona \\
+        Derived from & Analyzed req.; specification req.; backlog item & Raw req., latent need; analyzed req.; specification req. \\
+        Concerns & Assumption, ambiguity issue, conflict & Raw, analyzed or specification requirement \\
+        Resolved by & Ambiguity issue, conflict & Interview message \\
+        Flags & Validation issue & Any item \\
+        Depends on & Specification requirement, backlog item & Item of the same kind \\
+        Duplicates, supersedes & Any item & Item of the same kind \\
         \hline
     \end{tabularx}
 \end{table}
 
-Figure~\ref{fig:pa-trace-model} shows the same model as a UML class diagram: every item kind is a class, which specializes the generic artifact item stored in the database (Figure~\ref{fig:sd-domain-model}), and every link type is a navigable association.
+Figure~\ref{fig:pa-trace-model} shows the same model as a UML class diagram: every item kind is a class, which specializes the generic artifact item of the database (Figure~\ref{fig:sd-domain-model}), and every link type is a navigable association.
 
 \begin{figure}[H]
     \centering

@@ -1,0 +1,80 @@
+% Figure 4.1 (a): the workflow from the user's message to the interviews.
+%
+% UML RULES OBSERVED HERE, keep them if you edit:
+%  - every activity has exactly ONE outgoing edge; wherever the flow chooses, a decision node
+%    (diamond) follows it and each outgoing edge of the diamond carries a guard in square brackets;
+%  - every edge leaves and enters at a cardinal anchor, and every segment is axis-parallel. Angle
+%    anchors such as (node.340) draw diagonals and are forbidden;
+%  - no identifier appears: each box is titled the way the workflow definition titles it.
+\begin{tikzpicture}[uml, act/.style={action, text width=2.9cm, minimum width=3.1cm}]
+    \def\Y#1{{-(1.5+#1*1.05)}}
+    % --- agents: one column at x = 0
+    \node[initial] (init) at (0,\Y{0}) {};
+    \node[act] (router) at (0,\Y{1}) {Route the user's message};
+    \node[decision] (ch1) at (0,\Y{2}) {};
+    \node[act] (plan) at (0,\Y{3}) {Plan the elicitation};
+    \node[decision] (ch2) at (0,\Y{4}) {};
+    \node[act] (corpus) at (0,\Y{5}) {Build the research corpus};
+    \node[act] (mine) at (0,\Y{6}) {Mine stakeholder observations};
+    \node[act] (gen) at (0,\Y{7}) {Generate grounded personas};
+    \node[act] (ask) at (0,\Y{11}) {Ask a question or stop};
+    \node[decision] (ch3) at (0,\Y{12}) {};
+    \node[act] (answer) at (2.7,\Y{12}) {Answer as the persona};
+
+    % --- the user column at x = 6.95
+    \node[act] (askmsg) at (6.95,\Y{2}) {Questions about\\your message};
+    \node[act] (cplan) at (6.95,\Y{4}) {Answer the clarifying\\questions};
+    \node[act] (askpers) at (6.95,\Y{8}) {Questions about\\the interviewees};
+    \node[act] (cpers) at (6.95,\Y{9}) {Finalize the\\interviewees};
+    \node[decision] (ch4) at (6.95,\Y{10}) {};
+    \node[draw, circle, thick, inner sep=1pt, font=\scriptsize] (toB) at (0,\Y{13}) {A};
+    \node[draw, circle, thick, inner sep=1pt, font=\scriptsize] (fromB) at (-2.90,-13.30) {B};
+
+    % --- partitions
+    \begin{scope}[on background layer]
+        \draw[thin] (-6.0,-1.00) rectangle (4.90,\Y{13.5});
+        \draw[thin] (4.90,-1.00) rectangle (8.80,\Y{13.5});
+        \draw[thin] (-6.0,-1.00) rectangle (4.90,-0.60);
+        \draw[thin] (4.90,-1.00) rectangle (8.80,-0.60);
+    \end{scope}
+    \node[font=\scriptsize\bfseries] at (-0.4,-0.80) {Agents};
+    \node[font=\scriptsize\bfseries] at (6.95,-0.80) {User};
+
+    % --- the message is read, then the router chooses where it goes
+    \draw[flow] (init) -- (router.north);
+    \draw[flow] (router.south) -- (ch1.north);
+    \draw[flow] (ch1.east) -- node[guard, above] {[questions]} (askmsg.west);
+    \draw[flow] (askmsg.north) -- (6.95,\Y{1}) -- (router.east);
+    \draw[flow] (ch1.south) -- node[guard, right] {[target]} (plan.north);
+    % the five targets of the router: the planner and the interviewer are in this panel
+    \draw[thick] (ch1.west) -- (-5.20,\Y{2}) -- (-5.20,\Y{11});
+    \draw[flow] (-5.20,\Y{3}) -- (plan.west);
+    \draw[flow] (-5.20,-12.80) -- (-1.55,-12.80);
+    \node[guard, rotate=90] at (-5.20,\Y{6.8}) {[routed target]};
+
+    % --- planning: the answers come back to the planner, the plan goes on to the research
+    \draw[flow] (plan.south) -- (ch2.north);
+    \draw[flow] (ch2.east) -- node[guard, above] {[questions]} (cplan.west);
+    \draw[flow] (cplan.north) -- (6.95,\Y{3}) -- (plan.east);
+    \draw[flow] (ch2.south) -- (corpus.north);
+    \node[guard, right] at (0.22,-6.24) {[plan written]};
+
+    % --- evidence, then the checkpoint that opens the interviews
+    \draw[flow] (corpus) -- (mine);
+    \draw[flow] (mine) -- (gen);
+    \draw[flow] (gen.east) -| (askpers.north);
+    \draw[flow] (askpers.south) -- (cpers.north);
+    \draw[flow] (cpers.south) -- (ch4.north);
+    \draw[flow] (ch4.west) -- node[guard, above, pos=0.80] {[approve]} (0,\Y{10}) -- (ask.north);
+    \node[draw, circle, thick, inner sep=1pt, font=\scriptsize] (toR) at (8.40,-12.55) {R};
+    \draw[flow] (ch4.south) -- (6.95,-12.55) -- (toR.west);
+    \node[guard] at (7.75,-12.38) {[something else]};
+
+    % --- the interview loop: the interviewer decides whether to ask again
+    \draw[flow] (-2.74,-13.30) -- (-1.55,-13.30);
+    \draw[flow] (ask.south) -- (ch3.north);
+    \draw[flow] (ch3.east) -- (answer.west);
+    \node[guard] at (0.95,-13.96) {[question]};
+    \draw[flow] (answer.north) -- (2.7,-12.90) -- (1.55,-12.90);
+    \draw[flow] (ch3.south) -- node[guard, right] {[all interviewees done]} (toB.north);
+\end{tikzpicture}

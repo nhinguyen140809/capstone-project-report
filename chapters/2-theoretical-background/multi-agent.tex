@@ -28,7 +28,7 @@ LangGraph~\cite{langgraph} models an agent workflow as a \emph{state graph}:
     \item An \textbf{edge} names the node that runs next. A \emph{conditional edge} calls a routing function on the state to choose the next node, which allows loops and branches.
     \item A \textbf{checkpointer} saves the state after every step, so that a run can be paused, resumed after a failure from its last completed step, or inspected afterwards.
 \end{itemize}
-Compared with a free conversation between agents, an explicit graph makes the order of the agents, the loops and their bounds visible and testable, while the conditional edges still let the run take a different path depending on the results. The proposed workflow is a LangGraph state graph with seventeen nodes (Chapter~\ref{chap:proposed-approach}).
+Compared with a free conversation between agents, an explicit graph makes the order of the agents, the loops and their bounds visible and testable, while the conditional edges still let the run take a different path depending on the results. The proposed workflow is a LangGraph state graph with twenty-two nodes (Chapter~\ref{chap:proposed-approach}).
 
 \subsection{Human-in-the-Loop}
 \label{sec:bg-hitl}

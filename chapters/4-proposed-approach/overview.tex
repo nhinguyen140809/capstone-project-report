@@ -1,28 +1,35 @@
 \section{Overview of the Framework}
 \label{sec:pa-overview}
 
-\sysname{} takes a short product idea from the user and produces a validated requirement specification and product backlog. One workflow graph covers the whole requirements engineering process: planning, evidence collection, persona construction, elicitation by interviews, analysis, specification, backlog writing and validation (Figure~\ref{fig:pa-workflow}). The workflow is executed as a state graph~\cite{langgraph}: every node is an LLM agent, a human review checkpoint or a control node, and every agent reads from and writes to a shared set of artifacts rather than to a conversation history.
+\sysname{} takes a short product idea from the user and produces a validated requirement specification and product backlog. One workflow graph covers the whole requirements engineering process: planning, evidence collection, persona construction, elicitation by interviews, analysis, specification, backlog writing and validation (Figure~\ref{fig:pa-workflow}). The workflow is executed as a state graph~\cite{langgraph}: the nodes are LLM agents, human checkpoints and one control node, and every agent reads from and writes to a shared set of artifacts rather than to the conversation history of the run.
 
 \begin{figure}[H]
     \centering
-    \resizebox{!}{0.82\textheight}{\input{figures/proposed-approach/uml/workflow}}
-    \caption{UML activity diagram of the agent workflow (workflow definition version 2).}
+    \resizebox{\linewidth}{!}{\input{figures/proposed-approach/uml/workflow-a}}
+    \caption{UML activity diagram of the agent workflow (workflow definition version 2), from the user's message to the interviews. The run continues in Figure~\ref{fig:pa-workflow-b}.}
     \label{fig:pa-workflow}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/proposed-approach/uml/workflow-b}}
+    \caption{The same workflow, from the analysis to the validated backlog, with the two reviews that interrupt it. A and B mark the two points where the flow continues in Figure~\ref{fig:pa-workflow}, and R enters from the router of that figure.}
+    \label{fig:pa-workflow-b}
 \end{figure}
 
 The workflow differs from a sequential pipeline in three ways, detailed in Section~\ref{sec:pa-deliberation}:
 \begin{itemize}
-    \item \textbf{Loops.} The analyst sends the process back to the interview when open issues need a stakeholder's answer; the validator sends it back to the requirement engineer when the specification fails validation.
-    \item \textbf{Human review.} The run pauses at three checkpoints, where the user approves, edits or rejects the personas, the analysis and the specification.
-    \item \textbf{Incremental intent.} A message the user sends while the run works, or in a later run, is routed by an intent router to the node that should handle it.
+    \item \textbf{Loops.} The analyst sends the process back to the interview when open issues need a stakeholder's answer; the validator sends it back to the requirement engineer when the specification fails validation; and a review that the user rejects sends the process back as well.
+    \item \textbf{Human checkpoints.} The run pauses at eight checkpoints. Five of them ask questions, before the planning, in the middle of a message that is not clear, before the interviews, before the analysis and before the specification. Three of them review an artifact, where the user approves, edits or rejects the personas, the analysis and the specification.
+    \item \textbf{Incremental intent.} Every run starts at the intent router, the first one included. A message the user sends while the run works, or in a later run, is routed by it to the node that should handle it.
 \end{itemize}
 
 The design of the framework follows four principles:
 \begin{enumerate}
-    \item \textbf{Grounding before simulation.} No persona is invented from the product idea alone. The workflow first collects real documents of the domain and extracts what real stakeholder groups say in them; personas are then built only from these observations, and each persona keeps links to the quotes it rests on. This addresses the bias and homogeneity of ungrounded LLM-generated personas~\cite{li2026persona}.
+    \item \textbf{Grounding before simulation.} No persona is invented from the product idea alone. The workflow first collects real documents of the domain and extracts what real stakeholder groups say in them; personas are then built from these observations, and each persona keeps links to the quotes it rests on. This addresses the bias and homogeneity of ungrounded LLM-generated personas~\cite{li2026persona}.
     \item \textbf{Artifacts instead of chat history.} Agents do not read the conversation of the whole run. Each agent receives the current version of the artifacts it needs and writes typed items with typed links. The artifacts are the shared workspace of the agents, the material the user reviews, and the trace graph of the output at the same time.
-    \item \textbf{Evidence for every statement.} Every requirement carries the words of the interview it comes from, every observation the sentence of the document it comes from. The system checks that quotes are copied exactly and that documents and messages exist, and rejects an agent output that fails the check.
-    \item \textbf{Bounded non-linearity.} The workflow may loop back, but every loop is bounded by a run parameter (Table~\ref{tab:pa-run-parameters}), so that a run always terminates and its cost has an upper limit.
+    \item \textbf{Evidence for every statement.} Every requirement is traced back to the words of the interview it comes from, every observation to the sentence of the document it comes from. The system checks that the messages and the documents an item cites exist, and that every quote is copied word for word. An unknown reference fails the run; a quote that was not copied exactly is dropped from the link and reported in the run log, so the trace remains even where the words do not.
+    \item \textbf{Bounded non-linearity.} The workflow may loop back, and every loop has a bound: the maximum turns per interviewee bounds one interview, the maximum review rounds bound the rounds in which the specification and the backlog are written and validated (Table~\ref{tab:pa-run-parameters}), and the run as a whole stops after eighty steps, so that a run always terminates and its cost has an upper limit.
 \end{enumerate}
 
 \begin{table}[H]
@@ -33,11 +40,10 @@ The design of the framework follows four principles:
         \hline
         \textbf{Parameter} & \textbf{Meaning} & \textbf{Range} & \textbf{Default} \\
         \hline
-        Number of personas & Number of personas interviewed & 1--10 & 3 \\
-        Maximum number of personas & Largest number of personas that may be interviewed & 1--10 & 3 \\
-        Maximum turns per interview & Longest interview per persona, in questions and answers & 1--20 & 6 \\
-        Maximum review rounds & Number of revisions allowed after a review & 0--5 & 2 \\
-        Number of research documents & Number of research documents kept as evidence & 1--10 & 3 \\
+        Number of interviewees & Personas the interviews simulate & 1--10 & 3 \\
+        Maximum turns per interviewee & Longest interview, in questions and answers & 1--20 & 6 \\
+        Maximum review rounds & Write-and-validate rounds of the specification and the backlog & 0--5 & 2 \\
+        Number of research documents & Documents kept in the corpus as evidence & 1--10 & 3 \\
         \hline
     \end{tabularx}
 \end{table}

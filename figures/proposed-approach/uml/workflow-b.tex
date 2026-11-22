@@ -1,0 +1,84 @@
+% Figure 4.2 (b): the workflow from the analysis to the validated backlog.
+%
+% UML RULES OBSERVED HERE, keep them if you edit:
+%  - every activity has exactly ONE outgoing edge; wherever the flow chooses, a decision node follows
+%    it and each outgoing edge of the diamond carries a guard in square brackets;
+%  - every edge leaves and enters at a cardinal anchor or at an explicit point on an edge, and every
+%    segment is axis-parallel. Angle anchors such as (node.340) draw diagonals and are forbidden.
+%    Two edges may cross: a crossing without a junction dot is not a connection;
+%  - no identifier appears: each box is titled the way the workflow definition titles it.
+\begin{tikzpicture}[uml, act/.style={action, text width=2.9cm, minimum width=3.1cm}]
+    \def\Y#1{{-(1.5+#1*1.05)}}
+    % --- the agents' column at x = 0
+    \node[draw, circle, thick, inner sep=1pt, font=\scriptsize] (fromA) at (0,\Y{0}) {A};
+    \node[act] (analyze) at (0,\Y{1}) {Analyze the requirements};
+    \node[decision] (ch5) at (0,\Y{2}) {};
+    \node[act] (rework) at (-3.4,\Y{2}) {Write the rework\\directive};
+    \node[draw, circle, thick, inner sep=1pt, font=\scriptsize] (toB) at (-3.4,\Y{0}) {B};
+    \node[act] (spec) at (0,\Y{4}) {Write the specification};
+    \node[decision] (mback) at (0,\Y{8}) {};
+    \node[act] (backlog) at (0,\Y{9}) {Write the product backlog};
+    \node[act] (validate) at (0,\Y{10}) {Validate specification\\and backlog};
+    \node[decision] (ch8) at (0,\Y{11}) {};
+    \node[final] (fin) at (0,\Y{12}) {};
+
+    % --- the user column at x = 6.45
+    \node[act] (askan) at (6.45,\Y{2}) {Questions about\\the analysis};
+    \node[act] (can) at (6.45,\Y{3}) {Review the analysis};
+    \node[decision] (ch6) at (6.45,\Y{4}) {};
+    \node[act] (askspec) at (6.45,\Y{6}) {Questions about\\the specification};
+    \node[act] (cspec) at (6.45,\Y{7}) {Review the specification};
+    \node[decision] (ch7) at (6.45,\Y{8}) {};
+    \node[draw, circle, thick, inner sep=1pt, font=\scriptsize] (fromR) at (-5.20,\Y{0}) {R};
+
+    % --- partitions
+    \begin{scope}[on background layer]
+        \draw[thin] (-6.0,-1.00) rectangle (4.40,\Y{12.5});
+        \draw[thin] (4.40,-1.00) rectangle (8.30,\Y{12.5});
+        \draw[thin] (-6.0,-1.00) rectangle (4.40,-0.60);
+        \draw[thin] (4.40,-1.00) rectangle (8.30,-0.60);
+    \end{scope}
+    \node[font=\scriptsize\bfseries] at (-0.4,-0.80) {Agents};
+    \node[font=\scriptsize\bfseries] at (6.45,-0.80) {User};
+
+    % --- the router reaches three stages of this panel
+    \draw[thick] (fromR.south) -- (-5.20,\Y{8});
+    \draw[flow] (-5.20,\Y{1}) -- (analyze.west);
+    \draw[flow] (-5.20,-5.20) -- (0,-5.20) -- (spec.north);
+    \draw[flow] (-5.20,\Y{8}) -- (mback.west);
+    \node[guard, rotate=90] at (-5.20,\Y{5.2}) {[routed target]};
+
+    % --- the analysis, and the two ways out of it
+    \draw[flow] (fromA.south) -- (analyze.north);
+    \draw[flow] (analyze.south) -- (ch5.north);
+    \draw[flow] (ch5.west) -- node[guard, above] {[not OK]} (rework.east);
+    \draw[flow] (rework.north) -- (toB.south);
+    \draw[flow] (ch5.east) -- node[guard, above] {[OK]} (askan.west);
+    \draw[flow] (askan.south) -- (can.north);
+
+    % --- the analysis review: accept, re-analyse or re-interview
+    \draw[flow] (can.south) -- (ch6.north);
+    \draw[flow] (ch6.west) -- node[guard, above] {[accept]} (spec.east);
+    \draw[flow] (ch6.east) -- (8.15,\Y{4}) -- (8.15,\Y{1}) -- (analyze.east);
+    \node[guard, rotate=90] at (8.15,\Y{2.5}) {[re-analyse]};
+    \draw[flow] (ch6.south) -- (6.45,-6.60) -- (-3.40,-6.60) -- (rework.south);
+    \node[guard, above] at (1.60,-6.60) {[re-interview]};
+
+    % --- the specification, its checkpoint, the backlog and the validation
+    \draw[flow] (spec.south) -- (0,\Y{6}) -- (askspec.west);
+    \draw[flow] (askspec.south) -- (cspec.north);
+    \draw[flow] (cspec.south) -- (ch7.north);
+    \draw[flow] (ch7.west) -- node[guard, above] {[OK]} (mback.east);
+    \draw[flow] (ch7.east) -- (8.15,\Y{8}) -- (8.15,-6.30) -- (0.80,-6.30) -- (0.80,-6.09);
+    \node[guard, above] at (3.20,-6.30) {[not OK]};
+    \draw[flow] (mback.south) -- (backlog.north);
+    \draw[flow] (backlog.south) -- (validate.north);
+    \draw[flow] (validate.south) -- (ch8.north);
+    \draw[flow] (ch8.south) -- node[guard, right] {[pass or iteration limit]} (fin.north);
+    \draw[flow] (ch8.west) -- (-2.60,-13.05) -- (-2.60,-5.85) -- (-1.55,-5.85);
+    \node[guard, rotate=90] at (-2.60,-7.90) {[fail]};
+
+    % --- the option every review offers, which is not a flow of the workflow
+    \node[draw, thin, fill=white, font=\scriptsize, align=center, inner sep=2pt]
+        at (6.45,\Y{10.6}) {Every review also offers\\\emph{something else}: it asks for\\words and sends them\\to the router};
+\end{tikzpicture}

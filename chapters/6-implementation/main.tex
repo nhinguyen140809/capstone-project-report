@@ -17,7 +17,7 @@
         LLM access & LangChain chat models with provider packages (OpenAI, Anthropic, Google, Ollama); OpenAI-compatible gateways \\
         Research search & Tavily web search, or a keyless chain of DuckDuckGo and Wikipedia; OpenAlex and arXiv for paper abstracts \\
         Backend & Python 3.12, FastAPI, Uvicorn, Pydantic v2, structlog \\
-        Persistence & SQLAlchemy 2 and Alembic migrations on SQLite (aiosqlite); LangGraph SQLite checkpointer. PostgreSQL with pgvector is the production target \\
+        Persistence & SQLAlchemy 2 and Alembic migrations on SQLite (aiosqlite). PostgreSQL with pgvector is the production target \\
         Frontend & Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS v4, shadcn/ui, TanStack Query, Zustand, React Hook Form with Zod \\
         API client & Generated from the OpenAPI schema of the backend \\
         Quality & Ruff, mypy (strict), import-linter, pytest; ESLint, Prettier, Vitest with Testing Library and MSW, Playwright \\
@@ -28,7 +28,7 @@
 
 The main choices are motivated as follows:
 \begin{itemize}
-    \item \textbf{LangGraph} represents the workflow as an explicit state graph with conditional edges and a checkpointer (Section~\ref{sec:bg-langgraph}). The loops, the checkpoints and the resume after a failure come from the runtime instead of custom code, and the graph can be run and tested without the API.
+    \item \textbf{LangGraph} represents the workflow as an explicit state graph with conditional edges and a checkpointer (Section~\ref{sec:bg-langgraph}). The conditional edges carry the loops and the graph can be run and tested without the API; the backend saves the state after every step, so pausing, resuming and retrying from a failed step are its own code, not a service of the runtime.
     \item A \textbf{modular monolith} keeps one deployable backend while enforcing module boundaries with import rules. For a team of three, it avoids the operational cost of services while keeping the agents independent of the web layer, which the evaluation harness requires.
     \item A \textbf{relational database} holds the users, runs, events, checkpoints and the trace graph in one store (Section~\ref{sec:sd-database}). SQLite keeps the development setup to one file; the models and migrations do not depend on it.
     \item \textbf{Generated API types} make the web app and the backend agree on every request and response at compile time.
@@ -42,7 +42,7 @@ The main choices are motivated as follows:
 
 The workflow has a shared \emph{state} that every step reads and updates. It holds the inputs of the run (the project, the initial idea and the settings of the run), references to the artifacts and items the run has produced, at the version each step used, the current stage, the status of the run, and the few values that decide the next step: the answers given at the checkpoints, the verdicts of the analyst and of the validator, and the step chosen by the intent router. The content of the artifacts is kept in the database, not in the state, so the state stays small and every saved state can still be read later.
 
-The workflow of version~2 has seventeen steps connected by 27 transitions. The research steps follow each other in a fixed order (planner, corpus builder, stakeholder miner, persona generator); every other transition is conditional and is decided from the state alone, for example:
+The workflow of version~2 has twenty-two steps connected by 36 transitions. The research steps follow each other in a fixed order (planner, corpus builder, stakeholder miner, persona generator); every other transition is conditional and is decided from the state alone, for example:
 \begin{itemize}
     \item after the interviewer: to the persona agent for a new turn, or to the analyst when all interviews are complete;
     \item after the analyst: to the rework control node when the analysis needs interviews, otherwise to the analysis checkpoint;
@@ -61,7 +61,7 @@ The prompt of every agent role is a text document with a version number, kept an
 \subsection{Model Layer and Structured Output}
 \label{sec:impl-llm}
 
-Agents never name a model: they ask for a model by role, and the model access module chooses the provider and the model of the role from a configuration file, the settings of the user and the settings of the run, then fixes this choice for the whole run. Each call asks the model for structured output that must conform to the output schema of the role. A usage gate around every call checks the cost limit of the run and the budget of the user before the call and records the token usage, including prompt cache reads and writes, after it. A response that cannot be parsed, for example a streamed generation that degenerates into a truncated tool call, is retried once before the step fails.
+Agents never name a model: they ask for a model by role, and the model access module chooses the provider and the model of the role from a configuration file, the settings of the user and the settings of the run, then fixes this choice for the whole run. Each call asks the model for structured output that must conform to the output schema of the role. A usage gate around every call checks the cost limit of the run and the budget of the user before the call and records the token usage, including prompt cache reads and writes, after it. A response that cannot be parsed, for example a streamed generation that degenerates into a truncated tool call, is retried twice before the step fails.
 
 After the call, the step turns the output into items and links and saves them; the integrity checks of the domain rules reject an inconsistent output. Some nodes add checks of their own, such as the corpus builder, which rejects a document whose URL the search did not return.
 
@@ -84,9 +84,9 @@ The web app follows the layers of Section~\ref{sec:sd-frontend}. Its main screen
 \section{Testing and Continuous Integration}
 \label{sec:impl-testing}
 
-\paragraph{Backend.} The backend has 247 automated tests. They cover the domain rules without a database; the consistency of the workflow description, the item formats and the prompts; the workflow itself, run with simulated language models; the document search; the automatic decisions; and the API end to end, including authentication, editing, exports, the event stream with review requests, and the execution of runs. Static checks verify code style and types, and enforce the allowed dependencies between the modules.
+\paragraph{Backend.} The backend has 658 automated tests, of which 10 are currently skipped. They cover the domain rules without a database; the consistency of the workflow description, the item formats and the prompts; the workflow itself, run with simulated language models; the document search; the automatic decisions; and the API end to end, including authentication, editing, exports, the event stream with review requests, and the execution of runs. Static checks verify code style and types, and enforce the allowed dependencies between the modules.
 
-\paragraph{Frontend.} The web app has unit and component tests, and end-to-end tests that drive the application in a browser (27 test suites). On every change, the continuous integration of the web app checks types and code style, runs the unit tests and reports their coverage, builds the application and runs the end-to-end tests; a second job captures screenshots of the screens.
+\paragraph{Frontend.} The web app has unit and component tests, and end-to-end tests that drive the application in a browser (20 test suites). On every change, the continuous integration of the web app checks types and code style, runs the unit tests and reports their coverage, builds the application and runs the end-to-end tests; a second job captures screenshots of the screens.
 
 \todo{Add the coverage figures. Not decided yet: whether a CI workflow for the backend is added before submission; if not, state that the backend checks run locally.}
 

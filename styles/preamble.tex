@@ -131,6 +131,13 @@
 }
 \AtBeginDocument{\renewcommand*\contentsname{Contents}}
 \AtBeginDocument{\renewcommand*\refname{References}}
+% The template loads Vietnamese names from vntex; this report is written in English.
+\AtBeginDocument{\renewcommand*\listfigurename{List of Figures}}
+\AtBeginDocument{\renewcommand*\listtablename{List of Tables}}
+\AtBeginDocument{\renewcommand*\chaptername{Chapter}}
+\AtBeginDocument{\renewcommand*\appendixname{Appendix}}
+\AtBeginDocument{\renewcommand*\figurename{Figure}}
+\AtBeginDocument{\renewcommand*\tablename{Table}}
 
 \thesisheadlayout
 %\usepackage{fancyhdr}
