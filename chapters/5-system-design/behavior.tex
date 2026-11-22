@@ -4,7 +4,7 @@
 \subsection{Run Lifecycle}
 \label{sec:sd-run-lifecycle}
 
-Work starts from the chat box: creating a thread starts nothing, the first message does. The first run of a project begins at the planner, and every later run, in any thread of the project, begins at the intent router (Figure~\ref{fig:pa-workflow}).
+Work starts from the chat box: creating a thread starts nothing, the first message does. Every run, in any thread of the project, begins at the intent router; a project that holds nothing yet always lands on the planner, because no later step has anything to read (Figure~\ref{fig:pa-workflow}).
 
 A run is a resource with a lifecycle (Figure~\ref{fig:sd-run-lifecycle}). It is \emph{unfinished} while it is \texttt{queued}, \texttt{running} or \texttt{interrupted}, and \emph{finished} once it is \texttt{succeeded}, \texttt{failed} or \texttt{cancelled}; a finished run never changes status again. An interrupted run waits for the user at a checkpoint with no time limit. A thread has at most one unfinished run.
 

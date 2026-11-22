@@ -3,7 +3,7 @@
 
 \subsection{Automatic Rework}
 \label{sec:pa-rework}
-When the analyst's result is not OK, because issues need a stakeholder's answer, the \texttt{rework\_elicitation} control node writes a \emph{rework directive}: a record that names the open ambiguity issues and conflicts to settle and the personas who can settle them. The interview continues with these personas; the interviewer reads the directive first and asks about the issues, and the new messages are appended to the same transcripts. The analyst then runs again on the current analysis and resolves the issues the new answers settle. The number of rework loops is bounded by \texttt{max\_iterations}.
+When the analyst's result is not OK, because issues need a stakeholder's answer, a control node writes a \emph{rework directive}: a record that names the open ambiguity issues and conflicts to settle and the personas who can settle them. The interview continues with these personas; the interviewer reads the directive first and asks about the issues, and the new messages are appended to the same transcripts. The analyst then runs again on the current analysis and resolves the issues the new answers settle. The number of rework loops is bounded by the maximum review rounds.
 
 \subsection{Human Review Checkpoints}
 \label{sec:pa-checkpoints}
@@ -17,16 +17,18 @@ At a checkpoint the run pauses and waits for the user (Table~\ref{tab:pa-checkpo
         \hline
         \textbf{Checkpoint} & \textbf{Reviewed artifact} & \textbf{Options and next node} \\
         \hline
-        \texttt{checkpoint\_personas} & Persona catalog, editable & Approve (after edits) $\rightarrow$ interviewer \\
-        \texttt{checkpoint\_analysis} & Requirements analysis, editable & Accept $\rightarrow$ requirement engineer; reject and re-analyse $\rightarrow$ analyst; reject and re-interview $\rightarrow$ rework elicitation \\
-        \texttt{checkpoint\_spec} & Requirement specification & OK $\rightarrow$ backlog manager; not OK $\rightarrow$ requirement engineer \\
+        Finalize the interviewees & Persona catalog, editable & Approve (after edits) $\rightarrow$ interviewer \\
+        Review the analysis & Requirements analysis, editable & Accept $\rightarrow$ requirement engineer; reject and re-analyse $\rightarrow$ analyst; reject and re-interview $\rightarrow$ rework elicitation \\
+        Review the specification & Requirement specification, editable & OK $\rightarrow$ backlog manager; not OK $\rightarrow$ requirement engineer \\
         \hline
     \end{tabularx}
 \end{table}
 
+Every review also offers an option \emph{Something else}: it asks the user for words and sends them to the intent router as a message, so a decision that no option expresses is still possible.
+
 \subsection{Incremental Intent Routing}
 \label{sec:pa-intent-router}
-A message the user sends while the run works is taken in at the next safe point, after a node finishes: the intent router decides which node should handle it (planner, interviewer, analyst, requirement engineer or backlog manager) and the run continues there. A later run of the same thread starts at the intent router; only the first run of a project starts at the planner.
+A message the user sends while the run works is taken in at the next safe point, after a node finishes: the intent router decides which node should handle it (planner, interviewer, analyst, requirement engineer or backlog manager) and the run continues there. Every run starts at the intent router, the first one included; a project that holds nothing yet is sent on to the planner.
 
 The intent router reads the pending messages, newest first, together with the current specification and backlog, chooses the node whose artifact the message changes, and restates the intent as one instruction to that node. Some examples:
 \begin{itemize}

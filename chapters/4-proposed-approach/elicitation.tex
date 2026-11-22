@@ -1,12 +1,12 @@
 \section{Persona-Based Elicitation Interviews}
 \label{sec:pa-elicitation}
 
-Each persona is interviewed by two agents that alternate: the \emph{interviewer} asks one question, the \emph{persona agent} answers it in the role of the persona. The interview of a persona ends when the interviewer decides that the plan is sufficiently covered for this persona, or when \texttt{max\_turns} is reached; then the next persona is interviewed. When all personas are done, the workflow moves to the analyst. Each interview is stored as an \emph{interview transcript} artifact, one per persona, whose items are the messages, each with a key such as \texttt{PER-001\#4} that later requirements cite as evidence.
+Each persona is interviewed by two agents that alternate: the \emph{interviewer} asks one question, the \emph{persona agent} answers it in the role of the persona. The interview of a persona ends when the interviewer decides that the plan is sufficiently covered for this persona, or when the maximum number of turns is reached; then the next persona is interviewed. When all personas are done, the workflow moves to the analyst. Each interview is stored as an \emph{interview transcript} artifact, one per persona, whose items are the messages, each with a key such as \texttt{PER-001\#4} that later requirements cite as evidence.
 
 \subsection{Interviewer}
 \label{sec:pa-interviewer}
 
-The interviewer receives the plan, the persona, the transcript so far, the turn number and, on a rework round, the directive that names what must be clarified. At every turn it chooses the most valuable topic of the plan not yet covered for this persona and asks exactly one question that builds on the previous answers, asking for numbers and concrete examples. It never repeats a question of the transcript. On a rework round it first addresses the directive. When it stops, it writes a one-sentence summary of what the interviewee said, shown at the top of the transcript.
+The interviewer receives the plan, the persona, the last turns of the transcript, the turn number and, on a rework round, the directive that names what must be clarified. At every turn it chooses the most valuable topic of the plan not yet covered for this persona and asks exactly one question that builds on the previous answers, asking for numbers and concrete examples. It never repeats a question of the transcript. On a rework round it first addresses the directive. When it stops, it writes a one-sentence summary of what the interviewee said, shown at the top of the transcript.
 
 \subsection{Persona Agent}
 \label{sec:pa-persona-agent}

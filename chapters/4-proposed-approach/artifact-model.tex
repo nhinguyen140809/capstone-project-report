@@ -31,21 +31,21 @@ The output of the workflow has two levels: \emph{artifacts}, the work products, 
         \hline
         \textbf{Link type} & \textbf{Source} & \textbf{Target} \\
         \hline
-        \texttt{evidenced\_by} & Raw requirement, latent need; stakeholder observation & Interview message; source document \\
-        \texttt{grounded\_in} & Persona & Stakeholder observation \\
-        \texttt{stated\_by} & Raw requirement & Persona \\
-        \texttt{involves} & Analyzed requirement, latent need, conflict & Persona \\
-        \texttt{derived\_from} & Analyzed req.; specification req.; backlog item & Raw req., latent need; analyzed req.; specification req. \\
-        \texttt{concerns} & Assumption, ambiguity issue, conflict & Raw, analyzed or specification requirement \\
-        \texttt{resolved\_by} & Ambiguity issue, conflict & Interview message \\
-        \texttt{flags} & Validation issue & Any item \\
-        \texttt{depends\_on} & Specification requirement, backlog item & Item of the same kind \\
-        \texttt{duplicates}, \texttt{supersedes} & Any item & Item of the same kind \\
+        Evidenced by & Raw requirement, latent need; stakeholder observation & Interview message; source document \\
+        Grounded in & Persona & Stakeholder observation \\
+        Stated by & Raw requirement & Persona \\
+        Involves & Analyzed requirement, latent need, conflict & Persona \\
+        Derived from & Analyzed req.; specification req.; backlog item & Raw req., latent need; analyzed req.; specification req. \\
+        Concerns & Assumption, ambiguity issue, conflict & Raw, analyzed or specification requirement \\
+        Resolved by & Ambiguity issue, conflict & Interview message \\
+        Flags & Validation issue & Any item \\
+        Depends on & Specification requirement, backlog item & Item of the same kind \\
+        Duplicates, supersedes & Any item & Item of the same kind \\
         \hline
     \end{tabularx}
 \end{table}
 
-Figure~\ref{fig:pa-trace-model} shows the same model as a UML class diagram: every item kind is a class, which specializes the generic \texttt{ArtifactItem} of the database (Figure~\ref{fig:sd-domain-model}), and every link type is a navigable association.
+Figure~\ref{fig:pa-trace-model} shows the same model as a UML class diagram: every item kind is a class, which specializes the generic artifact item of the database (Figure~\ref{fig:sd-domain-model}), and every link type is a navigable association.
 
 \begin{figure}[H]
     \centering
@@ -62,15 +62,15 @@ Since agents write the output, the system cannot trust it: every write of an art
     \item \textbf{Content}: the content of an artifact or an item is valid against the content schema of its kind and schema version, and every value taken from a value list (priority, quality category, ambiguity type, conflict type, validation category) exists in the workflow definition in use.
     \item \textbf{Plan values}: a field that refers to the plan, such as the stakeholder type of a persona, takes only values listed in the current elicitation plan.
     \item \textbf{Link type}: the pair of source and target kinds is allowed for the link type (Table~\ref{tab:pa-links}); links of some types can be created only by agents.
-    \item \textbf{No cycle}: following \texttt{derived\_from}, \texttt{depends\_on} or \texttt{supersedes} links from an item never returns to it.
+    \item \textbf{No cycle}: following \emph{derived from}, \emph{depends on} or \emph{supersedes} links from an item never returns to it.
     \item \textbf{Exact quotes}: the quote of a link is copied exactly from the item it quotes, as one run of words of at most 300 characters.
-    \item \textbf{Supersedes}: creating a \texttt{supersedes} link marks its target as superseded. An agent may change only the lifecycle fields of an existing item (the status of an issue, the disposition of a latent need); any other change is a new item.
+    \item \textbf{Supersedes}: creating a \emph{supersedes} link marks its target as superseded. An agent may change only the lifecycle fields of an existing item (the status of an issue, the disposition of a latent need); any other change is a new item.
 \end{itemize}
 The checks are pure functions over data, used both by the workflow and by the API, so that an item created by an agent and an item edited by the user cannot follow different rules. An agent output that fails a check is rejected, and the step fails instead of saving an inconsistent artifact.
 
 \subsection{Versioning}
 \label{sec:pa-versioning}
 
-Artifacts and items are versioned: every change creates a new revision and old revisions are never rewritten. The workflow state holds \emph{references} to artifacts and items at the version a step used, not copies of their content, so every saved checkpoint of a run stays readable and every result can be reproduced from the versions it was computed from. The workflow itself is versioned the same way: the agent roles, nodes, checkpoints, item kinds, link types and value lists form a \emph{workflow definition} with a version number, and every run records the version it ran with. Version 2, presented in this chapter, adds the research corpus, the stakeholder observations and the \texttt{grounded\_in} link to version 1, whose personas are generated from the plan alone; version 1 remains available as the ungrounded baseline of the evaluation.
+Artifacts and items are versioned: every change creates a new revision and old revisions are never rewritten. The workflow state holds \emph{references} to artifacts and items at the version a step used, not copies of their content, so every saved checkpoint of a run stays readable and every result can be reproduced from the versions it was computed from. The workflow itself is versioned the same way: the agent roles, nodes, checkpoints, item kinds, link types and value lists form a \emph{workflow definition} with a version number, and every run records the version it ran with. Version 2, presented in this chapter, adds the research corpus, the stakeholder observations and the \emph{grounded in} link to version 1, whose personas are generated from the plan alone; version 1 remains available as the ungrounded baseline of the evaluation.
 
 From the trace graph the system derives a \emph{traceability matrix} and a coverage view, which show for each requirement its sources and its backlog items, and reveal requirements without a source and requirements without a story.
