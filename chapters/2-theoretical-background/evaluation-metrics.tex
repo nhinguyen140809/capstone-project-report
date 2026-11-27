@@ -28,7 +28,7 @@ Reference requirements are rarely complete, and a good elicitation may find vali
     \begin{equation}
         \mathrm{MDC} = \frac{1}{n}\sum_{i=1}^{n} \left\lVert \mathbf{e}_i - \bar{\mathbf{e}} \right\rVert .
     \end{equation}
-    \item \textbf{Convex Hull Volume (CHV)}~\cite{ataei2025elicitron, jin2025iredev} is the volume of the smallest convex set that contains all embeddings, after a reduction to a few dimensions (for example by principal component analysis), since a convex hull in the original high-dimensional space is degenerate. A larger volume means the requirements spread over a larger region of the space. \todo{Check how Elicitron and iReDev reduce the dimensions before computing CHV, and use the same method as the evaluation code.}
+    \item \textbf{Convex Hull Volume (CHV)}~\cite{ataei2025elicitron, jin2025iredev} is the volume of the smallest convex set that contains all embeddings, after a reduction to a few dimensions (for example by principal component analysis), since a convex hull in the original high-dimensional space is degenerate. A larger volume means the requirements spread over a larger region of the space.
     \item \textbf{Vendi Score}~\cite{friedman2023vendi} is the effective number of distinct requirements. With the similarity matrix $K_{ij} = \mathrm{sim}(\mathbf{e}_i, \mathbf{e}_j)$ and $\lambda_1, \dots, \lambda_n$ the eigenvalues of $K/n$,
     \begin{equation}
         \mathrm{VS} = \exp\!\left(-\sum_{i=1}^{n} \lambda_i \log \lambda_i\right),

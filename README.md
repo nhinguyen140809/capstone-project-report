@@ -42,7 +42,6 @@ Convention:
 - Tên đề tài, giai đoạn, sinh viên, giảng viên và ngày tháng chỉ được khai báo tại `metadata.tex`. Trang bìa, lời cam đoan và PDF properties đều lấy thông tin từ file này. Chẳng hạn, trước khi nộp giai đoạn 2, chỉ cần sửa `\newcommand{\reportphase}{Phase 2}` và `\reportdate` thay vì tìm và sửa từng vị trí.
 - Với hình vẽ bằng công cụ như draw.io hay Excalidraw, cần commit cả file source để có thể chỉnh sửa về sau (xem mục [Figures và file source của diagram](#figures-và-file-source-của-diagram)).
 - Tên hệ thống đề xuất chỉ khai báo một lần bằng macro `\sysname` trong `metadata.tex`; khi chốt tên, chỉ cần sửa tại đó.
-- Phần chưa viết được đánh dấu bằng `\todo{...}` (in màu đỏ trong PDF). Trước khi nộp, tìm `\todo` trong source để biết phần còn thiếu.
 - Commit message theo Conventional Commits với tập `type` và `scope` riêng cho project, xem [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Ví dụ, để thêm chương 6 về evaluation:

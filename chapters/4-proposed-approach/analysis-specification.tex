@@ -4,38 +4,19 @@
 \subsection{Requirements Analysis}
 \label{sec:pa-analyst}
 
-The analyst reads all transcripts and writes the \emph{requirements analysis}, which contains six kinds of items:
-\begin{itemize}
-    \item \textbf{Raw requirements}: every need, wish or complaint a persona stated, one per item and close to the persona's words. Each is linked to the persona who stated it (a \emph{stated by} link) and to the messages it comes from, with their exact words (an \emph{evidenced by} link).
-    \item \textbf{Latent needs}: needs that no persona stated but that their words imply, with the reasoning, the messages they rest on, and a confidence.
-    \item \textbf{Analyzed requirements}: raw requirements merged when they say the same thing and split when they say several things, each written as one clear, testable statement, with a type, a quality category, a MoSCoW priority and a rationale. Each is linked to the raw requirements or latent needs it is derived from (a \emph{derived from} link) and to the personas who want it (an \emph{involves} link).
-    \item \textbf{Assumptions}: what the analyst took as true where the interviews were silent, with what changes if it is wrong.
-    \item \textbf{Ambiguity issues}: wording that can be read in more than one way or lacks a needed detail, with its type (lexical, syntactic, semantic, vague or incomplete), the exact wording, and the question that would settle it.
-    \item \textbf{Conflicts}: requirements or wishes of different personas that cannot all hold, with their type (between requirements, between stakeholders, or with a constraint), the sides, a severity and the possible resolutions.
-\end{itemize}
-
-Two rules keep the analysis honest. First, the analyst never invents a number, a limit or a name that no persona gave: such a gap is recorded as an ambiguity issue. Second, an ambiguity issue or a conflict is marked \emph{open} only when a stakeholder can settle it; otherwise it becomes an assumption. The open issues decide the next step: when some of them need a stakeholder's answer, the analysis is not OK and the workflow returns to the interviews (Section~\ref{sec:pa-rework}); otherwise it goes to the analysis checkpoint.
-
-On a rework loop the analyst starts from the current analysis and adds only what is new. It never edits the meaning of an existing item: a changed item is a new item that replaces the old one, and an issue settled by new answers is returned with its status set to \emph{resolved}, a resolution, and a \emph{resolved by} link to the message that settles it. The history of the analysis is therefore preserved.
+The analyst is responsible for turning the interviews into a \emph{requirements analysis}. It receives the plan topics, the personas, the transcripts and, in a rework round, the current analysis. It produces six kinds of items: \emph{raw requirements}, the needs that a persona stated, each linked to the persona who \emph{stated} it and \emph{evidenced by} the exact words of the interview; \emph{latent needs}, implied but not stated; \emph{analyzed requirements}, single testable statements with a type and a MoSCoW priority, \emph{derived from} raw requirements or latent needs; and \emph{assumptions}, \emph{ambiguity issues} and \emph{conflicts}. An issue is marked open only when a stakeholder can settle it, and the open issues decide whether the workflow returns to the interviews (Section~\ref{sec:pa-rework}). Existing items are never edited: a changed item is a new item that \emph{supersedes} the old one, so the history of the analysis is preserved, and every requirement remains traceable to the interview statement it comes from.
 
 \subsection{Requirement Specification}
 \label{sec:pa-specification}
 
-The requirement engineer writes the \emph{requirement specification} from the analyzed requirements, the latent needs, the assumptions and the conflicts. The specification opens with its frame: purpose, scope, what is out of scope, and the definitions of the terms the requirements use. Each requirement is then written as one testable statement with a short title, classified as functional (``The system shall \ldots''), non-functional or constraint, and given:
-\begin{itemize}
-    \item measurable acceptance criteria, at least one for a functional requirement;
-    \item for a non-functional requirement, its quality category and a measurable \emph{fit criterion};
-    \item a priority, a rationale that names its sources, and a verification method;
-    \item \emph{derived from} links to the analyzed requirements and latent needs it is built from, and \emph{depends on} links to the requirements that must be met first.
-\end{itemize}
-The requirement engineer uses only the items it receives and does not invent requirements, which keeps every requirement traceable to the interviews. These rules implement the quality characteristics of ISO/IEC/IEEE 29148~\cite{iso29148}: singular, verifiable and traceable requirements.
+The requirement engineer is responsible for the \emph{requirement specification}. It receives the analyzed requirements, the latent needs, the assumptions and the conflicts, and writes the frame of the specification (purpose, scope and definitions) and requirements that are functional, non-functional or constraints. Each requirement has measurable acceptance criteria or a fit criterion, a priority, a rationale and a verification method, and is \emph{derived from} the analyzed requirements it is built from. It uses only the items it receives, so every requirement stays traceable to the interviews, in line with the quality characteristics of ISO/IEC/IEEE 29148~\cite{iso29148}.
 
 \subsection{Product Backlog}
 \label{sec:pa-backlog}
 
-The backlog manager turns every specified requirement into backlog items. It writes the product goal and the ordering principle of the backlog, then expresses each requirement as one or more user stories in the form ``As a \ldots, I want \ldots, so that \ldots'', splitting compound requirements and grouping stories that serve one goal under an \emph{epic}. Every story has acceptance criteria in Given/When/Then form, a priority aligned with its source requirement, and an estimate in story points. Two coverage rules hold: every story implements at least one requirement through a \emph{derived from} link, and every requirement is implemented by at least one story.
+The backlog manager is responsible for the \emph{product backlog}. It receives the specification and writes epics and user stories in the form ``As a \ldots, I want \ldots, so that \ldots'', with acceptance criteria in Given/When/Then form, a priority aligned with the source requirement and an estimate in story points. The backlog covers the specification in both directions: every story is \emph{derived from} at least one requirement, and every requirement is implemented by at least one story.
 
 \subsection{Validation}
 \label{sec:pa-validation}
 
-The validator is a strict, independent reviewer that reports problems and never rewrites the artifacts. It checks that every requirement has what its type demands (acceptance criteria, a fit criterion, a rationale and a verification method), that the backlog covers the specification in both directions, that the acceptance criteria of a story make the criteria of its requirement measurable, and which open issues of the analysis still block a build. Each problem becomes a \emph{validation issue} in exactly one category (elicitation, analysis, specification, backlog or traceability), with a severity, a description and a concrete suggestion, and a \emph{flags} link to the items where it lives. A pass with no blocking issue ends the run; otherwise the run returns to the requirement engineer with the issues as feedback, until the maximum review rounds are reached, after which the run closes with the last report instead of failing.
+The validator is responsible for an independent check of the specification and the backlog; it reports problems and never rewrites the artifacts. It receives the specification, the backlog and the issues of the analysis that are still open, and produces a validation report whose issues each belong to one category, carry a severity and a suggestion, and \emph{flag} the items concerned. A pass ends the run; otherwise the run returns to the requirement engineer, until the maximum review rounds are reached, after which the run closes with the last report instead of failing.

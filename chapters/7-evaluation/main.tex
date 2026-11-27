@@ -1,30 +1,26 @@
-\chapter{Experiments and Evaluation}
+\chapter{Evaluation Plan}
 \label{chap:evaluation}
-\textit{This chapter presents how \sysname{} is evaluated with respect to RQ1: the evaluation questions, the scenarios and baselines, the metrics and the experimental setup, a case study of one run, and the results. The experiments are conducted in parallel with the writing of this report; the parts that depend on them are marked as being updated.}
+\textit{This chapter presents the plan of the experiments that will answer RQ1: the evaluation questions, the scenarios, the compared methods, the metrics, the analysis and the setup of the runs. It ends with one run of the system on a real idea, which shows that the workflow runs on real models and real documents, and with the threats to the validity of the planned study.}
 
 \section{Evaluation Questions}
 \label{sec:eval-rq}
 
-The evaluation of this phase addresses RQ1 (Section~\ref{sec:research-questions}): \emph{to what extent can multiple stakeholder agents with different perspectives contribute to requirements elicitation and refinement?} It is refined into the following questions:
+The evaluation addresses RQ1 (Section~\ref{sec:research-questions}): \emph{to what extent can multiple stakeholder agents with different perspectives contribute to requirements elicitation and refinement?} The study refines it into four questions:
 \begin{itemize}
-    \item \textbf{EQ1 (coverage and diversity).} Do multiple persona agents expand the explored requirement space compared with eliciting from a single perspective, or generating the requirements directly from the idea?
-    \item \textbf{EQ2 (grounding).} Do personas grounded in evidence (workflow version 2) lead to more relevant and more diverse requirements than personas generated from the idea alone (workflow version 1)?
-    \item \textbf{EQ3 (quality).} Are the specification and the backlog produced by the multi-agent workflow of higher quality, with respect to ISO/IEC/IEEE 29148 and INVEST, than those of the baselines?
-    \item \textbf{EQ4 (cost).} What do these gains cost, in tokens, money and time, per run and per agent role?
+    \item \textbf{EQ1 (coverage and diversity).} Do multiple persona agents expand the explored requirement space compared with eliciting from a single perspective, or with generating the requirements directly from the idea?
+    \item \textbf{EQ2 (grounding).} Do personas grounded in evidence lead to more relevant and more diverse requirements than personas generated from the idea alone?
+    \item \textbf{EQ3 (quality).} Is the quality of the specification and of the backlog, with respect to ISO/IEC/IEEE 29148 and the INVEST criteria, higher than that of the baselines?
+    \item \textbf{EQ4 (cost).} What does each method cost in tokens, money and time, per run and per agent role?
 \end{itemize}
-\updating{the final list of evaluation questions.}
 
-\section{Experimental Setup}
-\label{sec:eval-setup}
-
-\subsection{Scenarios}
+\section{Scenarios}
 \label{sec:eval-datasets}
 
-The candidate dataset is a set of eight author-defined product scenarios across different domains, which vary domain, risk, data sensitivity, number of stakeholders, workflow complexity and ambiguity while keeping each input short enough that every method receives exactly the same evidence (Table~\ref{tab:eval-scenarios}). Each scenario has a one-sentence intent, a short context, the expected stakeholder types, constraints, goals, in-scope items and an ambiguity level. The benchmark cases used by prior multi-agent RE frameworks, such as those of MARE~\cite{mare2024} and iReDev~\cite{jin2025iredev}, are candidates for a comparison with reported results.
+The study uses eight product scenarios written by the authors (Table~\ref{tab:eval-scenarios}). Each scenario gives a one-sentence idea, a short context, constraints, goals and the items in scope. The scenarios are chosen to vary four factors that are expected to affect elicitation: the domain, the number of stakeholder types (four or five), the level of ambiguity of the idea (low, medium or high) and the risks involved, such as privacy, safety, fairness or financial integrity. Every input is short enough that all methods receive exactly the same information, which makes the comparison fair. The study may also include benchmark cases used by prior multi-agent frameworks, such as those of MARE~\cite{mare2024} and iReDev~\cite{jin2025iredev}, so that the results can be related to published ones.
 
 \begin{table}[H]
     \centering
-    \caption{Candidate scenarios of the evaluation.}
+    \caption{Scenarios of the planned evaluation.}
     \label{tab:eval-scenarios}
     \begin{tabularx}{\linewidth}{|X|l|c|c|}
         \hline
@@ -41,24 +37,38 @@ The candidate dataset is a set of eight author-defined product scenarios across 
         \hline
     \end{tabularx}
 \end{table}
-\updating{the final set of scenarios: scenarios may be added or removed, and the cases of MARE and iReDev may be included, while the experiments are in progress.}
 
-\subsection{Baselines and Variants}
+\section{Compared Methods}
 \label{sec:eval-baselines}
 
-The candidate methods are compared on the same scenarios:
+The study compares four methods on the same scenarios. Each method is chosen to isolate one factor:
 \begin{itemize}
-    \item \textbf{Direct prompting}: one LLM call generates the requirements and the backlog from the scenario.
-    \item \textbf{Single agent}: one agent elicits from a single generic user and writes the specification and the backlog.
-    \item \textbf{Agentic, ungrounded}: the full workflow with personas generated from the idea alone (workflow version 1).
-    \item \textbf{Agentic, grounded}: the full workflow with evidence-grounded personas (workflow version 2), the proposed method.
+    \item \textbf{Direct prompting}: one LLM call generates the requirements and the backlog from the scenario. Compared with the other methods, it shows what elicitation adds at all.
+    \item \textbf{Single agent}: one agent elicits from a single generic user and then writes the specification and the backlog. Compared with the multi-agent methods, it isolates the effect of multiple perspectives.
+    \item \textbf{Multi-agent, ungrounded}: the full workflow with personas generated from the idea alone. Compared with the next method, it isolates the effect of grounding the personas in evidence.
+    \item \textbf{Multi-agent, grounded}: the full workflow with evidence-grounded personas, the proposed method.
 \end{itemize}
-Further variants study the number of personas and the effect of the rework loop. \updating{the final set of baselines and ablations.}
+Additional variants of the proposed method change the number of personas and turn off the automatic rework loop, to measure the effect of each.
 
-\subsection{Evaluation Harness}
-\label{sec:eval-harness}
+\section{Metrics}
+\label{sec:eval-metrics}
 
-Experiments run the same agent workflow as the product through an evaluation harness, without the web app or the database (Figure~\ref{fig:eval-harness}). A review policy answers the checkpoints (scripted answers, always approve, or an LLM reviewer), and one record is written per run with its steps, usage and artifacts. The metrics are computed in a separate step from the records, so that a metric or a judge rubric can change without running the workflow again.
+The metrics of Section~\ref{sec:bg-metrics} are mapped to the evaluation questions as follows:
+\begin{itemize}
+    \item \textbf{EQ1 and EQ2.} The number of distinct requirements of a run; the Mean Distance to Centroid, the Convex Hull Volume and the Vendi Score of the embeddings of these requirements, which measure how widely they spread over the space of possible requirements; the number of latent needs; the number of stakeholder types that the requirements cover; and, where reference requirements exist, the share of them that the run recovers.
+    \item \textbf{EQ3.} The quality characteristics of ISO/IEC/IEEE 29148 for each requirement of the specification and the INVEST criteria for each user story, each scored on a scale from 1 to 5 by an LLM judge whose model differs from the models that generate the artifacts. A sample of the artifacts is also scored by two human raters, and their agreement with the judge is measured, so that the judge scores can be trusted or corrected.
+    \item \textbf{EQ4.} The input, output and cached tokens, the cost and the duration of each run and of each agent role, as recorded by the system for every step.
+\end{itemize}
+
+\section{Analysis}
+\label{sec:eval-analysis}
+
+Each method is run several times on each scenario, because the same input can give different outputs. For every metric, the study reports the mean and the standard deviation over the runs of each scenario and method. The proposed method is compared with each other method in pairs, on the same scenarios, and the differences are tested with a paired non-parametric test, which suits the small number of scenarios, together with an effect size. The results will be presented as one table per evaluation question, with one row per method and one column per metric, followed by the comparison of the variants of the proposed method and a breakdown of the cost per agent role.
+
+\section{Setup of the Runs}
+\label{sec:eval-details}
+
+All methods will run through the same evaluation harness and use the same models, so that differences come from the methods and not from the models (Figure~\ref{fig:eval-harness}). The harness runs the agent workflow without the web application, answers the checkpoints with a fixed review policy, and writes one record per run with its steps, usage and artifacts. The metrics are computed afterwards from these records, so that a metric or a judge rubric can change without running the methods again. The configuration of every run, which includes the model of each agent role, the temperature and the run parameters (Table~\ref{tab:pa-run-parameters}), is fixed before the runs and stored with each record. The decision layer of Section~\ref{sec:pa-decisions} is part of this configuration: it stays off unless a decision provider is configured for the study.
 
 \begin{figure}[H]
     \centering
@@ -67,25 +77,10 @@ Experiments run the same agent workflow as the product through an evaluation har
     \label{fig:eval-harness}
 \end{figure}
 
-\subsection{Metrics}
-\label{sec:eval-metrics}
-
-The metrics of Section~\ref{sec:bg-metrics} are mapped to the evaluation questions as follows:
-\begin{itemize}
-    \item \textbf{EQ1, EQ2}: number of distinct requirements, Mean Distance to Centroid, Convex Hull Volume and Vendi Score of the requirement embeddings; number of latent needs; number of stakeholder types covered; recall against reference requirements where a reference exists.
-    \item \textbf{EQ3}: ISO/IEC/IEEE 29148 characteristics of the specification requirements and INVEST criteria of the user stories, scored by an LLM-as-a-judge and checked on a sample by human raters.
-    \item \textbf{EQ4}: input, output and cached tokens, cost and duration per run and per agent role.
-\end{itemize}
-\updating{the final metrics and the judge rubric.}
-
-\subsection{Implementation Details}
-\label{sec:eval-details}
-\updating{the model of each agent role, the temperature, the run parameters (Table~\ref{tab:pa-run-parameters}), the number of repeats per scenario, and the judge model.}
-
-\section{Case Study}
+\section{Demonstration Run}
 \label{sec:eval-case-study}
 
-This section follows one run of the system through the HTTP API of the backend, with real LLM calls and real search, on the idea ``\textit{Build a platform that helps university students find career mentors}''. The project was created with Vietnamese as output language, and the members uploaded one short document of notes collected at a university. The run took about 33 minutes. \updating{the case study will be replaced by a complete run, with its requirements, specification and backlog.}
+Before the planned study, the system was run once through its API, with real LLM calls and real search, on the idea ``\textit{Build a platform that helps university students find career mentors}''. The project was created with Vietnamese as output language, and the members uploaded one short document of notes collected at a university. The run took about 33 minutes and went from the idea to the interviews. It shows that the first half of the workflow, from planning to persona-based interviews, runs on real models and real documents and keeps its evidence chain; it is not evidence of the quality of the requirements, which the planned study addresses.
 
 \paragraph{Plan.} The planner listed six stakeholder types: students seeking career guidance, potential mentors, career services staff, university administrators, platform administrators, and employers and industry partners. Its topics include the current channels students use and their frustrations, the outcomes expected from mentoring, matching criteria, interaction formats, and credential verification.
 
@@ -107,27 +102,9 @@ The three personas carry different, partly conflicting priorities: the student w
 
 \paragraph{Interview.} The interviews produced 22 messages. The first question to Linh asked what she did after two internship rejections, whom she turned to, and how long she waited for a useful answer. In her answer, the persona described turning first to her class group chat, where replies came quickly but were ``mostly sympathy'', and later explained that a mentor profile is only credible to her when it shows a specific title and company: ``If it just says `Marketing professional, 8 years experience' with no company --- skip.'' The plan had a topic on profile content and credential verification; the persona turned it into a concrete criterion of credibility, which the uploaded notes did not contain.
 
-\paragraph{Honesty checks.} On the data of this run, every observation quote was found word for word in its source document (8 of 8), every observation named an existing source (8 of 8), every web source had a real URL (3 of 3), and every evidence quote of a persona matched its observation exactly (6 of 6). Every persona also used one of the stakeholder types of the plan (3 of 3). The automatic report produced after the run listed this last check as failed, but a manual re-check of the stored artifacts shows that the three types match the plan exactly; the failure came from the report script, not from the system.
+\paragraph{Checks of the evidence chain.} On the data of this run, every observation quote was found word for word in its source document (8 of 8), every observation named an existing source (8 of 8), every web source had a real URL (3 of 3), every evidence quote of a persona matched its observation exactly (6 of 6), and every persona used one of the stakeholder types of the plan (3 of 3).
 
-\section{Results}
-\label{sec:eval-results}
-
-\subsection{Requirement Coverage and Diversity}
-\label{sec:eval-coverage}
-\updating{table of the number of requirements, MDC, CHV, Vendi Score, latent needs and covered stakeholder types, per scenario and method.}
-
-\subsection{Effect of Grounding}
-\label{sec:eval-grounding}
-\updating{comparison of workflow versions 1 and 2.}
-
-\subsection{Specification and Backlog Quality}
-\label{sec:eval-quality}
-\updating{ISO/IEC/IEEE 29148 and INVEST scores by the LLM judge and by human raters.}
-
-\subsection{Cost and Latency}
-\label{sec:eval-cost}
-\updating{tokens, cost and duration per run and per agent role.}
-
-\section{Discussion}
+\section{Threats to Validity}
 \label{sec:eval-discussion}
-\updating{answer to RQ1 from EQ1--EQ4.} The threats to validity to discuss include the bias of an LLM judge towards outputs of its own model family~\cite{zheng2023judging}, the possibility that the scenarios or the benchmark cases are known to the models, the non-determinism of the models, which requires repeated runs, and the dependence of the grounded personas on the quality of the documents that the search returns.
+
+The answer to RQ1 will rest on the comparisons of EQ1 to EQ3 between the methods, weighed against the cost measured for EQ4. Several threats can affect it. The scores of an LLM judge can be biased towards longer answers and towards outputs of its own model family~\cite{zheng2023judging}, which is why the judge uses a different model and is checked against human raters. The scenarios, or the published benchmark cases, may be known to the models, which would favor methods that rely on what the model already knows. The models are not deterministic, which requires repeated runs and the report of the variance. Diversity measures the spread of the requirements and not their relevance, so it is read together with quality and traceability. Finally, the grounded personas depend on the documents that the search returns, which vary across domains and over time; the corpus of every run is therefore stored with its record.

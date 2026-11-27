@@ -1,7 +1,7 @@
 \section{Non-Functional Requirements}
 \label{sec:sd-nfr}
 
-The \emph{Status} column follows the same convention as Table~\ref{tab:sd-fr}. \todo{Make every requirement measurable and review the status. NFR-05: provider keys are not stored yet, so their encryption is not implemented. NFR-08: depends on the evaluation harness. NFR-09: no tracing tool is integrated yet. NFR-10: draft, to be checked.}
+The \emph{Status} column follows the same convention as Table~\ref{tab:sd-fr}. NFR-05 is partly met because provider credentials are not stored yet, so their encryption is not in place; NFR-08 depends on the evaluation harness; no tracing tool is connected yet for NFR-09; and NFR-10 has not been assessed with users.
 
 \begingroup\setstretch{1.15}
 \begin{longtable}{|p{0.1\linewidth}|p{0.17\linewidth}|p{0.5\linewidth}|p{0.11\linewidth}|}
@@ -24,6 +24,6 @@ The \emph{Status} column follows the same convention as Table~\ref{tab:sd-fr}. \
     NFR-07 & Data integrity & Every artifact and item is validated against its versioned content schema and the integrity rules before it is saved. & Done \\ \hline
     NFR-08 & Reproducibility & Experiments import the same agent code as the product and record the workflow version, prompt versions, models and commit of every run. & Partial \\ \hline
     NFR-09 & Observability & Every agent step can be inspected in the LLM tracing tool. & Planned \\ \hline
-    NFR-10 & Usability & The current stage of a run, the pending review and the artifacts it changed are visible without leaving the thread page; a review needs no more than one screen. \todo{Check} & To check \\ \hline
+    NFR-10 & Usability & The current stage of a run, the pending review and the artifacts it changed are visible without leaving the thread page; a review needs no more than one screen. & Not assessed \\ \hline
 \end{longtable}
 \endgroup

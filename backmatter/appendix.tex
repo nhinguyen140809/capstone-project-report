@@ -185,56 +185,37 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Agent Prompts}
 \label{apx:prompts}
-Every agent role has its own prompt, with a version number and the structure described in Section~\ref{sec:impl-prompts}. Every role also receives the output language. Table~\ref{tab:apx-prompts} summarizes the prompts; the prompt of the analyst is reproduced below as an example. Words in double braces, such as \{\{ transcripts \}\}, are replaced by the data of the run at each call.
+Every agent role has its own prompt, with a version number and the structure described in Section~\ref{sec:impl-prompts}. All prompts share a common section of settings, and every role also receives the output language. The stakeholder miner and the persona generator use the third version of their prompts, the other roles the second. Table~\ref{tab:apx-prompts} summarizes the inputs and outputs of each prompt; the prompt of the analyst is reproduced below as an example. Words in double braces, such as \{\{ transcripts \}\}, are replaced by the data of the run at each call.
 
 \begin{table}[H]
     \centering
     \small
     \caption{Prompts of the agent roles.}
     \label{tab:apx-prompts}
-    \begin{tabularx}{\linewidth}{|l|c|X|p{3.4cm}|}
+    \begin{tabularx}{\linewidth}{|l|X|p{3.4cm}|}
         \hline
-        \textbf{Role} & \textbf{Version} & \textbf{Inputs} & \textbf{Output} \\
+        \textbf{Role} & \textbf{Inputs} & \textbf{Output} \\
         \hline
-        Planner & 1 & Intent & Elicitation plan \\ \hline
-        Corpus builder & 1 & Intent, plan, number of sources, search results & Source documents \\ \hline
-        Stakeholder miner & 1 & Intent, source, document text & Stakeholder observations \\ \hline
-        Persona generator & 2 & Intent, plan, observations, number of personas & Stakeholder groups, personas \\ \hline
-        Interviewer & 1 & Plan, persona, transcript, turn, turn limit reached, directive & Question or stop with summary \\ \hline
-        Persona agent & 1 & Persona, question, conversation & Answer \\ \hline
-        Analyst & 1 & Topics, personas, transcripts, current analysis, directive & Analysis items \\ \hline
-        Requirement engineer & 1 & Analyzed requirements, latent needs, assumptions, conflicts, current specification, directive & Specification requirements \\ \hline
-        Backlog manager & 1 & Specification, current backlog, directive & Epics and user stories \\ \hline
-        Validator & 1 & Specification, backlog, open issues, iteration & Verdict, validation issues \\ \hline
-        Intent router & 1 & Pending messages, specification, backlog & Target node, instruction \\ \hline
+        Planner & Product idea, current plan and the feedback of the user & Elicitation plan \\ \hline
+        Corpus builder & Product idea, plan, number of documents to keep, search results & Source documents \\ \hline
+        Stakeholder miner & Product idea, stakeholder groups already found, one source document & Stakeholder observations \\ \hline
+        Persona generator & Product idea, plan, observations, aspects to cover, number of personas & Stakeholder groups, personas \\ \hline
+        Interviewer & Plan, topics already covered, persona, transcript, turn, turn limit, rework directive & Question, or end of the interview with a summary \\ \hline
+        Persona agent & Persona, what the persona knows, question, conversation & Answer \\ \hline
+        Analyst & Plan topics, personas, transcripts, current analysis, rework directive & Analysis items \\ \hline
+        Requirement engineer & Analyzed requirements, latent needs, assumptions, conflicts, current specification, directive & Specification requirements \\ \hline
+        Backlog manager & Specification, current backlog, directive & Epics and user stories \\ \hline
+        Validator & Specification, backlog, open issues, review round & Verdict, validation issues \\ \hline
+        Intent router & Pending messages, recent history, project, specification, backlog & Target step and instruction \\ \hline
     \end{tabularx}
 \end{table}
 
 \section{Analyst Prompt}
 \label{apx:analyst-prompt}
 {\setstretch{1.0}
-\lstinputlisting[style=prompt]{backmatter/prompts/analyst.v1.md}
+\lstinputlisting[style=prompt]{backmatter/prompts/analyst.v2.md}
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Table of Workload}
-\label{apx:workload}
 
-\begin{table}[H]
-    \centering
-    \caption{Workload of the team members.}
-    \label{tab:apx-workload}
-    \begin{tabularx}{\linewidth}{|l|l|X|c|}
-        \hline
-        \textbf{Member} & \textbf{Student ID} & \textbf{Tasks} & \textbf{Contribution} \\
-        \hline
-        Pham Khanh Duy & 2310510 & \updating{tasks} & \updating{\%} \\
-        \hline
-        Nguyen Tran Yen Nhi & 2312506 & \updating{tasks} & \updating{\%} \\
-        \hline
-        Tang Hong Ai & 2310167 & \updating{tasks} & \updating{\%} \\
-        \hline
-    \end{tabularx}
-\end{table}
 
 \end{appendices}

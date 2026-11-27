@@ -88,9 +88,9 @@ The web app follows the layers of Section~\ref{sec:sd-frontend}. Its main screen
 
 \paragraph{Frontend.} The web app has unit and component tests, and end-to-end tests that drive the application in a browser (20 test suites). On every change, the continuous integration of the web app checks types and code style, runs the unit tests and reports their coverage, builds the application and runs the end-to-end tests; a second job captures screenshots of the screens.
 
-\todo{Add the coverage figures. Not decided yet: whether a CI workflow for the backend is added before submission; if not, state that the backend checks run locally.}
+The continuous integration of the backend runs on every change as well: it checks the code style, the types and the allowed dependencies between the modules, runs the automated tests, and runs end-to-end tests of the web application against the real backend.
 
 \section{Deployment}
 \label{sec:impl-deployment}
 
-For development, a Docker Compose file starts the API and the web app, each reloading on a change of its source; the web app is served on port 3000 and the API on port 8000, and the database is a SQLite file in a volume. Secrets, such as the provider API keys, are read from an environment file that is never committed. The models available to the agents are listed in a model configuration file, which can point to the public providers or to an OpenAI-compatible gateway. A seed script creates a demo user and sample projects. The production layout of Section~\ref{sec:sd-deployment} is the target of the next phase.
+For development, the API and the web app run in containers that reload when their source changes, with the database stored in a single file. Secrets, such as the keys of the model providers, are supplied by the operator and are never stored with the source. The models available to the agents are listed in a configuration that can point to the public providers or to a compatible gateway, and a script creates a demo user with sample projects. The production layout of Section~\ref{sec:sd-deployment} is the target of the next phase.

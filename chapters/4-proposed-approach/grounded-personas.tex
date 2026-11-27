@@ -13,42 +13,22 @@ The first stage of the workflow turns the product idea into a set of interviewab
 \subsection{Elicitation Planning}
 \label{sec:pa-planning}
 
-The planner reads the product idea and writes the \emph{elicitation plan}, the artifact that everything else grows out of. The plan contains the objectives of the elicitation (the questions it must answer), the topics a good interview covers, the information gaps that currently block a design, the stakeholder \emph{types} whose perspectives must be captured, the interview strategies, and the stopping conditions that say when enough has been gathered. The planner lists types, such as ``student'' or ``parking office staff'', never named people: the personas come later, from evidence. The stakeholder types of the plan also become a closed vocabulary: a later persona must name one of them as its stakeholder type, which the system checks.
+The planner is responsible for deciding what the elicitation must find out. It reads the product idea and the answers the user gave to the clarifying questions asked before the planning, and writes the \emph{elicitation plan}: the objectives of the elicitation, the topics to cover, the stopping conditions, and the stakeholder types that the interviews must represent, such as a student or a member of the parking office staff. These stakeholder types become a closed vocabulary: every persona built later must declare one of them as its stakeholder type, which the system checks.
 
 \subsection{Research Corpus}
 \label{sec:pa-corpus}
 
-The corpus builder assembles the \emph{research corpus}, the set of documents in which real stakeholders speak. Its input comes from two sources:
-\begin{enumerate}
-    \item \textbf{Documents uploaded by the project members}, such as survey results, interview notes or complaint logs. They come first, since they are the most specific evidence available.
-    \item \textbf{Search results.} Search queries are built in code from the topics and stakeholder types of the plan and from the product idea. They are sent to a web search service and to academic sources (OpenAlex and arXiv), which add paper abstracts.
-\end{enumerate}
-The agent then reads the hits and keeps as many documents as the run asks for, chosen to cover the stakeholder types of the plan together. A document is worth keeping only if it reports what stakeholders do, need, fear or value: studies, surveys, interviews and forum threads are preferred, while vendor pages and thin listicles are dropped. For each kept document the agent records its title, URL, publisher, an excerpt that shows the stakeholder voice, and the reason it is relevant to the plan.
-
-The agent may only select among the hits; it cannot invent a document. The node checks this after the call: an output that names a URL not returned by the search is rejected. When no usable document is found, the run stops with an explicit error that asks the user to upload documents, instead of letting the personas fall back to invention.
+The corpus builder is responsible for the \emph{research corpus}, the set of documents in which real stakeholders speak. Its inputs are the plan, the documents uploaded by the project members, which come first, and the results of its own web searches: it is the only role with a tool, a search that it calls repeatedly with queries of its own within a bounded number of rounds, until the stakeholder types of the plan are covered by documents of different kinds. From these candidates it keeps the requested number of documents that report what stakeholders do, need, fear or value, preferring studies, surveys, interviews and forum threads to vendor pages, and records for each one an excerpt and the reason it is relevant. The agent can only keep a document that the search or the members actually provided: an output that names any other document is rejected, and a run that finds no usable document stops with an explicit error instead of falling back to invented personas.
 
 \subsection{Stakeholder Observation Mining}
 \label{sec:pa-mining}
 
-The stakeholder miner reads one document at a time and returns \emph{stakeholder observations}. An observation is a tuple
-\begin{center}
-    (stakeholder group, description, evaluative dimension, evidence, source),
-\end{center}
-where the \emph{evaluative dimension} is a short label of what the group evaluates (for example ``spot-finding time''), and the \emph{evidence} is the exact sentence of the document that proves it. The miner returns one observation per distinct dimension of each stakeholder group the document reports; when several sentences prove the same dimension, it keeps the sharpest one. It records only the voice of stakeholders, never the claims of the authors or the marketing of vendors, and it returns nothing for a document without stakeholder voice.
-
-The evidence becomes the quote of an \emph{evidenced by} link from the observation to its source document, and the system checks that it appears word for word in the document. Observations are therefore the verified ground on which the personas are built.
+The stakeholder miner is responsible for extracting, from one document at a time, what the stakeholders in it care about. Each \emph{stakeholder observation} it returns records the group of people concerned, what they say or do, the evaluative dimension that this reveals (for example, the time spent finding a parking spot), the sentence that serves as evidence, and the document that contains it. Only the voice of stakeholders is recorded, never the claims of the authors or the marketing of vendors. The evidence must match the document word for word, which the system checks; observations are therefore the verified ground on which the personas are built, linked to their documents by \emph{evidenced by} links.
 
 \subsection{Persona Generation}
 \label{sec:pa-persona-generation}
 
-The persona generator builds the personas in three steps:
-\begin{enumerate}
-    \item \textbf{Clustering.} Observations whose stakeholder names and descriptions describe the same real group are clustered into a stakeholder group.
-    \item \textbf{Consolidation.} Within a group, observations that evaluate the same thing are merged into one dimension, while distinct dimensions are kept separate, since diverse perspectives make the interviews sharper.
-    \item \textbf{Construction.} One persona is built per distinct evaluative dimension, or per set of dimensions one person would naturally carry together, until the run has as many personas as it asks for.
-\end{enumerate}
-
-Each persona has the attributes recommended for RE personas~\cite{karolita2023what}: a name and demographics, a stakeholder type from the plan, a domain specialty, psychological traits, social relationships, goals, interests, constraints, priorities, concerns and behavioral tendencies. It also carries the evaluative dimension it embodies and the evidence it is built from, copied from its observations, and it is linked to these observations by \emph{grounded in} links. The generator may extend a persona beyond the evidence only where a real carrier of the dimension would reasonably go, and never against its observations. It gives the personas conflicting priorities where real stakeholders would have them, so that the interviews can surface conflicts, and it reports the stakeholder types of the plan that no evidence covers.
+The persona generator is responsible for turning the observations into the requested number of personas. It groups the observations that describe the same real group, merges those that evaluate the same thing, and builds one persona per distinct evaluative dimension or set of dimensions that one person would carry together. Each persona has the attributes recommended for RE personas~\cite{karolita2023what}, among them goals, constraints, priorities and concerns, and a stakeholder type taken from the vocabulary of the plan; it is linked by \emph{grounded in} links to the observations it is built from, together with their quotes. Personas are given conflicting priorities where real stakeholders would have them, so that the interviews can surface conflicts.
 
 For example, from a campus parking corpus, the observation ``Commuters report circling lots for 10 to 15 minutes before giving up and parking off campus'' of the group \emph{commuter students} leads to the persona ``Maya, 21, third-year biology major commuting 35 minutes'', of stakeholder type \emph{Student}, whose evaluative dimension is the time spent finding a spot.
 
