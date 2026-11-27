@@ -3,29 +3,29 @@
     \umlactor{res}{(-2.8,0)}{Researcher}
     \node[component] (runner) at (1.6,0) {\stereo{component}\\Runner};
     \node[component] (policy) at (1.6,2.2) {\stereo{component}\\Review policy};
-    \node[component] (wf) at (5.2,0) {\stereo{component}\\Agent workflow\\\tiny imported from the backend};
-    \node[component] (astore) at (4.0,-2.2) {\stereo{component}\\Artifact store\\\tiny in memory};
-    \node[component] (cstore) at (7.0,-2.2) {\stereo{component}\\Checkpoint store\\\tiny in memory};
+    \node[component] (wf) at (5.9,0) {\stereo{component}\\Agent workflow\\\tiny imported from the backend};
+    \node[component] (astore) at (4.1,-2.3) {\stereo{component}\\Artifact store\\\tiny in memory};
+    \node[component] (cstore) at (7.7,-2.3) {\stereo{component}\\Checkpoint store\\\tiny in memory};
     \node[component] (metrics) at (1.6,-4.4) {\stereo{component}\\Metrics and judges};
     \begin{scope}[on background layer]
         \node[draw, thick, fill=gray!6, fit=(runner)(policy)(wf)(astore)(cstore)(metrics), inner sep=0.45cm, label={[anchor=north west, font=\scriptsize]north west:\stereo{subsystem} Harness process}] (harness) {};
     \end{scope}
-    \node[artifact] (cfg) at (-2.8,-2.0) {\stereo{artifact}\\config.yaml\\dataset.jsonl};
-    \node[artifact] (records) at (-2.8,-4.4) {\stereo{artifact}\\runs.jsonl\\artifacts/};
-    \node[artifact] (summary) at (5.6,-4.4) {\stereo{artifact}\\summary.csv};
+    \node[artifact, text width=1.6cm] (cfg) at (-2.8,-1.9) {\stereo{artifact}\\config.yaml\\dataset.jsonl};
+    \node[artifact, text width=1.6cm] (records) at (-2.8,-4.4) {\stereo{artifact}\\runs.jsonl\\artifacts/};
+    \node[artifact] (summary) at (5.9,-4.4) {\stereo{artifact}\\summary.csv};
     \node[component] (llm) at (11.0,0.8) {\stereo{external system}\\LLM providers};
     \node[component] (trace) at (11.0,-1.2) {\stereo{system}\\LLM tracing tool};
 
     \draw[dep] (res) -- node[guard, above] {starts} (runner);
-    \draw[dep] (runner) -- node[guard, left] {reads} (cfg);
+    \draw[dep] (runner.west) -- node[guard, sloped, above] {reads} (cfg.east);
     \draw[dep] (runner) -- node[guard, right] {checkpoint, decision} (policy);
-    \draw[dep] (runner) -- node[guard, above] {runs each case} (wf);
+    \draw[dep] (runner) -- node[guard, above, yshift=2pt] {runs each case} (wf);
     \draw[dep] (wf) -- node[guard, left] {writes} (astore);
     \draw[dep] (wf) -- node[guard, right] {saves state} (cstore);
-    \draw[dep] (runner.south west) -- node[guard, left] {one record per run} (records.north east);
+    \draw[dep] (runner.south west) -- node[guard, sloped, above, pos=0.55] {one record per run} (records.north east);
     \draw[dep] (metrics) -- node[guard, above] {reads} (records);
     \draw[dep] (metrics) -- node[guard, above] {writes} (summary);
     \draw[dep] (wf.east) -- node[guard, above, sloped] {chat model calls} (llm.west);
     \draw[dep] (wf.east) -- node[guard, below, sloped] {traces, optional} (trace.west);
-    \draw[dep] (metrics.south east) -- ++(0,-0.3) -| node[guard, pos=0.25, below] {judge calls} (llm.south);
+    \draw[dep] (metrics.south) -- ++(0,-0.95) -- ($(llm.east |- metrics.south)+(0.6,-0.95)$) node[guard, pos=0.5, above] {judge calls} |- (llm.east);
 \end{tikzpicture}

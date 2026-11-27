@@ -10,8 +10,8 @@
     \node[package, minimum width=1.6cm] (m7) at (0.3,-0.7) {Activity};
     \node[package, minimum width=1.6cm] (m8) at (2.2,-0.7) {User};
     \node[package, minimum width=1.6cm] (m9) at (4.1,-0.7) {Login};
-    \node[draw, thick, fit=(m1)(m9)(m5), inner sep=0.35cm, label={[anchor=north west, font=\scriptsize]north west:Feature modules}] (modules) {};
-    \draw[thick] (modules.north west) rectangle ++(2.0,0.25);
+    \node[draw, thick, fit=(m1)(m9)(m5), inner sep=0.35cm, label={[anchor=south west, font=\scriptsize, inner sep=2pt]north west:Feature modules}] (modules) {};
+    \draw[thick] (modules.north west) rectangle ++(2.1,0.32);
 
     % layers inside each module
     \node[package, minimum width=2.4cm] (widgets) at (10.2,1.4) {Widgets\\\tiny UI blocks};

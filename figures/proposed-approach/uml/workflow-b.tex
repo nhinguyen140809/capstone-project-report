@@ -34,9 +34,9 @@
     % --- partitions
     \begin{scope}[on background layer]
         \draw[thin] (-6.0,-1.00) rectangle (4.40,\Y{12.5});
-        \draw[thin] (4.40,-1.00) rectangle (8.30,\Y{12.5});
+        \draw[thin] (4.40,-1.00) rectangle (8.75,\Y{12.5});
         \draw[thin] (-6.0,-1.00) rectangle (4.40,-0.60);
-        \draw[thin] (4.40,-1.00) rectangle (8.30,-0.60);
+        \draw[thin] (4.40,-1.00) rectangle (8.75,-0.60);
     \end{scope}
     \node[font=\scriptsize\bfseries] at (-0.4,-0.80) {Agents};
     \node[font=\scriptsize\bfseries] at (6.45,-0.80) {User};
@@ -59,18 +59,18 @@
     % --- the analysis review: accept, re-analyse or re-interview
     \draw[flow] (can.south) -- (ch6.north);
     \draw[flow] (ch6.west) -- node[guard, above] {[accept]} (spec.east);
-    \draw[flow] (ch6.east) -- (8.15,\Y{4}) -- (8.15,\Y{1}) -- (analyze.east);
-    \node[guard, rotate=90] at (8.15,\Y{2.5}) {[re-analyse]};
-    \draw[flow] (ch6.south) -- (6.45,-6.60) -- (-3.40,-6.60) -- (rework.south);
-    \node[guard, above] at (1.60,-6.60) {[re-interview]};
+    \draw[flow] (ch6.east) -- (8.40,\Y{4}) -- (8.40,\Y{1}) -- (analyze.east);
+    \node[guard, rotate=90] at (8.40,\Y{2.5}) {[re-analyse]};
+    \draw[flow] (ch6.south) -- (6.45,-6.95) -- (-3.40,-6.95) -- (rework.south);
+    \node[guard, above] at (-1.90,-6.95) {[re-interview]};
 
     % --- the specification, its checkpoint, the backlog and the validation
     \draw[flow] (spec.south) -- (0,\Y{6}) -- (askspec.west);
     \draw[flow] (askspec.south) -- (cspec.north);
     \draw[flow] (cspec.south) -- (ch7.north);
     \draw[flow] (ch7.west) -- node[guard, above] {[OK]} (mback.east);
-    \draw[flow] (ch7.east) -- (8.15,\Y{8}) -- (8.15,-6.30) -- (0.80,-6.30) -- (0.80,-6.09);
-    \node[guard, above] at (3.20,-6.30) {[not OK]};
+    \draw[flow] (ch7.east) -- (8.40,\Y{8}) -- (8.40,-6.50) -- (0.80,-6.50) -- ($(spec.south)+(0.80,0)$);
+    \node[guard, above] at (3.20,-6.50) {[not OK]};
     \draw[flow] (mback.south) -- (backlog.north);
     \draw[flow] (backlog.south) -- (validate.north);
     \draw[flow] (validate.south) -- (ch8.north);

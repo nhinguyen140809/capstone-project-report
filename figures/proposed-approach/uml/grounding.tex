@@ -1,6 +1,6 @@
 % UML activity diagram with object flows of the persona construction (Section 4.3).
 % The trace links between the objects are shown in the class diagram of the trace model.
-\begin{tikzpicture}[uml, action/.append style={text width=2.2cm, minimum width=2.4cm}, objnode/.append style={text width=2.5cm, font=\scriptsize}]
+\begin{tikzpicture}[uml, action/.append style={text width=2.2cm, minimum width=2.4cm, execute at begin node={\hyphenpenalty=10000}}, objnode/.append style={text width=2.5cm, font=\scriptsize}]
     \node[initial] (init) at (-1.7,0) {};
     \node[action] (plan) at (0,0) {Plan the elicitation};
     \node[objnode] (oplan) at (3.2,0) {\underline{:ElicitationPlan}\\\tiny stakeholder types, topics};

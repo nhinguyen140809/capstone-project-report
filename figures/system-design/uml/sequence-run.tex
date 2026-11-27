@@ -2,11 +2,11 @@
 {\scriptsize
 \begin{sequencediagram}
     \newthread[white]{web}{:Web app}
-    \newinst[1.6]{api}{:API}
+    \newinst[2.1]{api}{:API}
     \newthread[white]{exe}{:Run executor}
-    \newinst[1.6]{graph}{:Workflow graph}
-    \newinst[1.6]{llm}{:LLM provider}
-    \newinst[1.6]{db}{:Database}
+    \newinst[2.1]{graph}{:Workflow graph}
+    \newinst[2.1]{llm}{:LLM provider}
+    \newinst[2.1]{db}{:Database}
 
     \begin{call}{web}{send the first message}{api}{201 run, queued}
         \begin{callself}{api}{store message, create run}{}

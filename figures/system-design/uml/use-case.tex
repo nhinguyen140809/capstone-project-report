@@ -11,15 +11,15 @@
     \node[usecase] (uc05) at (4.0, -1.2) {UC-05 Export the requirements};
     \node[usecase] (uc08) at (4.0, -2.6) {UC-08 Run an experiment};
     % extensions of UC-01
-    \node[usecase] (uc02) at (8.4, 6.2) {UC-02 Review an artifact at a checkpoint};
-    \node[usecase] (uc03) at (8.4, 1.3) {UC-03 Send a message during a run};
+    \node[usecase] (uc02) at (9.3, 5.0) {UC-02 Review an artifact at a checkpoint};
+    \node[usecase] (uc03) at (9.3, 3.4) {UC-03 Send a message during a run};
     \node[sysbound, fit=(uc11)(uc08)(uc02)(uc03), label={[anchor=north west, font=\scriptsize\bfseries]north west:\sysname{}}] (sys) {};
 
     % actors
     \umlactor{user}{(0.0, 2.5)}{User}
     \umlactor{researcher}{(0.0, -2.8)}{Researcher}
-    \umlactor{llm}{(12.4, 2.2)}{LLM provider\\\stereo{system}}
-    \umlactor{search}{(12.4, 4.6)}{Web search service\\\stereo{system}}
+    \umlactor{llm}{(13.4, -1.4)}{LLM provider\\\stereo{system}}
+    \umlactor{search}{(13.4, 1.2)}{Web search service\\\stereo{system}}
 
     % generalization: a researcher is a user
     \draw[->, thick, >={Triangle[open, length=2.5mm]}] (0.0, -2.65) -- (0.0, 1.95);
@@ -27,12 +27,12 @@
     % associations
     \foreach \u in {uc11, uc06, uc07, uc01, uc09, uc04, uc10, uc05} \draw[assoc] (user) -- (\u.west);
     \draw[assoc] (researcher) -- (uc08.west);
-    \draw[assoc] (llm) -- (uc01.east);
+    \draw[assoc] (llm) -- (uc01.-20);
     \draw[assoc] (llm) -- (uc08.east);
-    \draw[assoc] (search) -- (uc01.east);
+    \draw[assoc] (search) -- (uc01.-8);
     \draw[assoc] (search) -- (uc08.east);
 
     % extend relationships point to the extended use case
     \draw[include] (uc02.west) -- node[guard, sloped, above] {\stereo{extend}} (uc01.north east);
-    \draw[include] (uc03.west) -- node[guard, sloped, below] {\stereo{extend}} (uc01.south east);
+    \draw[include] (uc03.west) -- node[guard, sloped, below] {\stereo{extend}} (uc01.8);
 \end{tikzpicture}

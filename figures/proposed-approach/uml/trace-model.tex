@@ -29,10 +29,10 @@
     \draw[nav] (ass.west) -- node[linklabel, above, sloped] {concerns} ($(ana.east)+(0,0.25)$);
     \draw[nav] (amb.west) -- node[linklabel, above, sloped] {concerns} (ana.east);
     \draw[nav] (con.west) -- node[linklabel, below, sloped] {concerns} ($(ana.east)+(0,-0.25)$);
-    \draw[nav] (amb.east) -- ++(0.5,0) |- node[linklabel, pos=0.75, below] {resolved by} ($(msg.west)+(-1.8,-8.8)$) |- ($(msg.west)+(0,-0.15)$);
-    \draw[nav] (con.east) -- ++(0.3,0) |- ($(msg.west)+(-1.6,-8.6)$) |- ($(msg.west)+(0,0.15)$);
-    \draw[nav] (spec.west) -- ++(-0.4,0) -- ++(0,-0.45) -| node[linklabel, pos=0.25, below] {depends on} ($(spec.south)+(-0.8,0)$);
-    \draw[nav] (back.west) -- ++(-0.4,0) -- ++(0,-0.55) -| node[linklabel, pos=0.25, below] {depends on} ($(back.south)+(-0.8,0)$);
-    \node[note, anchor=north] (n) at ($(val.south)+(0,-0.5)$) {\emph{flags} links a validation issue to any item; \emph{duplicates} and \emph{supersedes} link two items of the same kind.};
+    \draw[nav] (amb.east) -- ++(0.5,0) |- node[linklabel, pos=0.75, below] {resolved by} ($(msg.west)+(-1.8,-10.2)$) |- ($(msg.west)+(0,-0.15)$);
+    \draw[nav] (con.east) -- ++(0.3,0) |- ($(msg.west)+(-1.6,-10.0)$) |- ($(msg.west)+(0,0.15)$);
+    \draw[nav] (spec.east) -- ++(0.45,0) |- node[linklabel, pos=0.75, below] {depends on} ($(spec.south)+(0.9,-0.4)$) -- ($(spec.south)+(0.9,0)$);
+    \draw[nav] (back.east) -- ++(0.45,0) |- node[linklabel, pos=0.75, below] {depends on} ($(back.south)+(0.9,-0.4)$) -- ($(back.south)+(0.9,0)$);
+    \node[note, anchor=north] (n) at ($(val.south)+(0,-0.35)$) {\emph{flags} links a validation issue to any item; \emph{duplicates} and \emph{supersedes} link two items of the same kind.};
     \draw[dashed] (n) -- (val);
 \end{tikzpicture}
