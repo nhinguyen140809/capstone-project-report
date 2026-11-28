@@ -218,4 +218,135 @@ Every agent role has its own prompt, with a version number and the structure des
 
 
 
+
+\chapter{Project Management}
+\label{apx:project-management}
+\label{apx:timeline}
+This appendix records how the specialized project was organized, so that its progress can be followed and the work of each member traced. It starts with an overview of the work areas and of the timeline, and then gives the details: the phases of the project and the log of the implementation. In every table, the column \emph{Assigned to} names the members responsible for each task.
+
+The timeline and the log are reconstructed from the version history of the two repositories of the project: the repository of the system, which holds 92 commits between 28 September and 24 November 2026, and the repository of this report. The system was built with GitHub Flow: changes were made in pull requests, checked by the continuous integration of Section~\ref{sec:impl-testing}, and merged into the main branch as one commit each.
+
+\section{Overview}
+\label{apx:pm-overview}
+The work of the project falls into six areas, listed in Table~\ref{tab:apx-areas}. Figure~\ref{fig:apx-gantt} shows when each area was active: the planning and the design came first; the web app was then built for about a month against simulated API responses, while the backend and the agents were developed; the backend joined the web app in November; and the report was written in the second half of November.
+
+\begin{table}[H]
+    \centering
+    \caption{Work areas of the project.}
+    \label{tab:apx-areas}
+    \begin{tabularx}{\linewidth}{|p{3.4cm}|X|p{3cm}|}
+        \hline
+        \textbf{Area} & \textbf{Scope} & \textbf{Assigned to} \\
+        \hline
+    Planning and design & Goals, scope and key decisions; design documents of the architecture, the data, the API and the user interface & \\ \hline
+    Web app (frontend) & Design system, screens and data access of the web app; simulated API; tests of the web app & \\ \hline
+    Backend & API application, persistence, run execution, event log and streaming, exports, assistant & \\ \hline
+    Agent workflow & Workflow definition, agent roles and prompts, search tool, integrity checks & \\ \hline
+    Evaluation & Evaluation plan, scenarios and demonstration run & \\ \hline
+    Report & Writing, diagrams and review of this report & \\ \hline
+    \end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/appendix/gantt-specialized}}
+    \caption{Timeline of the work areas of the specialized project, by date of the merged changes.}
+    \label{fig:apx-gantt}
+\end{figure}
+
+\section{Timeline}
+\label{apx:pm-timeline}
+Table~\ref{tab:apx-timeline} details the phases of the project in each area.
+
+\begingroup\setstretch{1.15}
+\begin{longtable}{|p{0.15\linewidth}|p{0.12\linewidth}|p{0.45\linewidth}|p{0.16\linewidth}|}
+    \caption{Timeline of the specialized project.}
+    \label{tab:apx-timeline} \\
+    \hline
+    \textbf{Period (2026)} & \textbf{Area} & \textbf{Main results} & \textbf{Assigned to} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Period (2026)} & \textbf{Area} & \textbf{Main results} & \textbf{Assigned to} \\
+    \hline
+    \endhead
+    26--28 Sep & Setup & Repository of the report with its build and continuous integration & \\ \hline
+    26--28 Sep & Setup & Planning document of the system: goals, scope, key decisions, risks and setup checklist; contributing guide & \\ \hline
+    1--9 Oct & Web app & Skeleton of the web app with the component library and the design system & \\ \hline
+    10 Oct & Design & Design documents of the architecture, the data shape, the API and the user interface & \\ \hline
+    13 Oct -- 9 Nov & Web app & Screens and data access of the web app, built against simulated API responses (see Table~\ref{tab:apx-log}) & \\ \hline
+    10 Nov & Backend & Backend behind the versioned API contract & \\ \hline
+    13 Nov & Agents & Questions before planning, search tool of the corpus builder, retry of a failed stage & \\ \hline
+    16--17 Nov & Report & Chapters laid out and written; UML diagrams; bibliography; status of the requirements & \\ \hline
+    20--27 Nov & Report & Review of the background and related work; alignment with the system; evaluation plan and demonstration run & \\ \hline
+    21--24 Nov & Web app & User and developer layouts; faces and acts of the agents & \\ \hline
+    23--24 Nov & Backend & Assistant for questions about the application; fixes of authorization, evidence quotes and rework & \\ \hline
+\end{longtable}
+\endgroup
+
+\section{Implementation Log}
+\label{apx:pm-log}
+Table~\ref{tab:apx-log} lists the main changes in the order in which they were merged, one task per row. Routine changes, such as refactoring, formatting and changes of the tooling, are left out.
+
+\begingroup\setstretch{1.15}
+\begin{longtable}{|p{0.12\linewidth}|p{0.12\linewidth}|p{0.48\linewidth}|p{0.16\linewidth}|}
+    \caption{Implementation log of the project.}
+    \label{tab:apx-log} \\
+    \hline
+    \textbf{Date (2026)} & \textbf{Area} & \textbf{Change} & \textbf{Assigned to} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Date (2026)} & \textbf{Area} & \textbf{Change} & \textbf{Assigned to} \\
+    \hline
+    \endhead
+    26 Sep & Report & Repository of the report with its local build and continuous integration & \\ \hline
+    28 Sep & Planning & Planning document, README and contributing guide of the system & \\ \hline
+    1 Oct & Web app & Skeleton of the web app with the component library, the chat shell and the test tooling & \\ \hline
+    9 Oct & Web app & Design system and UI components & \\ \hline
+    10 Oct & Design & Design documents of the architecture, the data shape, the API and the user interface & \\ \hline
+    14 Oct & Web app & Workbench: activity bar, project workspace, tabs, top bar, status bar and command palette & \\ \hline
+    15 Oct & Web app & Login, registration and sessions & \\ \hline
+    15 Oct & Web app & Simulated API serving projects, threads and runs & \\ \hline
+    18 Oct & Web app & Project list and project frame & \\ \hline
+    21 Oct & Web app & Idempotency key on the requests that start work & \\ \hline
+    27 Oct & Web app & Workflow definition, artifact kinds and content schemas & \\ \hline
+    27 Oct & Web app & Reading and changing artifacts and items & \\ \hline
+    27 Oct & Web app & Exports of a project & \\ \hline
+    28 Oct & Web app & Trace links, traces and traceability views & \\ \hline
+    29 Oct & Web app & Runs and run settings of a project & \\ \hline
+    30 Oct & Web app & Review requests and their answers & \\ \hline
+    31 Oct & Web app & Threads and messages & \\ \hline
+    31 Oct & Web app & Run status and stop in the status bar & \\ \hline
+    31 Oct & Web app & Model catalog and model settings of the user & \\ \hline
+    31 Oct & Web app & Profile, password, sessions and settings of the user & \\ \hline
+    1 Nov & Web app & Monthly usage and budget in the status bar & \\ \hline
+    2 Nov & Web app & Outline and status of the documents; documents in the side panel and in tabs & \\ \hline
+    3 Nov & Design & Changes of a document accepted only during a review; quotes of both items of a link & \\ \hline
+    6 Nov & Web app & Editing, browsing and restoring records with their links and history & \\ \hline
+    6 Nov & Web app & Documents drawn as layouts, conversations and profiles & \\ \hline
+    7 Nov & Web app & Activity of a project: chat, panel and prompt & \\ \hline
+    7 Nov & Web app & Sending messages, answering reviews and choosing run settings & \\ \hline
+    9 Nov & Web app & Trace pages: linking, unlinking and opening items & \\ \hline
+    10 Nov & Backend & Backend behind the versioned API contract & \\ \hline
+    13 Nov & Agents & Questions asked before planning & \\ \hline
+    13 Nov & Agents & Search tool of the corpus builder & \\ \hline
+    13 Nov & Backend & Retry of a failed stage from its saved state & \\ \hline
+    13 Nov & Web app & Phases of the work shown in time order & \\ \hline
+    16 Nov & Report & Chapters laid out and written; diagrams redrawn in UML; bibliography; prompts in the appendix & \\ \hline
+    20--22 Nov & Report & Review of the background and related work; alignment of the report with the system & \\ \hline
+    21 Nov & Design & UI hints for kinds, personas and workflow acts & \\ \hline
+    22 Nov & Web app & User and developer views, chosen by host & \\ \hline
+    22 Nov & Web app & Faces of the agents and their acts & \\ \hline
+    22 Nov & Web app & Chat with the reader beside it; pages of the user view & \\ \hline
+    23 Nov & Web app & Two layouts of the desk; prompt with sources, dictation and a draft & \\ \hline
+    23 Nov & Web app & Motions of the faces; acts in the chat; personas shown in blocks & \\ \hline
+    23 Nov & Backend & Assistant that answers messages about the application & \\ \hline
+    23 Nov & Backend & Fixes of authorization, evidence quotes, item conflicts and the assumption loop & \\ \hline
+    24 Nov & Backend & Rework no longer copies the document and is told what failed & \\ \hline
+    24 Nov & Design & Stakeholder types reduced to their word pattern & \\ \hline
+    27 Nov & Report & Evaluation plan; agent descriptions updated; layout of the UML diagrams fixed & \\ \hline
+\end{longtable}
+\endgroup
+
 \end{appendices}

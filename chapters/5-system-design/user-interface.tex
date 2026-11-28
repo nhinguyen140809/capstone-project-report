@@ -1,9 +1,78 @@
 \section{User Interface Design}
 \label{sec:sd-ui}
 
-After logging in, the user chooses one of two layouts for the whole application, and can change the choice later in the settings.
+The user interface is designed around the review checkpoints: whatever the layout, the user must see what the run is doing, what it waits for and which artifact a decision concerns, without leaving the page (NFR-10). After logging in, the user chooses one of two layouts for the whole application, and can change the choice later in the settings (Figure~\ref{fig:sd-ui-views}).
 \begin{itemize}
-    \item \textbf{User layout.} Designed for people who use the system to work on a product. The home page lists the projects and the recently opened items. The page of a project places the chat with the agents beside a reader that shows the artifact or item the conversation refers to, so that the user can follow the run, answer the reviews and read the results without leaving the page.
-    \item \textbf{Developer layout.} Designed for people who inspect how a run works. Besides the projects and the settings, the page of a project gives access to its documents and artifacts, to every item with its content and history, to the activity of the project, and to the traceability views: the trace of an item, the gaps where a requirement lacks a source or an implementation, and the open issues.
+    \item \textbf{User layout}, labelled \emph{Guided view} in the application. Designed for people who use the system to work on a product. The home page asks for the product idea and lists the projects. The page of a project places the chat with the agents beside a reader that shows the artifact or item the conversation refers to, so that the user can follow the run, answer the reviews and read the results without leaving the page.
+    \item \textbf{Developer layout}, labelled \emph{Developer view}. Designed for people who inspect how a run works. Besides the projects and the settings, the page of a project gives access to its activity, to its documents and artifacts, to every item with its content and history, and to the traceability views: the trace of an item, the gaps where a requirement lacks a source or a user story, and the open issues.
 \end{itemize}
-The settings let the user choose the model of each agent role. Screens are not reproduced in this report.
+The settings also let the user choose the theme and the model of each agent role. Table~\ref{tab:sd-screens} lists the main screens and the use cases they serve; the figures that follow were captured from the web application in its mock mode, in which simulated responses with sample data replace the API (Section~\ref{sec:impl-frontend}).
+
+\begin{table}[H]
+    \centering
+    \caption{Main screens of the web app.}
+    \label{tab:sd-screens}
+    \begin{tabularx}{\linewidth}{|p{3.0cm}|p{1.9cm}|X|p{2.7cm}|}
+        \hline
+        \textbf{Screen} & \textbf{Layout} & \textbf{Purpose} & \textbf{Use cases} \\
+        \hline
+        Login, registration & Both & Create an account and a session & UC-11 \\
+        Layout choice & Both & Choose the layout of the whole application & --- \\
+        Home & User & Describe a new product idea; list the projects & UC-01, UC-11 \\
+        Project (chat and reader) & User & Follow a run, answer reviews, send messages, read artifacts, ask the assistant & UC-01, UC-02, UC-03, UC-13 \\
+        Activity & Developer & Progress of the run by stage, the outline of the messages, the chat and the reviews & UC-01, UC-02, UC-03, UC-09 \\
+        Documents & Developer & Read and, during a review, edit an artifact and its items; history of revisions & UC-04 \\
+        Trace & Developer & Trace graph of an item, gaps, links to check, open issues & UC-10 \\
+        Export & User & Choose a template and a format, download the file & UC-05 \\
+        Settings & Both & Layout, theme, models of the agent roles & UC-06, UC-11 \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{system-design/screens/views}
+    \caption{Choice of the layout, shown after the first login and in the settings.}
+    \label{fig:sd-ui-views}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{system-design/screens/user-home}
+    \caption{Home page of the user layout: the product idea starts a new project.}
+    \label{fig:sd-ui-home}
+\end{figure}
+
+Figure~\ref{fig:sd-ui-review} shows the project page of the user layout while a run waits at the analysis review. The review is rendered from the workflow definition: each option of the checkpoint becomes a choice with its description, and the option that needs feedback asks for it. A message sent while the run waits is shown with the note that it will be read after the review, and the bar under the input shows the progress of the run through its stages.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{system-design/screens/user-project}
+    \caption{Project page of the user layout, waiting at the review of the analysis (UC-02).}
+    \label{fig:sd-ui-review}
+\end{figure}
+
+In the developer layout (Figure~\ref{fig:sd-ui-activity}), a rail on the left switches between the activity, the documents and the trace of the project, a side panel lists the stages of the run or the artifacts, and the status bar at the bottom shows what the run waits for, with a button to stop it.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{system-design/screens/dev-activity}
+    \caption{Activity page of the developer layout, with the stages of the run and the pending review.}
+    \label{fig:sd-ui-activity}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{system-design/screens/dev-document}
+    \caption{An artifact in the developer layout: the requirements analysis under review, with its items in the side panel (UC-04).}
+    \label{fig:sd-ui-document}
+\end{figure}
+
+The trace page (Figure~\ref{fig:sd-ui-trace}) draws the trace graph of an item, from the research document and the stakeholder observation it comes from, through the interviewee and the stated needs, to the requirements and the user stories derived from it. A link made against an older version of its target, or whose target has since been replaced, is marked as out of date, so that the user can check it.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{system-design/screens/dev-trace-item}
+    \caption{Trace of a stakeholder observation in the developer layout (UC-10).}
+    \label{fig:sd-ui-trace}
+\end{figure}

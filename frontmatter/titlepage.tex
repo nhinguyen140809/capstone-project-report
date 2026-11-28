@@ -17,7 +17,7 @@
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=8cm]{hcmut.png}
+\includegraphics[width=5.5cm]{hcmut.png}
 \end{center}
 \end{figure}
 \vspace{-1cm}
@@ -44,8 +44,11 @@
 \large
 \begin{tabular}{r@{\hspace{0.4em}:\hspace{0.4em}}l}
      \textbf{THESIS COMMITTEE} & \reportcommittee\\
-     \textbf{SUPERVISOR(s)} & \stackedlines{\reportsupervisors}\\
-     \textbf{REVIEWER} & \stackedlines{\reportreviewers}\\
+     \textbf{SUPERVISOR (s)} & \stackedlines{\reportsupervisors}\\
+     \ifdefempty{\reportreviewers}{}{\textbf{REVIEWER} & \stackedlines{\reportreviewers}\\}
+     \ifdefempty{\reportchairman}{}{\textbf{CHAIRMAN} & \reportchairman\\}
+     \ifdefempty{\reportsecretary}{}{\textbf{SECRETARY} & \reportsecretary\\}
+     \ifdefempty{\reportmember}{}{\textbf{MEMBER} & \reportmember\\}
      \multicolumn{2}{c}{\textbf{————o0o———–}}\\
      \textbf{STUDENT} & \stackedlines{\reportstudents}\\
 \end{tabular}

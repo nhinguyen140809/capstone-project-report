@@ -3,8 +3,57 @@
 
 The architecture is described with UML diagrams that together cover the views of the 4+1 model~\cite{kruchten1995}: a component diagram of the building blocks and package diagrams of the backend and the web app (logical and development views), the state machine, activity and sequence diagrams of Section~\ref{sec:sd-behavior} (process view), a deployment diagram (physical view), and the use cases of Section~\ref{sec:sd-use-cases} (scenarios).
 
+\subsection{Architectural Style and Alternatives}
+\label{sec:sd-style}
+
+The architecture follows from the drivers of the requirements more than from the size of the system. Three drivers dominate: a run lasts minutes, waits for a human for an unbounded time and must survive a closed browser (NFR-01, NFR-02); the agents must run both inside the product and inside the evaluation harness without the web layer (FR-17, NFR-08, NFR-12); and the team of three must build, test and operate the system alone (NFR-11, NFR-15). Table~\ref{tab:sd-styles} compares the architectural styles that were considered against these drivers.
+
+\begin{table}[H]
+    \centering
+    \caption{Architectural styles considered.}
+    \label{tab:sd-styles}
+    \begin{tabularx}{\linewidth}{|p{2.6cm}|X|X|}
+        \hline
+        \textbf{Style} & \textbf{Strengths for this system} & \textbf{Weaknesses for this system} \\
+        \hline
+        Layered monolith & One deployable unit; simple to build, test and deploy & Layers cut across features; nothing keeps the agent workflow from depending on the web layer, which the evaluation harness cannot use \\
+        \hline
+        Modular monolith (chosen) & One deployable unit, with modules per feature and allowed import directions that are checked automatically; the agent workflow is a module that the harness imports without the web layer & A single API process runs the workflows, so scaling out needs a later step that moves run execution to workers \\
+        \hline
+        Microservices & Agents, API and exports could scale and be deployed independently & Service discovery, distributed tracing, network failures between services and several deployments, an operational cost out of proportion to a team of three and to the expected load \\
+        \hline
+        Hosted agent platform & No orchestration code to write & Checkpoints, typed artifacts, trace links and cost limits are specific to this workflow; the experiments need the same code to run locally and to record every step \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+The modular monolith was chosen because it keeps the deployment of a monolith while enforcing the boundary that the evaluation requires. The main architectural decisions that follow are summarized in Table~\ref{tab:sd-adr}; the decisions of the database design are given separately in Table~\ref{tab:sd-db-decisions}.
+
+\begin{table}[H]
+    \centering
+    \caption{Main architectural decisions.}
+    \label{tab:sd-adr}
+    \begin{tabularx}{\linewidth}{|p{2.4cm}|X|X|X|}
+        \hline
+        \textbf{Question} & \textbf{Options considered} & \textbf{Decision} & \textbf{Rationale} \\
+        \hline
+        Orchestration of the agents & A hand-written loop; a conversation between agents that share a chat history; an explicit state graph & An explicit state graph with conditional edges, on LangGraph & The loops, checkpoints and bounds are visible in one definition, which the web app draws and the tests check; the graph runs without the API \\
+        \hline
+        Shared memory of the agents & The chat history of the run; typed artifacts & Typed artifacts, items and links in the database & Every agent reads only what it needs, the user reviews the same objects, and the trace graph is a by-product \\
+        \hline
+        Execution of a run & Inside the HTTP request; background task in the API process; separate workers behind a queue & Background task in the API process & No extra service in this phase; since events already pass through the event log, moving to workers changes neither the API nor the web app \\
+        \hline
+        Updates from server to client & Polling; WebSocket; Server-Sent Events & Server-Sent Events read from a durable event log & Data flows mostly from server to client; SSE works over plain HTTP and the browser reconnects with the last event identifier \\
+        \hline
+        Contract between web app and API & Hand-written types; types generated from the OpenAPI schema & Generated types & A change of the API is a compile-time error in the web app \\
+        \hline
+    \end{tabularx}
+\end{table}
+
 \subsection{Building Blocks}
 \label{sec:sd-building-blocks}
+
+Figure~\ref{fig:sd-building-blocks} shows the building blocks of the system and the interfaces between them: the web app uses the REST API and the event stream provided by the API application, which reads and writes the database and the file storage and calls the external LLM providers and the tracing tool.
 
 \begin{figure}[H]
     \centering
@@ -41,8 +90,8 @@ The API application is one deployable unit, a modular monolith. Figure~\ref{fig:
         \textbf{Module} & \textbf{Responsibility} \\
         \hline
         API layer & Exposes the features as one REST API; turns business errors into HTTP responses \\
-        Feature modules & One module per business feature (accounts, projects, conversations, runs, artifacts, documents, exports, model settings), each with its endpoints, data formats, business logic and data access \\
-        Agent workflow & The workflow graph with its agents, prompts and the versioned workflow definition \\
+        Feature modules & One module per business feature (accounts, projects, conversations, runs, artifacts, documents, exports, model settings, assistant), each with its endpoints, data formats, business logic and data access \\
+        Agent workflows & The requirements engineering workflow and the assistance workflow, with their agents, prompts and versioned workflow definitions \\
         Model access & The only place that calls language models; chooses the model of each agent role, checks cost limits and records usage \\
         Agent tools & Tools that agents can use, such as the search for research documents \\
         Platform services & Database access, file storage and the execution of runs in the background \\
@@ -88,3 +137,34 @@ The production baseline runs every service on one Linux host with Docker Compose
     \item \textbf{Long-lived responses}: the proxy must not buffer the event stream and must keep connections open for minutes; the API sends a heartbeat every 15 seconds while a run waits.
     \item \textbf{Secrets}: provider API keys and the session secret exist only in the environment of the API service; only outbound HTTPS to the providers is needed.
 \end{itemize}
+
+\subsection{Non-Functional Requirements and the Architecture}
+\label{sec:sd-nfr-architecture}
+
+Table~\ref{tab:sd-nfr-arch} shows which elements of the architecture realize each group of non-functional requirements of Section~\ref{sec:sd-nfr}.
+
+\begingroup\setstretch{1.15}\small
+\begin{longtable}{|p{0.17\linewidth}|p{0.11\linewidth}|p{0.62\linewidth}|}
+    \caption{Realization of the non-functional requirements in the architecture.}
+    \label{tab:sd-nfr-arch} \\
+    \hline
+    \textbf{Quality} & \textbf{NFR} & \textbf{Architectural elements} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Quality} & \textbf{NFR} & \textbf{Architectural elements} \\
+    \hline
+    \endhead
+    Reliability & NFR-01, NFR-02 & Runs execute as background tasks, decoupled from requests; events go through a durable event log that the stream endpoint replays; the state is saved after every node, so a retry starts from the last safe point; on startup the API recovers the runs of a stopped process (Section~\ref{sec:sd-failures}). \\ \hline
+    Performance & NFR-03 & Tokens are streamed from the model to the event log and on to the browser as Server-Sent Events; the reverse proxy does not buffer the stream; heartbeats keep idle connections open. \\ \hline
+    Cost and boundedness & NFR-04, NFR-14 & All model calls go through the model access module, the only place that calls a model, where the cost limit and the budget are checked and usage is recorded; every loop of the workflow graph has a bound and the run has a step limit. \\ \hline
+    Security & NFR-05 & One public entry, the reverse proxy, with TLS; same-origin web app and API, so the session cookie can be httpOnly, Secure and SameSite and requests that change data are checked for their origin; secrets live only in the environment of the API service; access checks answer ``not found''. \\ \hline
+    Modifiability & NFR-06 & Agents ask for a model by role, never by name; the workflow is a versioned definition from which the web app draws the graph, the reviews and the artifact panels, so a new version needs no change of the web app. \\ \hline
+    Data integrity & NFR-07 & The domain rules module validates every write against the versioned content schemas and the integrity rules, both for agent outputs and for user edits; agents write only through one path. \\ \hline
+    Reproducibility and testability & NFR-08, NFR-12 & The agent workflow is a module independent of the web layer, imported by the evaluation harness and run in the tests with simulated models; every run stores its workflow version, prompt versions and models. \\ \hline
+    Observability & NFR-09 & Every step is recorded with its model, usage and items; a tracing service receives a trace of every agent step in the production layout. \\ \hline
+    Usability & NFR-10 & The thread page combines the chat, the workflow graph, the pending review and the artifact panel (Section~\ref{sec:sd-ui}). \\ \hline
+    Maintainability and interoperability & NFR-11, NFR-13 & Modular monolith with import rules checked in continuous integration; the API is described by an OpenAPI schema, from which the client of the web app is generated. \\ \hline
+    Deployability & NFR-15 & Every service runs in a container; the production baseline runs them on one host with Docker Compose behind a reverse proxy. \\ \hline
+\end{longtable}
+\endgroup

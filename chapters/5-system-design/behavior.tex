@@ -51,6 +51,48 @@ Figure~\ref{fig:sd-sequence} shows the interactions of use case UC-01 and UC-02.
     \label{fig:sd-sequence}
 \end{figure}
 
+\subsection{Review at a Checkpoint}
+\label{sec:sd-review}
+
+Figure~\ref{fig:sd-review} details use case UC-02. Each of the three reviews offers its own options, nine in total: the persona review offers \emph{approve} and \emph{something else}; the analysis review offers \emph{approve}, \emph{redo the analysis}, \emph{interview again} and \emph{something else}; and the specification review offers \emph{approve}, \emph{ask for changes} and \emph{something else}. Every option other than approval requires feedback, which the next step receives. \emph{Something else} hands the feedback to the intent router, which decides where it belongs, as for a message sent during a run. All three reviews allow the artifact under review to be edited before the option is chosen; this is the only time when the user can change items (UC-04).
+
+\begin{figure}[H]
+    \centering
+    \resizebox{0.95\linewidth}{!}{\input{figures/system-design/uml/review-activity}}
+    \caption{UML activity diagram of a review at a checkpoint (UC-02).}
+    \label{fig:sd-review}
+\end{figure}
+
+\subsection{Sequences of the Other Main Use Cases}
+\label{sec:sd-sequences-other}
+
+Figure~\ref{fig:sd-seq-message} shows how a message sent during a run (UC-03) reaches the workflow. The API only stores the message as pending; the run executor takes it at the next safe point, after the current node has finished and its state has been saved, so that a message never interrupts a step halfway.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/sequence-message}}
+    \caption{UML sequence diagram of a message sent during a run (UC-03).}
+    \label{fig:sd-seq-message}
+\end{figure}
+
+Figure~\ref{fig:sd-seq-edit} shows the edit of an item (UC-04). The request carries the version of the item that the user has read, so that an edit made on an outdated version is rejected with a version conflict instead of silently overwriting a newer one; a content that fails a check is rejected with the list of the rules it breaks. The content is checked against the content schema of the item kind and against the vocabulary of the plan before it is saved as a new revision.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/sequence-edit}}
+    \caption{UML sequence diagram of editing an item during a review (UC-04).}
+    \label{fig:sd-seq-edit}
+\end{figure}
+
+Figure~\ref{fig:sd-seq-export} shows an export (UC-05). The file is rendered during the request from the current versions of the artifacts of the template, and the export records exactly which versions it holds, so that a file can always be traced back to the artifacts it was made from.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/sequence-export}}
+    \caption{UML sequence diagram of an export (UC-05).}
+    \label{fig:sd-seq-export}
+\end{figure}
+
 \subsection{Failures, Cancellation and Restarts}
 \label{sec:sd-failures}
 

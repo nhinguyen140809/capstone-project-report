@@ -1,7 +1,7 @@
 \section{Database Design}
 \label{sec:sd-database}
 
-The schema has 23 tables in five groups: identity and settings, workspace, conversation and execution, artifacts and trace, and supporting tables. Figure~\ref{fig:sd-domain-model} shows the main persistent entities and their associations as a UML class diagram; tables that only support these entities (sessions, settings, revisions and exports) are left out.
+The schema has 24 tables in five groups (Table~\ref{tab:sd-tables}). Figure~\ref{fig:sd-domain-model} shows the main persistent entities and their associations as a UML class diagram; tables that only support these entities (sessions, settings, revisions and exports) are left out.
 
 \begin{figure}[H]
     \centering
@@ -9,6 +9,28 @@ The schema has 23 tables in five groups: identity and settings, workspace, conve
     \caption{UML class diagram of the main persistent entities.}
     \label{fig:sd-domain-model}
 \end{figure}
+
+\begingroup\setstretch{1.15}
+\begin{longtable}{|p{0.2\linewidth}|p{0.68\linewidth}|}
+    \caption{Groups of tables of the database.}
+    \label{tab:sd-tables} \\
+    \hline
+    \textbf{Group} & \textbf{Tables and what they hold} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Group} & \textbf{Tables and what they hold} \\
+    \hline
+    \endhead
+    Identity and settings (4) & Users, with their monthly budget; their login sessions; their settings, such as the theme, the default output language and the default run settings; and the model chosen for each agent role. \\ \hline
+    Workspace (4) & Projects with their owner; the counters that number the keys of the items of a project; the uploaded source documents and their versions. \\ \hline
+    Conversation and execution (9) & Threads and their messages, with the delivery status of each message; runs with their status, workflow version and frozen run configuration; the steps of each run with their model, usage and saved state; the ordered event log of each run; the review requests and the human decisions that answer them; the directives that the intent router and the rework control write for the next node; and the usage of the model calls that classify a message before any run exists. \\ \hline
+    Artifacts and trace (5) & Artifacts and their revisions; artifact items and their revisions; and the typed trace links between items, with their quotes. \\ \hline
+    Supporting (2) & Exports with the versions of the artifacts they hold; and the keys that make repeated requests idempotent. \\ \hline
+\end{longtable}
+\endgroup
+
+The design associates users with projects as members (Figure~\ref{fig:sd-domain-model}); the current implementation gives each project a single owner, which is why FR-03 is partly met.
 
 \subsection{Artifact Storage}
 \label{sec:sd-artifact-storage}

@@ -1,0 +1,117 @@
+\chapter{Plan for the Next Phase}
+\label{chap:next-phase}
+\label{chap:evaluation}
+\textit{The specialized project has delivered the framework, the analysis and design of the system and a working prototype. The capstone (thesis) phase will evaluate the framework systematically and continue its development. This chapter presents the plan of both: how the evaluation of RQ1 is organized, what will be developed next, and in which order. The plan sets the direction of the work; its details may be adjusted at the start of the next phase.}
+
+\section{Evaluation Plan}
+\label{sec:eval-plan}
+
+\subsection{Evaluation Questions}
+\label{sec:eval-rq}
+The evaluation addresses RQ1 (Section~\ref{sec:research-questions}): \emph{to what extent can multiple stakeholder agents with different perspectives contribute to requirements elicitation and refinement?} It is refined into four questions:
+\begin{itemize}
+    \item \textbf{EQ1 (coverage and diversity).} Do multiple persona agents expand the explored requirement space compared with eliciting from a single perspective, or with generating the requirements directly from the idea?
+    \item \textbf{EQ2 (grounding).} Do personas grounded in evidence lead to more relevant and more diverse requirements than personas generated from the idea alone?
+    \item \textbf{EQ3 (quality).} Is the quality of the specification and of the backlog, with respect to ISO/IEC/IEEE 29148 and the INVEST criteria, higher than that of the baselines?
+    \item \textbf{EQ4 (cost).} What does each method cost in tokens, money and time, per run and per agent role?
+\end{itemize}
+
+\subsection{Scenarios}
+\label{sec:eval-datasets}
+The study will use product scenarios written by the authors, chosen to vary the factors expected to affect elicitation: the domain, the number of stakeholder types, the ambiguity of the idea and the risks involved, such as privacy, safety or financial integrity (Table~\ref{tab:eval-scenarios}). Each scenario is a short idea with its context, constraints and goals, so that every method receives exactly the same input. Benchmark cases of prior multi-agent frameworks, such as MARE~\cite{mare2024} and iReDev~\cite{jin2025iredev}, may be added so that the results can be related to published ones.
+
+\begin{table}[H]
+    \centering
+    \caption{Draft scenarios of the planned evaluation.}
+    \label{tab:eval-scenarios}
+    \begin{tabularx}{\linewidth}{|X|l|c|c|}
+        \hline
+        \textbf{Scenario} & \textbf{Domain} & \textbf{Stakeholder types} & \textbf{Ambiguity} \\
+        \hline
+        Shared IT incident response hub & Information technology & 5 & Medium \\
+        Outpatient care coordination & Healthcare & 5 & Medium \\
+        Small-business bookkeeping assistant & Finance & 4 & Medium \\
+        Course assignment feedback platform & Education & 4 & Low \\
+        Used-goods marketplace with returns & E-commerce & 5 & Medium \\
+        Municipal permit application portal & Public services & 5 & High \\
+        Electric fleet charging coordinator & Transportation & 5 & High \\
+        Inclusive employee onboarding & Human resources & 5 & Medium \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{Compared Methods}
+\label{sec:eval-baselines}
+Each compared method isolates one factor of the proposed framework:
+\begin{itemize}
+    \item \textbf{Direct prompting}: one LLM call writes the requirements and the backlog from the idea; it shows what elicitation adds at all.
+    \item \textbf{Single agent}: one agent elicits from one generic user; it isolates the effect of multiple perspectives.
+    \item \textbf{Multi-agent, ungrounded}: the full workflow with personas generated from the idea alone; it isolates the effect of grounding.
+    \item \textbf{Multi-agent, grounded}: the proposed method.
+\end{itemize}
+Variants of the proposed method that change the number of personas or turn off the rework loop will measure the effect of these choices.
+
+\subsection{Metrics}
+\label{sec:eval-metrics}
+The metrics of Section~\ref{sec:bg-metrics} are mapped to the questions: coverage and diversity measures, such as the number of distinct requirements, the spread of their embeddings and the stakeholder types they cover, answer EQ1 and EQ2; the quality characteristics of ISO/IEC/IEEE 29148 and the INVEST criteria, scored by an LLM judge and checked on a sample by human raters, answer EQ3; and the tokens, cost and duration recorded for every step answer EQ4.
+
+\subsection{Setup and Analysis}
+\label{sec:eval-details}
+All methods will run through the same evaluation harness with the same models, so that differences come from the methods and not from the models (Figure~\ref{fig:eval-harness}). The harness runs the agent workflow without the web application, answers the checkpoints with a fixed review policy, and writes one record per run with its steps, usage and artifacts; the metrics are computed afterwards from these records, so that a metric can change without running the methods again. The configuration of every run, including the model of each agent role and the run parameters (Table~\ref{tab:pa-run-parameters}), is fixed in advance and stored with each record; the decision layer of Section~\ref{sec:pa-decisions} stays off unless a decision provider is configured for the study. Since the models are not deterministic, each method will be run several times on each scenario, and the methods will be compared on the same scenarios with the mean and the spread of every metric.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/evaluation/uml/experiment-harness}}
+    \caption{UML component diagram of the evaluation harness.}
+    \label{fig:eval-harness}
+\end{figure}
+
+\subsection{Threats to Validity}
+\label{sec:eval-discussion}
+The plan already takes the main threats into account: an LLM judge may favor longer outputs or outputs of its own model family~\cite{zheng2023judging}, so the judge uses a different model and is checked against human raters; the models may know published scenarios, so the study relies mainly on new ones; outputs vary between runs, so runs are repeated; and the documents found by search change over time, so the corpus of every run is stored with its record.
+
+\section{Development Plan}
+\label{sec:dev-plan}
+\label{sec:conc-future}
+Besides the evaluation, the next phase will continue the system and the research in the following directions:
+\begin{itemize}
+    \item \textbf{RQ2: the value of human involvement.} Study at which stages of elicitation and refinement human involvement is most valuable, by comparing runs with different sets of review checkpoints turned on, and with scripted, LLM-simulated and real human reviewers.
+    \item \textbf{Evaluation harness.} Build the harness designed in Section~\ref{sec:eval-details} as a feature of the system (FR-17), with the review policies and the computation of the metrics.
+    \item \textbf{Deliberation.} Strengthen the negotiation of conflicts between personas, for example with explicit debate rounds between the personas involved in a conflict.
+    \item \textbf{Product features.} Complete the requirements that are only partly met or planned (Tables~\ref{tab:sd-fr} and~\ref{tab:sd-nfr}): stored provider credentials (FR-02, NFR-05), project members (FR-03), comments and notifications (FR-14), the connection to a tracing tool (NFR-09), and the exports in PDF and DOCX formats, which the export templates declare but which are not rendered yet.
+    \item \textbf{Deployment and usability.} Deploy the production layout of Section~\ref{sec:sd-deployment} with PostgreSQL, object storage and tracing, and assess the usability of the web app with users (NFR-10).
+\end{itemize}
+
+\section{Work Plan}
+\label{sec:work-plan}
+Figure~\ref{fig:np-gantt} gives an overview of the next phase as a tentative timeline over the weeks of the semester, and Table~\ref{tab:work-plan} details its four stages. The evaluation comes first, since its results decide where the framework needs improvement; the product features are developed alongside it, and the thesis is written in the second half of the semester. The weeks are indicative and will be fixed with the supervisors at the start of the phase.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/evaluation/gantt-next-phase}}
+    \caption{Tentative timeline of the capstone (thesis) phase.}
+    \label{fig:np-gantt}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{Stages of the work in the capstone (thesis) phase.}
+    \label{tab:work-plan}
+    \begin{tabularx}{\linewidth}{|p{3.3cm}|X|X|}
+        \hline
+        \textbf{Stage} & \textbf{Work} & \textbf{Expected output} \\
+        \hline
+        1. Preparation & Build the evaluation harness; finalize the scenarios, the rubrics of the judge and the configuration of the runs & A harness that runs every compared method on every scenario \\
+        \hline
+        2. Evaluation of RQ1 & Run the compared methods and the variants; compute the metrics; score a sample with human raters & Answers to EQ1--EQ4 \\
+        \hline
+        3. Study of RQ2 and improvements & Compare review settings; strengthen the deliberation where the results show weaknesses; complete the product features & Answer to RQ2; improved framework \\
+        \hline
+        4. Deployment and thesis & Deploy the production layout; assess usability; write the thesis & Deployed system and thesis report \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\section{Summary}
+\label{sec:np-summary}
+This chapter planned the capstone (thesis) phase. The evaluation of RQ1 is organized around four evaluation questions, a set of product scenarios, four compared methods that each isolate one factor of the framework, metrics for coverage, diversity, quality and cost, and an evaluation harness that runs every method in the same way. The development plan adds the study of RQ2, the improvement of the deliberation, the completion of the product features and the deployment of the production layout, and the work plan orders these tasks over the semester. Chapter~\ref{chap:conclusion} concludes the report.

@@ -1,0 +1,30 @@
+% Tentative timeline of the capstone (thesis) phase, by week of the semester (Chapter 7).
+\begin{ganttchart}[
+    x unit=0.62cm, y unit chart=0.6cm, y unit title=0.55cm,
+    title height=1, bar height=0.55,
+    bar/.append style={fill=black!35, draw=black},
+    group/.append style={fill=black},
+    milestone/.append style={fill=black},
+    vgrid={dotted},
+    bar label font=\small, group label font=\small\bfseries, title label font=\small,
+    milestone label font=\small
+  ]{1}{16}
+  \gantttitle{Week of the semester}{16} \\
+  \gantttitlelist{1,...,16}{1} \\
+  \ganttgroup{1. Preparation}{1}{4} \\
+  \ganttbar{Evaluation harness}{1}{3} \\
+  \ganttbar{Scenarios, rubrics, configuration}{2}{4} \\
+  \ganttgroup{2. Evaluation of RQ1}{4}{8} \\
+  \ganttbar{Runs of the compared methods}{4}{7} \\
+  \ganttbar{Human rating and analysis}{6}{8} \\
+  \ganttgroup{3. RQ2 and improvements}{8}{12} \\
+  \ganttbar{Study of RQ2}{8}{11} \\
+  \ganttbar{Deliberation improvements}{9}{12} \\
+  \ganttbar{Product features}{3}{12} \\
+  \ganttgroup{4. Deployment and thesis}{11}{16} \\
+  \ganttbar{Production deployment}{11}{13} \\
+  \ganttbar{Usability assessment}{12}{14} \\
+  \ganttbar{Thesis writing}{10}{16} \\
+  \ganttmilestone{Results of RQ1}{8} \\
+  \ganttmilestone{Thesis submitted}{16}
+\end{ganttchart}

@@ -1,10 +1,10 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
-\textit{This chapter summarizes the work of the specialized project, its limitations and the plan for the next phase.}
+\textit{This chapter summarizes the work of the specialized project, its limitations and the lessons learned.}
 
 \section{Summary}
 \label{sec:conc-summary}
-This specialized project addressed the elicitation and refinement of software requirements from a short product idea with an LLM-based multi-agent system. It reviewed LLM-based requirements engineering, persona-based stakeholder simulation and multi-agent coordination, and identified the lack of their integration in a stakeholder-centered, end-to-end process. It proposed \sysname{}, a multi-agent framework whose personas are grounded in evidence mined from uploaded and public documents, and whose workflow combines persona-based interviews, analysis, specification, a prioritized backlog and validation with rework loops, human review checkpoints and intent routing, while keeping every requirement traceable to its sources. The system was analyzed and designed following software engineering practice, implemented as a web application with a modular backend, and demonstrated on a real run from a product idea to persona interviews. The report also defines the plan of the experiments that will answer RQ1.
+This specialized project addressed the elicitation and refinement of software requirements from a short product idea with an LLM-based multi-agent system. It reviewed LLM-based requirements engineering, persona-based stakeholder simulation and multi-agent coordination, and identified the lack of their integration in a stakeholder-centered, end-to-end process. It proposed \sysname{}, a multi-agent framework whose personas are grounded in evidence mined from uploaded and public documents, and whose workflow combines persona-based interviews, analysis, specification, a prioritized backlog and validation with rework loops, human review checkpoints and intent routing, while keeping every requirement traceable to its sources. The system was analyzed and designed following software engineering practice, implemented as a web application with a modular backend, and demonstrated as a prototype on a real run from a product idea to persona interviews. Chapter~\ref{chap:next-phase} defines the plan of the evaluation that will answer RQ1 and of the development in the next phase.
 
 \section{Limitations}
 \label{sec:conc-limitations}
@@ -17,12 +17,13 @@ The work has the following limitations:
     \item \textbf{Features and deployment.} Some designed features are not implemented yet: project members, comments and notifications, stored provider credentials and the connection to a tracing tool. The current implementation runs on SQLite in one process; the production layout with PostgreSQL, object storage and tracing is designed but not yet deployed.
 \end{itemize}
 
-\section{Future Work}
-\label{sec:conc-future}
-The capstone (thesis) phase will continue the work in the following directions:
+\section{Lessons Learned}
+\label{sec:conc-lessons}
+The project also taught the team several lessons about building a system around LLM agents:
 \begin{itemize}
-    \item \textbf{RQ2: the value of human involvement.} Study at which stages of elicitation and refinement human involvement is most valuable, by comparing runs with different sets of review checkpoints turned on, and with scripted, LLM-simulated and real human reviewers.
-    \item \textbf{Evaluation.} Build the evaluation harness, run the planned experiments, extend the scenarios, compare with the prior frameworks, and validate the judge with human raters.
-    \item \textbf{Deliberation.} Strengthen the negotiation of conflicts between personas, for example by explicit debate rounds between the personas involved in a conflict.
-    \item \textbf{Product.} Complete the features that are only designed (project members, comments and notifications, provider credentials, tracing), and deploy the production layout.
+    \item \textbf{Design the contract first.} The design documents of the data, the API and the user interface were written before most of the code. The web app was then built against simulated responses of the API for a month, while the backend and the agents were developed, and the two met on the same contract (Appendix~\ref{apx:timeline}).
+    \item \textbf{Do not trust agent output.} Fluent outputs can still cite sources that do not exist or quote words that were never said. Checking every write against content schemas and integrity rules, and every quote against its source, turned such errors from silent defects into visible failures that can be retried or corrected.
+    \item \textbf{A long run is a resource.} A workflow that lasts minutes and waits for a person for hours does not fit in a request. Modeling the run as a resource with a lifecycle, an event log and saved states shaped the whole architecture, and made reconnection, retry and review possible with little extra code.
+    \item \textbf{Version what changes behavior.} Prompts, the workflow definition and the content schemas change as often as code and alter the output as much. Versioning them, and recording their versions with every run, made the web app independent of the workflow and makes the planned experiments reproducible.
+    \item \textbf{Cost is a design constraint.} Every agent call has a price. Bounding every loop, checking cost limits before each call, giving each agent only the artifacts it needs, and ordering calls so that the provider can reuse its prompt cache kept a full run affordable.
 \end{itemize}

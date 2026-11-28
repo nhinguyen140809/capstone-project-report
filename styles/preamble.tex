@@ -43,6 +43,10 @@
 \usepackage{array}
 \usepackage{tabularx}
 \usepackage{caption}
+% Every caption label ("Figure 4.1:", "Table 4.1:") is bold, for figures, tables and longtables alike.
+% Set once here: a new figure or table only needs \caption{...}.
+\captionsetup{labelfont=bf, labelsep=colon}
+\captionsetup[sub]{labelfont=bf}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{rotating}
@@ -51,6 +55,7 @@
 \usepackage{setspace}
 \usepackage{epsfig}
 \usepackage{tikz}
+\usepackage{pgfgantt}	% timelines of the project (appendix) and of the next phase
 \usepackage{subcaption}
 \usepackage{longfbox}
 \usepackage{float}

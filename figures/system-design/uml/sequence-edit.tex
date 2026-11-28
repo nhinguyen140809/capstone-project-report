@@ -1,0 +1,27 @@
+% UML sequence diagram of editing an item during a review (UC-04), Section 5.5.
+{\scriptsize
+\begin{sequencediagram}
+    \newthread[white]{web}{:Web app}
+    \newinst[2.4]{api}{:API}
+    \newinst[2.4]{svc}{:Artifact service}
+    \newinst[2.4]{db}{:Database}
+
+    \begin{call}{web}{edit item with expected version}{api}{200 item, new version}
+        \begin{call}{api}{check access and edit window}{svc}{editable}
+            \begin{call}{svc}{find review allowing edits}{db}{review}
+            \end{call}
+        \end{call}
+        \begin{callself}{api}{compare expected and current version}{}
+        \end{callself}
+        \begin{call}{api}{validate against schema and plan}{svc}{no errors}
+        \end{call}
+        \begin{call}{api}{save item and revision}{db}{}
+        \end{call}
+        \mess{api}{bump the version of the artifact}{db}
+    \end{call}
+    \begin{call}{web}{read traceability matrix and coverage}{api}{matrix, coverage}
+        \begin{call}{api}{read trace links}{db}{links}
+        \end{call}
+    \end{call}
+\end{sequencediagram}
+}

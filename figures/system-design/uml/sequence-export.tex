@@ -1,0 +1,27 @@
+% UML sequence diagram of an export (UC-05), Section 5.5.
+{\scriptsize
+\begin{sequencediagram}
+    \newthread[white]{web}{:Web app}
+    \newinst[2.4]{api}{:API}
+    \newinst[2.4]{exp}{:Export service}
+    \newinst[2.4]{db}{:Database}
+    \newinst[2.4]{files}{:File storage}
+
+    \begin{call}{web}{request export}{api}{201 export, ready}
+        \begin{call}{api}{create export}{exp}{export}
+            \begin{callself}{exp}{check template and format}{}
+            \end{callself}
+            \begin{call}{exp}{read current versions}{db}{artifacts, items}
+            \end{call}
+            \begin{callself}{exp}{render the file}{}
+            \end{callself}
+            \mess{exp}{write file}{files}
+            \mess{exp}{store export and versions}{db}
+        \end{call}
+    \end{call}
+    \begin{call}{web}{download the file}{api}{file}
+        \begin{call}{api}{read file}{files}{bytes}
+        \end{call}
+    \end{call}
+\end{sequencediagram}
+}

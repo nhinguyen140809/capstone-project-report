@@ -1,0 +1,25 @@
+\section{Technology Overview}
+\label{sec:intro-technology}
+
+\sysname{} is built as a web application with an agent workflow at its core. Table~\ref{tab:intro-tech} gives an overview of the main technologies by layer; Section~\ref{sec:impl-stack} lists them in full and explains the choices.
+
+\begin{table}[H]
+    \centering
+    \caption{Overview of the technologies of \sysname{}.}
+    \label{tab:intro-tech}
+    \begin{tabularx}{\linewidth}{|p{3.4cm}|X|}
+        \hline
+        \textbf{Layer} & \textbf{Technologies} \\
+        \hline
+        Agent orchestration & LangGraph state graph, with LangChain chat models \\
+        Language models & Several providers behind one configuration (OpenAI, Anthropic, Google, local models through Ollama), chosen per agent role \\
+        Research search & Web search (Tavily, or DuckDuckGo and Wikipedia without a key) and scholarly sources (OpenAlex, arXiv) \\
+        Backend & Python, FastAPI, Pydantic, SQLAlchemy with versioned migrations; Server-Sent Events for live updates \\
+        Data & SQLite during development; PostgreSQL with pgvector as the production target \\
+        Web app & Next.js, React and TypeScript, Tailwind CSS with shadcn/ui, TanStack Query; API client generated from the OpenAPI schema \\
+        Quality and delivery & Automated tests (pytest, Vitest, Playwright), static checks, GitHub Actions, Docker Compose \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+The choice follows the needs of the framework: the state graph makes the loops, checkpoints and bounds of the workflow explicit; the provider-independent model layer lets each agent role run on the model best suited to it and lets the experiments change models by configuration; and a typed API shared by the backend and the web app keeps the two consistent as the workflow evolves.

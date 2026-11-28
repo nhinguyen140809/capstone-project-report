@@ -3,7 +3,7 @@
 
 To address these challenges, we present \sysname{}, a persona-driven multi-agent framework for incremental intent formalization. Rather than enforcing a rigid, sequential pipeline, \sysname{} models requirements engineering as a dynamic, non-linear deliberation workflow. By deploying specialized agents equipped with domain-grounded personas, the framework enables flexible transitions between elicitation, conflict negotiation, and verification, allowing agents to iteratively revisit and refine requirements as new insights emerge.
 
-The evaluation planned in Chapter~\ref{chap:evaluation} compares \sysname{} with direct prompting, a single-agent baseline and an ungrounded multi-agent variant on eight product scenarios from different domains.
+A prototype of \sysname{} has been built and demonstrated on a real idea. The evaluation planned for the next phase (Chapter~\ref{chap:next-phase}) will compare it with direct prompting, a single-agent baseline and an ungrounded multi-agent variant on product scenarios from different domains.
 
 The main contributions of this work are as follows:
 \begin{itemize}
@@ -11,5 +11,5 @@ The main contributions of this work are as follows:
     \item We construct the stakeholder personas from evidence: the framework synthesizes uploaded documents, trustworthy public sources and interview evidence into structured stakeholder goals, concerns and constraints, and keeps every persona and requirement traceable to its source evidence and to the decisions taken on it.
     \item We design a multi-perspective deliberation workflow incorporating persona-based elicitation, rework loops, human review checkpoints and intent routing, to support non-sequential requirement refinement.
     \item We build the framework as a web application in which the user follows the agents, reviews and edits their artifacts, and navigates the trace graph.
-    \item We define an evaluation plan that measures the contribution of multiple stakeholder agents with different perspectives to requirements elicitation and refinement (RQ1), and demonstrate the workflow on a real run.
+    \item We demonstrate the prototype on a real run, and define the plan of the evaluation that will measure the contribution of multiple stakeholder agents with different perspectives to requirements elicitation and refinement (RQ1).
 \end{itemize}

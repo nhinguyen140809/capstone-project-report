@@ -1,24 +1,43 @@
 \section*{\Huge List of Abbreviations}
 \addcontentsline{toc}{chapter}{List of Abbreviations}
 
+Table~\ref{tab:abbreviations} lists the abbreviations used in this report, in alphabetical order.
+
 \begingroup\setstretch{1.15}
+% Numbered 0.1, before the chapters: the report class would print "Table 1" outside a chapter.
+\renewcommand{\thetable}{0.\arabic{table}}
 \begin{longtable}{|p{0.2\linewidth}|p{0.7\linewidth}|}
+    \caption{List of abbreviations used in the report.}
+    \label{tab:abbreviations} \\
+    \hline
+    \textbf{Abbreviation} & \textbf{Description} \\
+    \hline
+    \endfirsthead
     \hline
     \textbf{Abbreviation} & \textbf{Description} \\
     \hline
     \endhead
     API & Application Programming Interface \\ \hline
     CHV & Convex Hull Volume \\ \hline
+    CI & Continuous Integration \\ \hline
     CoT & Chain-of-Thought \\ \hline
     FR & Functional Requirement \\ \hline
+    HTTP & Hypertext Transfer Protocol \\ \hline
     INVEST & Independent, Negotiable, Valuable, Estimable, Small, Testable \\ \hline
+    JSON & JavaScript Object Notation \\ \hline
     LLM & Large Language Model \\ \hline
     MAS & Multi-Agent System \\ \hline
     MDC & Mean Distance to Centroid \\ \hline
+    MoSCoW & Must have, Should have, Could have, Won't have \\ \hline
     NFR & Non-Functional Requirement \\ \hline
     RAG & Retrieval-Augmented Generation \\ \hline
     RE & Requirements Engineering \\ \hline
+    REST & Representational State Transfer \\ \hline
     SRS & Software Requirements Specification \\ \hline
     SSE & Server-Sent Events \\ \hline
+    TLS & Transport Layer Security \\ \hline
+    UC & Use Case \\ \hline
+    UI & User Interface \\ \hline
+    UML & Unified Modeling Language \\ \hline
 \end{longtable}
 \endgroup

@@ -1,7 +1,7 @@
 \section{Agent Roles}
 \label{sec:pa-agent-roles}
 
-Table~\ref{tab:pa-agent-roles} lists the eleven agent roles of the workflow and the artifact each one produces. A role is made of three parts: its versioned instructions (Appendix~\ref{apx:prompts}), its inputs, which are snapshots of the artifacts it needs, and the output format it fills. What a role may change is limited to the items it returns, which the system writes into the shared artifacts after checking them; the corpus builder is the only role that may also act outside the workspace, through its search tool. The model of each role is chosen by configuration, so different roles may run on different LLMs.
+Table~\ref{tab:pa-agent-roles} lists the eleven agent roles of the workflow and the artifact each one produces. A role is made of three parts: its versioned instructions (Appendix~\ref{apx:prompts}), its inputs, which are snapshots of the artifacts it needs, and the output format it fills. What a role may change is limited to the items it returns, which the system writes into the shared artifacts after checking them; the corpus builder is the only role that may also act outside the workspace, through its search tool. The assistant of Section~\ref{sec:pa-assistance} belongs to a separate workflow and is not counted among these roles. The model of each role is chosen by configuration, so different roles may run on different LLMs.
 
 \begin{table}[H]
     \centering

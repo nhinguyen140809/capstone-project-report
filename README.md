@@ -81,6 +81,10 @@ Một số lưu ý khi export:
 - Không dùng trực tiếp file SVG vì `pdflatex` không đọc được định dạng này. Cần export sang PDF trước.
 - Ảnh chụp màn hình không có file source, chỉ cần đặt file PNG trong `figures/<chapter name>/`.
 
+### Caption của hình và bảng
+
+Định dạng caption được cố định trong `styles/preamble.tex` (`\captionsetup{labelfont=bf, labelsep=colon}`): phần nhãn như **Figure 4.1:** hay **Table 4.1:** luôn in đậm, kể cả bảng `longtable` và hình con (`subfigure`). Khi thêm hình hoặc bảng chỉ cần viết `\caption{...}` bình thường, không tự thêm `\textbf` vào caption.
+
 ## Install compiler
 
 Report được compile bằng `pdflatex` (do sử dụng `vntex` và font encoding `T5`), phần tài liệu tham khảo dùng `biblatex` + `biber`, và `latexmk` tự động chạy đủ số lượt compile cần thiết. Cần cài đặt:

@@ -1,0 +1,40 @@
+% UML activity diagram of a review at a checkpoint (UC-02), Section 5.5.
+\begin{tikzpicture}[uml, node distance=0.55cm]
+    \node[initial] (init) {};
+    \node[action, below=of init, text width=4.2cm] (show) {Show the artifact under review, the options and the questions};
+    \node[decision, below=of show] (edits) {};
+    \node[action, right=1.8cm of edits, text width=2.8cm] (edit) {Edit items and links (UC-04)};
+    \node[decision, below=0.8cm of edits] (m1) {};
+    \node[action, below=of m1, text width=3.6cm] (choose) {Choose an option, answer the questions, write feedback};
+    \node[decision, below=of choose] (valid) {};
+    \node[action, left=1.8cm of valid, text width=2.6cm] (err) {Show the fields that are not valid};
+    \node[action, below=0.8cm of valid, text width=3.6cm] (store) {Store the decision and resume the run};
+    \node[decision, below=of store] (opt) {};
+    \node[action, text width=2.2cm] (next) at ($(opt)+(-4.5,-1.5)$) {Continue to the next stage};
+    \node[action, text width=2.2cm] (rework) at ($(opt)+(-1.5,-1.5)$) {Producing agent revises with the feedback};
+    \node[action, text width=2.2cm] (reint) at ($(opt)+(1.5,-1.5)$) {Interview again with the named personas};
+    \node[action, text width=2.2cm] (route) at ($(opt)+(4.5,-1.5)$) {Intent router routes the feedback};
+    \node[decision, below=2.8cm of opt] (m2) {};
+    \node[final, below=of m2] (fin) {};
+
+    \draw[flow] (init) -- (show);
+    \draw[flow] (show) -- (edits);
+    \draw[flow] (edits) -- node[guard, above] {[edits allowed]} (edit);
+    \draw[flow] (edit) |- (m1);
+    \draw[flow] (edits) -- node[guard, right] {[else]} (m1);
+    \draw[flow] (m1) -- (choose);
+    \draw[flow] (choose) -- (valid);
+    \draw[flow] (valid) -- node[guard, above] {[not valid]} (err);
+    \draw[flow] (err) |- (m1);
+    \draw[flow] (valid) -- node[guard, right] {[valid]} (store);
+    \draw[flow] (store) -- (opt);
+    \draw[flow] (opt) -| node[guard, pos=0.3, above] {[approve]} (next);
+    \draw[flow] (opt.south) -- ++(0,-0.3) -| node[guard, pos=0.7, left] {[ask for changes]} (rework);
+    \draw[flow] (opt.south) -- ++(0,-0.3) -| node[guard, pos=0.7, right] {[interview again]} (reint);
+    \draw[flow] (opt) -| node[guard, pos=0.3, above] {[something else]} (route);
+    \draw[flow] (next) |- (m2);
+    \draw[flow] (rework) |- (m2);
+    \draw[flow] (reint) |- (m2);
+    \draw[flow] (route) |- (m2);
+    \draw[flow] (m2) -- (fin);
+\end{tikzpicture}

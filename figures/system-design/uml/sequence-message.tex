@@ -1,0 +1,31 @@
+% UML sequence diagram of a message sent during a run (UC-03), Section 5.5.
+{\scriptsize
+\begin{sequencediagram}
+    \newthread[white]{web}{:Web app}
+    \newinst[2.6]{api}{:API}
+    \newinst[2.6]{db}{:Database}
+    \newthread[white]{exe}{:Run executor}
+    \newinst[2.6]{router}{:Intent router}
+    \newinst[2.6]{node}{:Chosen node}
+
+    \begin{call}{web}{post a message}{api}{201 message, pending}
+        \begin{call}{api}{find unfinished run}{db}{run}
+        \end{call}
+        \mess{api}{store as pending}{db}
+    \end{call}
+    \begin{callself}{exe}{finish node, save state}{}
+    \end{callself}
+    \begin{call}{exe}{read pending}{db}{messages}
+    \end{call}
+    \begin{call}{exe}{route messages}{router}{target, directive}
+        \begin{callself}{router}{read spec and backlog}{}
+        \end{callself}
+    \end{call}
+    \mess{exe}{mark delivered, append events}{db}
+    \begin{call}{exe}{continue at target}{node}{updated artifact}
+    \end{call}
+    \begin{call}{api}{read event log}{db}{events}
+    \end{call}
+    \mess{api}{delivered, changed via SSE}{web}
+\end{sequencediagram}
+}

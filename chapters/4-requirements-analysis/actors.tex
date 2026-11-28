@@ -1,0 +1,63 @@
+\section{Stakeholders and Actors}
+\label{sec:sd-actors}
+
+Figure~\ref{fig:sd-context} shows who uses the system and what it depends on.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/system-context}}
+    \caption{System context as a UML component diagram.}
+    \label{fig:sd-context}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{Actors of the system.}
+    \label{tab:sd-actors}
+    \begin{tabularx}{\linewidth}{|l|l|X|}
+        \hline
+        \textbf{Actor} & \textbf{Type} & \textbf{Role} \\
+        \hline
+        User (project member) & Person & Describes a product idea, answers review checkpoints, edits and exports the requirements \\
+        Researcher & Person & Uses the web app like a user, and runs the same workflow on datasets to measure quality, cost and latency \\
+        LLM provider & External system & Chat models reached over HTTPS; a local model server is also possible \\
+        Web search service & External system & Finds the public documents the research corpus is built from \\
+        LLM tracing tool & Supporting system & Stores a trace of every agent step \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{Stakeholders and Their Needs}
+\label{sec:sd-stakeholders}
+The requirements of the following sections are derived from the needs of four stakeholder groups. The first two are the human actors of Table~\ref{tab:sd-actors}; the last two do not use the web app but constrain its design.
+
+\paragraph{Product team member (user).} A product owner, business analyst or developer who starts a new product, or a new feature of a product, from an idea that is not yet written down. Their needs are:
+\begin{itemize}
+    \item to obtain a first specification and a prioritized backlog from a short description, without organizing interviews themselves;
+    \item to see where every requirement comes from, so that they can judge it and defend it before their team;
+    \item to stay in control of the process: to correct the personas, the analysis and the specification before the agents build on them, and to change their intent while the agents work;
+    \item to follow a run that takes minutes without keeping the page open, and to find its results again later;
+    \item to take the results out of the system in formats that other tools accept;
+    \item to keep the cost of the language models under a limit that they choose.
+\end{itemize}
+
+\paragraph{Researcher.} A member of the project team who evaluates the framework. Their needs are:
+\begin{itemize}
+    \item to run the same agent workflow as the product on a set of scenarios and configurations, without the web app;
+    \item to answer the review checkpoints automatically, so that runs are repeatable;
+    \item to obtain for every run a record of its steps, models, prompt versions, usage and artifacts, from which the metrics of Chapter~\ref{chap:next-phase} can be computed.
+\end{itemize}
+
+\paragraph{Development team.} The three members who build and operate the system. They need module boundaries that keep the agents independent of the web layer, a workflow that can be changed by a new versioned definition, automated checks on every change, and a deployment that one person can run.
+
+\paragraph{External services.} The LLM providers and the web search service are reached over HTTPS with keys that the operator supplies. Their rate limits, prices and occasional errors are constraints that the design must absorb: cost limits, retries of unparsable outputs and runs that can be retried from their last completed step.
+
+\subsection{User Journeys}
+\label{sec:sd-journeys}
+The following journeys show how the stakeholders use the system from end to end; each step names the use cases of Section~\ref{sec:sd-use-cases} that it involves.
+\begin{itemize}
+    \item \textbf{From an idea to a backlog.} A product owner creates a project and uploads the notes of an earlier survey (UC-07, UC-11). In a new thread, they describe the product in a few sentences and set three personas (UC-01). They answer the questions asked before the planning, then close the browser. Later they return to the thread, which shows the run waiting at the persona review. They edit one persona and approve the set (UC-02). After the interviews they approve the analysis, review and approve the specification, and finally inspect the traceability matrix (UC-10) and export the specification and the backlog (UC-05).
+    \item \textbf{Changing the intent during a run.} While the requirement engineer is writing the specification, the user sends a message that the product must also work offline (UC-03). At the next safe point the intent router sends the message to the step whose artifact it changes, and the specification and backlog that follow take the new constraint into account.
+    \item \textbf{Recovering from a failure.} A provider returns an error during the analysis and the run fails. The user retries it (UC-09); the new run starts from the last completed step, and the interviews are not paid for again.
+    \item \textbf{Running an experiment.} A researcher prepares a dataset of scenarios and a configuration with several variants, starts the evaluation harness and collects the run records and the summary of the metrics (UC-08).
+\end{itemize}

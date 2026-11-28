@@ -1,0 +1,37 @@
+\section{Requirements Traceability}
+\label{sec:sd-traceability-matrix}
+
+Table~\ref{tab:sd-req-trace} closes the design by tracing every functional requirement of Chapter~\ref{chap:requirements} to the use cases that exercise it, the backend modules of Table~\ref{tab:sd-backend-modules} that realize it, and the diagrams, tables and screens of this chapter that describe it. Together with Table~\ref{tab:sd-nfr-arch} for the non-functional requirements, it shows that every requirement is addressed by the design, and that every part of the design answers to a requirement.
+
+\begingroup\setstretch{1.15}
+\begin{longtable}{|p{0.09\linewidth}|p{0.13\linewidth}|p{0.40\linewidth}|p{0.24\linewidth}|}
+    \caption{Traceability from the functional requirements to the use cases, modules and design elements.}
+    \label{tab:sd-req-trace} \\
+    \hline
+    \textbf{FR} & \textbf{Use cases} & \textbf{Modules} & \textbf{Design elements} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{FR} & \textbf{Use cases} & \textbf{Modules} & \textbf{Design elements} \\
+    \hline
+    \endhead
+    FR-01 & UC-11 & Feature module: accounts & Table~\ref{tab:sd-api}; Table~\ref{tab:sd-tables} \\ \hline
+    FR-02 & UC-06 & Feature module: model settings; model access & Table~\ref{tab:sd-api}; Table~\ref{tab:sd-screens} \\ \hline
+    FR-03 & UC-11 & Feature module: projects & Figure~\ref{fig:sd-domain-model}; Table~\ref{tab:sd-tables} \\ \hline
+    FR-04 & UC-07 & Feature module: documents; agent tools; platform services & Figure~\ref{fig:sd-domain-model}; Table~\ref{tab:sd-api} \\ \hline
+    FR-05 & UC-01 & Feature modules: conversations, runs; agent workflow & Figures~\ref{fig:pa-workflow}, \ref{fig:sd-sequence}, \ref{fig:sd-ui-home} \\ \hline
+    FR-06 & UC-01 & Feature module: runs (event log and stream) & Figures~\ref{fig:sd-node-steps}, \ref{fig:sd-sequence}, \ref{fig:sd-ui-activity} \\ \hline
+    FR-07 & UC-01 & Feature module: runs; model access & Table~\ref{tab:pa-run-parameters} \\ \hline
+    FR-08 & UC-09 & Feature module: runs; platform services & Figure~\ref{fig:sd-run-lifecycle} \\ \hline
+    FR-09 & UC-03 & Feature modules: conversations, runs; agent workflow & Figures~\ref{fig:sd-message-delivery}, \ref{fig:sd-seq-message} \\ \hline
+    FR-10 & UC-02 & Feature module: runs; agent workflow & Figures~\ref{fig:sd-review}, \ref{fig:sd-sequence}, \ref{fig:sd-ui-review} \\ \hline
+    FR-11 & UC-04 & Feature module: artifacts & Figures~\ref{fig:sd-domain-model}, \ref{fig:sd-ui-document} \\ \hline
+    FR-12 & UC-02, UC-04 & Feature module: artifacts; domain rules & Figures~\ref{fig:sd-seq-edit}, \ref{fig:sd-ui-document} \\ \hline
+    FR-13 & UC-04, UC-10 & Feature module: artifacts; domain rules & Figures~\ref{fig:sd-seq-edit}, \ref{fig:sd-ui-trace} \\ \hline
+    FR-14 & --- & Planned & --- \\ \hline
+    FR-15 & UC-05 & Feature module: exports; platform services & Figure~\ref{fig:sd-seq-export} \\ \hline
+    FR-16 & UC-12 & Model access; feature modules: runs, accounts & Table~\ref{tab:sd-tables} \\ \hline
+    FR-17 & UC-08 & Evaluation harness; agent workflow & Figure~\ref{fig:eval-harness} \\ \hline
+    FR-18 & UC-13 & Feature module: assistant; model access & Section~\ref{sec:pa-assistance}; Figure~\ref{fig:sd-ui-review} \\ \hline
+\end{longtable}
+\endgroup

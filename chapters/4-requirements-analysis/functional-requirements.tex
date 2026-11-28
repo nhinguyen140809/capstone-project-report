@@ -1,0 +1,39 @@
+\section{Functional Requirements}
+\label{sec:sd-fr}
+
+The functional requirements follow from the needs of Section~\ref{sec:sd-stakeholders} and are grouped by the feature they belong to (Table~\ref{tab:sd-fr}). The \emph{Priority} column uses the MoSCoW scheme: \emph{Must} marks a requirement without which the system cannot support the process from an idea to a validated backlog or cannot be evaluated, \emph{Should} a requirement that the product needs for regular use but whose absence has a workaround, and \emph{Could} a requirement that improves collaboration but is not needed in this phase.
+
+The \emph{Status} column records whether each requirement is met by the current implementation: \emph{Done} when the backend exposes the feature, \emph{Partial} when only part of it exists, and \emph{Planned} when it is designed but not implemented. The status reflects the implementation at the time of writing. The requirements that are only partly met lack the storage of provider credentials (FR-02) and the invitation of members (FR-03); comments and notifications (FR-14) are designed but not implemented; and experiments currently run through scripts, while the evaluation harness of FR-17 is designed but not built.
+
+\begingroup\setstretch{1.15}
+\begin{longtable}{|p{0.08\linewidth}|p{0.16\linewidth}|p{0.41\linewidth}|p{0.09\linewidth}|p{0.11\linewidth}|}
+    \caption{Functional requirements.}
+    \label{tab:sd-fr} \\
+    \hline
+    \textbf{ID} & \textbf{Group} & \textbf{Requirement} & \textbf{Prio.} & \textbf{Status} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{ID} & \textbf{Group} & \textbf{Requirement} & \textbf{Prio.} & \textbf{Status} \\
+    \hline
+    \endhead
+    FR-01 & Account & The user can register, log in, log out and manage their sessions. & Must & Done \\ \hline
+    FR-02 & Account & The user can store their own LLM provider credentials and choose a model for each agent role. & Should & Partial \\ \hline
+    FR-03 & Project & The user can create, rename and delete a project and invite other members. & Should & Partial \\ \hline
+    FR-04 & Project & The user can upload documents to a project; the corpus builder uses them before web search. & Should & Done \\ \hline
+    FR-05 & Conversation & The user can open a thread in a project and describe a product idea in a chat message, which starts a run of the workflow. & Must & Done \\ \hline
+    FR-06 & Run & The user can follow a run live: the current stage on the workflow graph, the agent steps, the streamed output and the artifacts as they change. & Must & Done \\ \hline
+    FR-07 & Run & The user can configure a run: number of personas, turns per persona, review rounds, research documents, the checkpoints to stop at, the output language and cost limits. & Should & Done \\ \hline
+    FR-08 & Run & The user can cancel a run and retry a failed run from its last completed step. & Must & Done \\ \hline
+    FR-09 & Run & The user can send a message during a run or in a later run; the system routes it to the node that should handle it. & Should & Done \\ \hline
+    FR-10 & Review & At a checkpoint the user can approve, edit, or reject an artifact with feedback, and the run continues along the chosen option. & Must & Done \\ \hline
+    FR-11 & Artifact & The user can view every artifact (plan, corpus, personas, transcripts, analysis, specification, backlog, validation report) and its items. & Must & Done \\ \hline
+    FR-12 & Artifact & While a review that allows edits waits, the user can edit, add, reorder and delete items and restore an earlier version; the revisions of every item can be read at any time. & Must & Done \\ \hline
+    FR-13 & Traceability & The user can see and edit the trace links of an item, view the traceability matrix and the coverage of the project. & Must & Done \\ \hline
+    FR-14 & Collaboration & Members can comment on artifacts and items and receive notifications. & Could & Planned \\ \hline
+    FR-15 & Export & The user can export the specification, the backlog, the traceability matrix, the transcripts or the whole project. & Must & Done \\ \hline
+    FR-16 & Usage & The user can see token usage and cost per run, project and agent role. & Should & Done \\ \hline
+    FR-17 & Research & The researcher can run the workflow on a dataset with an experiment configuration and obtain run records and metrics, without the web app. & Must & Partial \\ \hline
+    FR-18 & Assistance & The user can ask in the chat about the application or the project; the system answers without starting a run of the requirements workflow, and can open the document, item, review or run settings the answer refers to. & Should & Done \\ \hline
+\end{longtable}
+\endgroup

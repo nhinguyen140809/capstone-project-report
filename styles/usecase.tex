@@ -1,10 +1,12 @@
 \usepackage{longtable}
 
 \newcounter{tmp}
-\newcommand\tabularhead[1]{
+% Usage: \begin{usecase}{Title of the use case}{uc-01} ... \end{usecase}
+% The second argument names the table: it is labelled tab:<id>, so the text can cite it with Table~\ref{tab:uc-01}.
+\newcommand\tabularhead[2]{
 % \begin{table}[h]
   \begin{longtable}{|p{0.3\linewidth}|p{0.55\linewidth}|}
-  \caption{Use case: #1} \\
+  \caption{Use case: #1}\label{tab:#2} \\
     \hline
     \textbf{Use-case} & {\textbf{#1}} \\
     \hline}

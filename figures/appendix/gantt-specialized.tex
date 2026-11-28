@@ -1,0 +1,24 @@
+% Timeline of the work areas of the specialized project (Appendix D), from the merged changes.
+\begin{ganttchart}[
+    time slot format=isodate,
+    x unit=0.22cm, y unit chart=0.6cm, y unit title=0.55cm,
+    title height=1, bar height=0.55,
+    bar/.append style={fill=black!35, draw=black},
+    milestone/.append style={fill=black},
+    group/.append style={fill=black},
+    bar label font=\small, group label font=\small\bfseries, title label font=\small,
+    milestone label font=\small
+  ]{2026-09-26}{2026-11-30}
+  \gantttitlecalendar{month=shortname} \\
+  \ganttbar{Planning}{2026-09-26}{2026-09-28} \\
+  \ganttbar{Design documents}{2026-10-10}{2026-10-10}
+  \ganttbar{}{2026-10-28}{2026-11-03}
+  \ganttbar{}{2026-11-21}{2026-11-24} \\
+  \ganttbar{Web app (frontend)}{2026-10-01}{2026-11-24} \\
+  \ganttbar{Backend}{2026-11-10}{2026-11-24} \\
+  \ganttbar{Agent workflow}{2026-11-13}{2026-11-24} \\
+  \ganttbar{Report}{2026-09-26}{2026-09-26}
+  \ganttbar{}{2026-11-16}{2026-11-27} \\
+  \ganttmilestone{Backend joins the web app}{2026-11-10} \\
+  \ganttmilestone{First version of the report}{2026-11-16}
+\end{ganttchart}

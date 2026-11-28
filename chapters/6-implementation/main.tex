@@ -1,9 +1,11 @@
 \chapter{Implementation}
 \label{chap:implementation}
-\textit{This chapter describes how \sysname{} is implemented: the technology stack, the agent workflow on LangGraph, the backend, the web app, and the testing and continuous integration process.}
+\textit{This chapter describes how \sysname{} is implemented: the technology stack, the agent workflow on LangGraph, the backend, the web app, the testing and continuous integration process, the deployment, and a demonstration of the prototype on a real idea.}
 
 \section{Technology Stack}
 \label{sec:impl-stack}
+
+Table~\ref{tab:impl-stack} lists the technologies used for each concern of the system, from the orchestration of the agents to the tooling of the team.
 
 \begin{table}[H]
     \centering
@@ -68,25 +70,27 @@ After the call, the step turns the output into items and links and saves them; t
 \section{Backend Implementation}
 \label{sec:impl-backend}
 
-The backend follows the modules of Section~\ref{sec:sd-backend-modules}. Each feature module (accounts, projects, conversations, runs, artifacts, documents and exports) contains its API endpoints, the formats of its requests and responses, its business logic and its database tables, built with FastAPI, Pydantic and SQLAlchemy; the database schema is created by versioned migrations.
+The backend follows the modules of Section~\ref{sec:sd-backend-modules}. Each feature module (accounts, projects, conversations, runs, artifacts, documents, exports and the assistant) contains its API endpoints, the formats of its requests and responses, its business logic and its database tables, built with FastAPI, Pydantic and SQLAlchemy; the database schema is created by versioned migrations.
 
 \paragraph{Run execution.} Posting the first message of a thread creates a run with the status \emph{queued} and returns at once. The run is then executed in the background: the backend fixes the settings of the run, gives the workflow access to the database, the document search, the project documents and the cost control, and runs the workflow from its last saved state. For every step it records which step ran, the model used, the tokens and cost, and the items produced. On startup, the backend recovers the runs left by a stopped process as described in Section~\ref{sec:sd-failures}.
 
 \paragraph{Event log and streaming.} Every event of a run (a token, a step started or finished, an artifact changed, a review requested, the run finished) is appended to an event log in the database with an increasing sequence number. The streaming endpoint reads the log and sends the events as Server-Sent Events; a client that reconnects passes the last sequence number it received and gets the events after it.
+
+\paragraph{Assistant.} Every posted message is handed to the assistant as a job of the server (Section~\ref{sec:pa-assistance}). The assistant calls its model with structured output that either answers the message, asks for one more read through one of its tools, or sends the message on to the requirements workflow. Its tools only read the database of the project. The commands of the answer are kept only when they are listed in the catalog of commands and name a document or an item of the project, and the usage of the call is recorded so that the budget of the user includes it.
 
 \paragraph{Artifacts and traceability.} The artifact service validates every write with the domain checks and stores a new revision. The traceability endpoints compute the trace of an item, the traceability matrix and the coverage of a project from the trace links. Exports render the specification, the backlog, the matrix and the transcripts into files.
 
 \section{Web Application}
 \label{sec:impl-frontend}
 
-The web app follows the layers of Section~\ref{sec:sd-frontend}. Its main screens are the project list, the project page with its threads and documents, and the thread page, which combines the chat, the workflow graph with the progress of the current run, the review of a pending checkpoint, and an artifact panel. The graph, its stages and the review forms are generated from the workflow definition: a checkpoint's options become buttons and its questions become form fields, with the validation rules of the definition. The artifact panel renders each artifact kind from its content schema, with editors for the items and the links. In mock mode, simulated responses replace the API inside the browser, which is used both for development and for the end-to-end tests. Screenshots are shown in Section~\ref{sec:sd-ui}.
+The web app follows the layers of Section~\ref{sec:sd-frontend}. Its main screens are the project list, the project page with its threads and documents, and the thread page, which combines the chat, the workflow graph with the progress of the current run, the review of a pending checkpoint, and an artifact panel. The graph, its stages and the review forms are generated from the workflow definition: a checkpoint's options become buttons and its questions become form fields, with the validation rules of the definition. The artifact panel renders each artifact kind from its content schema, with editors for the items and the links. Every agent is shown with a small animated face. Its mood follows the state of the work: working while the run runs, waiting at a review, glad when the run succeeds, worried when it fails and asleep when it is cancelled, among eight moods in all. Beside the face, an \emph{act} shows what the agent is doing, such as searching, reading, interviewing or writing; the seventeen acts form a catalog, and every stage and tool of the workflow definition names the acts it performs, so that a new stage needs no change of the web app. The prompt input also accepts dictation, and answers can be read aloud. In mock mode, simulated responses replace the API inside the browser, which is used both for development and for the end-to-end tests. Screenshots of the main screens are shown in Section~\ref{sec:sd-ui}.
 
 \section{Testing and Continuous Integration}
 \label{sec:impl-testing}
 
-\paragraph{Backend.} The backend has 658 automated tests, of which 10 are currently skipped. They cover the domain rules without a database; the consistency of the workflow description, the item formats and the prompts; the workflow itself, run with simulated language models; the document search; the automatic decisions; and the API end to end, including authentication, editing, exports, the event stream with review requests, and the execution of runs. Static checks verify code style and types, and enforce the allowed dependencies between the modules.
+\paragraph{Backend.} The backend has 759 automated tests, of which 10 are currently skipped; all the others pass. They cover the domain rules without a database; the consistency of the workflow description, the item formats and the prompts; the workflow itself, run with simulated language models; the document search; the automatic decisions; and the API end to end, including authentication, editing, exports, the event stream with review requests, and the execution of runs. Static checks verify code style and types, and enforce the allowed dependencies between the modules.
 
-\paragraph{Frontend.} The web app has unit and component tests, and end-to-end tests that drive the application in a browser (20 test suites). On every change, the continuous integration of the web app checks types and code style, runs the unit tests and reports their coverage, builds the application and runs the end-to-end tests; a second job captures screenshots of the screens.
+\paragraph{Frontend.} The web app has 615 files of unit and component tests, and 22 suites of end-to-end tests that drive the application in a browser. On every change, the continuous integration of the web app checks types and code style, runs the unit tests and reports their coverage, builds the application and runs the end-to-end tests; a second job captures screenshots of the screens.
 
 The continuous integration of the backend runs on every change as well: it checks the code style, the types and the allowed dependencies between the modules, runs the automated tests, and runs end-to-end tests of the web application against the real backend.
 
@@ -94,3 +98,52 @@ The continuous integration of the backend runs on every change as well: it check
 \label{sec:impl-deployment}
 
 For development, the API and the web app run in containers that reload when their source changes, with the database stored in a single file. Secrets, such as the keys of the model providers, are supplied by the operator and are never stored with the source. The models available to the agents are listed in a configuration that can point to the public providers or to a compatible gateway, and a script creates a demo user with sample projects. The production layout of Section~\ref{sec:sd-deployment} is the target of the next phase.
+
+\section{Prototype Demonstration}
+\label{sec:impl-demo}
+\label{sec:eval-case-study}
+
+To check that the prototype works end to end outside the tests, the system was run once through its API, with real LLM calls and real search, on the idea ``\textit{Build a platform that helps university students find career mentors}''. The project was created with Vietnamese as output language, and the members uploaded one short document of notes collected at a university. The run took about 33 minutes and went from the idea to the interviews. It shows that the first half of the workflow, from planning to persona-based interviews, runs on real models and real documents and keeps its evidence chain; it is a demonstration of the prototype, not a measurement of the quality of the requirements, which the evaluation planned in Chapter~\ref{chap:next-phase} addresses. The paragraphs below give an overview of what each step produced.
+
+\paragraph{Plan.} The planner listed six stakeholder types: students seeking career guidance, potential mentors, career services staff, university administrators, platform administrators, and employers and industry partners. Its topics include the current channels students use and their frustrations, the outcomes expected from mentoring, matching criteria, interaction formats, and credential verification.
+
+\paragraph{Corpus and observations.} The corpus builder kept three documents: the uploaded notes, a journal article on the impact of mentoring in higher education on student careers, and an article on developing strategic partnerships between companies and universities. The stakeholder miner extracted eight observations, each with a verbatim quote, for example:
+\begin{itemize}
+    \item students, \emph{advisor matching by field and free time}: ``Tim co van theo nganh nghe va gio ranh'' (find an advisor by field and free time);
+    \item students, \emph{quick booking in a few clicks}: ``Book lich nhanh trong vai cu bam'' (book a session in a few clicks);
+    \item advisors, \emph{filtering requests before accepting}: ``Loc yeu cau truoc khi nhan'' (filter requests before accepting them);
+    \item companies, \emph{difficulty establishing and running university partnerships}: ``However, companies often struggle to establish and run university partnerships effectively.''
+\end{itemize}
+
+\paragraph{Personas.} The persona generator built three personas, each grounded in two observations:
+\begin{itemize}
+    \item \textbf{Linh}, 21, third-year marketing student who commutes and works part-time, grounded in the observations on matching by field and free time and on quick booking. Her goals are to find an advisor in marketing or branding whose hours fit around her classes and shifts, and to get a confirmed session in a few clicks.
+    \item \textbf{Minh}, 29, senior software engineer and alumnus who mentors in his spare time, grounded in the observations on filtering requests and on a conflict-free schedule.
+    \item \textbf{Huong}, 38, university relations manager at a technology company, grounded in the two observations on university partnerships.
+\end{itemize}
+The three personas carry different, partly conflicting priorities: the student wants fast booking, while the mentor wants to filter every request before accepting it.
+
+\paragraph{Interview.} The interviews produced 22 messages. The first question to Linh asked what she did after two internship rejections, whom she turned to, and how long she waited for a useful answer. In her answer, the persona described turning first to her class group chat, where replies came quickly but were ``mostly sympathy'', and later explained that a mentor profile is only credible to her when it shows a specific title and company: ``If it just says `Marketing professional, 8 years experience' with no company --- skip.'' The plan had a topic on profile content and credential verification; the persona turned it into a concrete criterion of credibility, which the uploaded notes did not contain.
+
+\paragraph{Checks of the evidence chain.} On the data of this run, every observation quote was found word for word in its source document (8 of 8), every observation named an existing source (8 of 8), every web source had a real URL (3 of 3), every evidence quote of a persona matched its observation exactly (6 of 6), and every persona used one of the stakeholder types of the plan (3 of 3).
+
+\paragraph{Overview of the output.} Table~\ref{tab:impl-demo-output} summarizes the artifacts of the run. Overall, the prototype turned a one-sentence idea into a plan, a small grounded corpus, three distinct personas with traceable evidence and a first round of interviews, without manual intervention apart from the answers at the checkpoints. The output was coherent with the idea, the personas brought partly conflicting priorities into the interviews, and every link of the evidence chain could be checked. The run also showed the cost of the approach: it took about half an hour for the first half of the workflow, which confirms that cost and latency must be measured in the planned evaluation.
+
+\begin{table}[H]
+    \centering
+    \caption{Overview of the output of the demonstration run.}
+    \label{tab:impl-demo-output}
+    \begin{tabularx}{\linewidth}{|l|X|}
+        \hline
+        \textbf{Artifact} & \textbf{Output} \\
+        \hline
+        Elicitation plan & Six stakeholder types and the topics of the interviews \\
+        Research corpus & Three documents: the uploaded notes and two articles found by search \\
+        Stakeholder observations & Eight observations, each with a verbatim quote from its document \\
+        Personas & Three personas (a student, an alumnus mentor and an industry partner), each grounded in two observations \\
+        Interview transcripts & Twenty-two messages \\
+        Evidence checks & All checks passed: quotes (8 of 8), sources (8 of 8), URLs (3 of 3), persona evidence (6 of 6), stakeholder types (3 of 3) \\
+        \hline
+    \end{tabularx}
+\end{table}
+\input{chapters/6-implementation/summary}

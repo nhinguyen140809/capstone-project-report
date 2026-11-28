@@ -1,0 +1,310 @@
+\section{Use Cases}
+\label{sec:sd-use-cases}
+
+\subsection{Use Case Diagram}
+\label{sec:sd-uc-diagram}
+Figure~\ref{fig:sd-use-case} shows the use cases of the system and its actors. The researcher is a specialization of the user: they use the web app like any user, and in addition run experiments. Reviewing an artifact at a checkpoint (UC-02) and sending a message during a run (UC-03) extend UC-01, since they happen only while a run is unfinished.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/system-design/uml/use-case}}
+    \caption{UML use case diagram.}
+    \label{fig:sd-use-case}
+\end{figure}
+
+\subsection{Use Case Specifications}
+\label{sec:sd-uc-specs}
+Table~\ref{tab:sd-uc-list} lists the use cases with the functional requirements they realize; every functional requirement except FR-14, which is planned for the next phase, is realized by at least one use case. The specifications follow. Each one states the normal flow, the alternative flows, which reach the goal by another path, and the exception flows, which end the use case without reaching it.
+
+\begin{table}[H]
+    \centering
+    \caption{Main use cases.}
+    \label{tab:sd-uc-list}
+    \begin{tabularx}{\linewidth}{|l|X|l|l|l|}
+        \hline
+        \textbf{ID} & \textbf{Use case} & \textbf{Actor} & \textbf{Requirements} & \textbf{Spec.} \\
+        \hline
+        UC-01 & Start a requirements engineering run & User & FR-05, FR-06, FR-07 & Table~\ref{tab:uc-01} \\
+        UC-02 & Review an artifact at a checkpoint & User & FR-10, FR-12 & Table~\ref{tab:uc-02} \\
+        UC-03 & Send a message during a run & User & FR-09 & Table~\ref{tab:uc-03} \\
+        UC-04 & Edit items and trace links & User & FR-11, FR-12, FR-13 & Table~\ref{tab:uc-04} \\
+        UC-05 & Export the requirements & User & FR-15 & Table~\ref{tab:uc-05} \\
+        UC-06 & Configure models and credentials & User & FR-02 & Table~\ref{tab:uc-06} \\
+        UC-07 & Upload project documents & User & FR-04 & Table~\ref{tab:uc-07} \\
+        UC-08 & Run an experiment & Researcher & FR-17 & Table~\ref{tab:uc-08} \\
+        UC-09 & Cancel or retry a run & User & FR-08 & Table~\ref{tab:uc-09} \\
+        UC-10 & View the traceability matrix and coverage & User & FR-13 & Table~\ref{tab:uc-10} \\
+        UC-11 & Manage projects and members & User & FR-01, FR-03 & Table~\ref{tab:uc-11} \\
+        UC-12 & View usage and cost & User & FR-16 & Table~\ref{tab:uc-12} \\
+        UC-13 & Ask about the application & User & FR-18 & Table~\ref{tab:uc-13} \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\begin{usecase}{Start a requirements engineering run}{uc-01}
+    \addrow{Use case ID}{UC-01}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user describes a product idea in a thread and the system runs the agent workflow on it.}
+    \addrow{Related requirements}{FR-05, FR-06, FR-07}
+    \addrow{Preconditions}{The user is logged in, is a member of the project, and has a model configured for every agent role.}
+    \addrow{Trigger}{The user sends the first message of a thread.}
+    \addmulrow{Normal flow}{
+        \item The user opens a project and creates a thread.
+        \item The user enters the product idea and, optionally, changes the run settings.
+        \item The system creates a run, starts it in the background and opens its event stream.
+        \item The system shows the current stage on the workflow graph and the artifacts as the agents produce them.
+        \item The run pauses at the persona checkpoint (UC-02).
+    }
+    \addmulrow{Alternative flows}{
+        \item[3a.] The cost limit is reached: the run stops with an error and the user may raise the limit and retry.
+        \item[4a.] The user closes the browser: the run continues; when the user returns, the stream replays the missed events.
+    }
+    \addmulrow{Exception flows}{
+        \item[3e.] The monthly budget of the user is spent: the system refuses the message and no run is created.
+        \item[4e.] A provider returns an error, or an agent output fails the integrity checks: the run ends as \emph{failed} with an error code, and the user may retry it (UC-09).
+    }
+    \addrow{Postconditions}{A run exists with status \emph{running}, \emph{interrupted} or \emph{succeeded}.}
+\end{usecase}
+
+\begin{usecase}{Review an artifact at a checkpoint}{uc-02}
+    \addrow{Use case ID}{UC-02}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user reviews the artifact under review and chooses an option; the run continues along it.}
+    \addrow{Related requirements}{FR-10, FR-12}
+    \addrow{Preconditions}{A run of the thread is interrupted at a checkpoint.}
+    \addrow{Trigger}{The system shows a review request.}
+    \addmulrow{Normal flow}{
+        \item The system shows the artifact under review, the options and the questions of the checkpoint.
+        \item The user edits the artifact if the checkpoint allows edits.
+        \item The user chooses an option and, when the option requires it, writes feedback.
+        \item The system records the decision and resumes the run on the edge of the chosen option.
+    }
+    \addmulrow{Alternative flows}{
+        \item[3a.] The user rejects the analysis with re-interview: the run goes back to the interviews with the personas named by the rework directive.
+    }
+    \addmulrow{Exception flows}{
+        \item[3e.] The chosen option requires feedback and none is given, or an answer to a question is not valid: the system rejects the decision, names the fields, and keeps the review open.
+        \item[4e.] The run was cancelled while the review was open: the review was cancelled with it, and the decision is rejected because the run no longer waits for it.
+    }
+    \addrow{Postconditions}{A human decision is stored and the run is running again.}
+\end{usecase}
+
+\begin{usecase}{Send a message during a run}{uc-03}
+    \addrow{Use case ID}{UC-03}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user changes or adds to the intent while a run works, or after it has finished; the system routes the message to the step that should handle it.}
+    \addrow{Related requirements}{FR-09}
+    \addrow{Preconditions}{The thread has at least one run.}
+    \addrow{Trigger}{The user sends a message in the thread.}
+    \addmulrow{Normal flow}{
+        \item The system stores the message, and the assistant decides that it concerns the requirements work (Section~\ref{sec:pa-assistance}). If a run is unfinished, the message is pending.
+        \item At the next safe point, after the current node finishes, the intent router reads the pending messages with the current specification and backlog.
+        \item The intent router chooses the node whose artifact the message changes and writes an intent directive for it.
+        \item The run continues at that node, and the message is marked delivered.
+    }
+    \addmulrow{Alternative flows}{
+        \item[1a.] No run is unfinished: the message starts a new run, which begins at the intent router.
+        \item[1b.] The message is a question about the application: the assistant answers it (UC-13), and no run of the requirements workflow is involved.
+        \item[2a.] The run fails or is cancelled before a safe point: the message is marked undelivered and the user may send it again.
+    }
+    \addrow{Postconditions}{The message is delivered and the chosen node has updated its artifact.}
+\end{usecase}
+
+\begin{usecase}{Edit items and trace links}{uc-04}
+    \addrow{Use case ID}{UC-04}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user corrects the output of the agents: edits, adds, reorders or deletes items, and adds or removes trace links.}
+    \addrow{Related requirements}{FR-11, FR-12, FR-13}
+    \addrow{Preconditions}{The user is a member of the project, and a run of the project waits at a review that allows edits and lists the artifact (UC-02). Outside such a review the artifacts are read-only, so that the agents and the user never write the same artifact at the same time.}
+    \addrow{Trigger}{The user opens the artifact under review in the artifact panel.}
+    \addmulrow{Normal flow}{
+        \item The system shows the items of the artifact in outline order with their links.
+        \item The user edits an item, or links it to another item with a link type allowed for the pair of kinds.
+        \item The system checks the change against the content schema and the integrity rules, saves a new revision, and records the user as its origin.
+        \item The traceability matrix and the coverage view reflect the change.
+    }
+    \addmulrow{Alternative flows}{
+        \item[3a.] The change fails a check (for example a link that would create a cycle): the system rejects it and shows the rule that failed.
+        \item[3b.] The user restores an earlier revision of the artifact.
+    }
+    \addmulrow{Exception flows}{
+        \item[2e.] No review that allows edits of the artifact is waiting: the change is rejected.
+        \item[2f.] The item was changed since the user read it: the change is rejected with the current version, and the user edits that version.
+    }
+    \addrow{Postconditions}{A new revision of the item or link exists; earlier revisions are kept.}
+\end{usecase}
+
+\begin{usecase}{Export the requirements}{uc-05}
+    \addrow{Use case ID}{UC-05}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user exports the specification, the backlog, the traceability matrix, the interview transcripts or the whole project as a file.}
+    \addrow{Related requirements}{FR-15}
+    \addrow{Preconditions}{The artifacts of the chosen template exist.}
+    \addrow{Trigger}{The user chooses an export template and a format.}
+    \addmulrow{Normal flow}{
+        \item The system creates an export from the current versions of the artifacts of the template.
+        \item The system renders the file and stores it in file storage.
+        \item The user downloads the file.
+    }
+    \addmulrow{Alternative flows}{
+        \item[1a.] An artifact of the template does not exist yet: the system rejects the export and names the missing artifact.
+    }
+    \addmulrow{Exception flows}{
+        \item[1e.] The chosen format is not offered for the template, or is not available yet: the system rejects the export and names the formats of the template.
+    }
+    \addrow{Postconditions}{The export and its file are stored with the versions they were built from.}
+\end{usecase}
+
+\begin{usecase}{Configure models and credentials}{uc-06}
+    \addrow{Use case ID}{UC-06}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user stores an API key of an LLM provider and chooses the model of each agent role.}
+    \addrow{Related requirements}{FR-02}
+    \addrow{Preconditions}{The user is logged in.}
+    \addrow{Trigger}{The user opens the model settings.}
+    \addmulrow{Normal flow}{
+        \item The system lists the models the user may choose, with the agent roles each may serve.
+        \item The user adds a provider credential; the system stores the key encrypted and never returns it.
+        \item The user chooses a model for each agent role, or keeps the default.
+        \item The system saves the settings; the next run freezes them in its run configuration.
+    }
+    \addrow{Postconditions}{Every agent role resolves to a model the user may use.}
+\end{usecase}
+
+\begin{usecase}{Upload project documents}{uc-07}
+    \addrow{Use case ID}{UC-07}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user uploads documents of the domain, such as survey results or interview notes, which the corpus builder uses before web search.}
+    \addrow{Related requirements}{FR-04}
+    \addrow{Preconditions}{The user is a member of the project.}
+    \addrow{Trigger}{The user chooses files in the documents page of the project.}
+    \addmulrow{Normal flow}{
+        \item The system stores each file and extracts its text.
+        \item The documents are listed in the project.
+        \item In the next run, the corpus builder receives the documents ahead of the search results.
+    }
+    \addmulrow{Alternative flows}{
+        \item[1a.] The file type is not supported or the file is too large: the system rejects it with a message.
+    }
+    \addrow{Postconditions}{The documents are available to the research stage of later runs.}
+\end{usecase}
+
+\begin{usecase}{Run an experiment}{uc-08}
+    \addrow{Use case ID}{UC-08}
+    \addrow{Actor}{Researcher}
+    \addrow{Description}{The researcher runs the workflow on every case of a dataset, for several configurations, and computes the metrics.}
+    \addrow{Related requirements}{FR-17}
+    \addrow{Preconditions}{A dataset file and an experiment configuration exist; provider keys are set.}
+    \addrow{Trigger}{The researcher starts the evaluation harness with the experiment folder.}
+    \addmulrow{Normal flow}{
+        \item The harness reads the configuration and the dataset.
+        \item For each variant, case and repeat, it runs the compiled workflow graph, and the review policy answers the checkpoints.
+        \item It writes one run record per run, with its steps, usage, review answers and artifacts.
+        \item The metrics step reads the records, calls the judge model where needed, and writes the summary.
+    }
+    \addmulrow{Alternative flows}{
+        \item[2a.] A run fails: its record is written with the error, and the harness continues with the next run.
+    }
+    \addrow{Postconditions}{The run records and the summary of the metrics are in the experiment folder.}
+\end{usecase}
+
+\begin{usecase}{Cancel or retry a run}{uc-09}
+    \addrow{Use case ID}{UC-09}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user stops a run that goes in a wrong direction, or restarts a failed run from its last completed step.}
+    \addrow{Related requirements}{FR-08}
+    \addrow{Preconditions}{The thread has a run that is unfinished (cancel) or \emph{failed} (retry).}
+    \addrow{Trigger}{The user chooses \emph{Cancel} or \emph{Retry} on the run.}
+    \addmulrow{Normal flow}{
+        \item The user chooses \emph{Cancel} on an unfinished run.
+        \item The system marks the run \emph{cancelled}, cancels its pending review, if any, and sends the end of the event stream; a step in progress stops at its end, and pending messages are marked undelivered.
+        \item The items written by the completed steps are kept.
+    }
+    \addmulrow{Alternative flows}{
+        \item[1a.] The user chooses \emph{Retry} on a failed run: the system creates a new run that starts from a completed step of the failed one, using its saved state, so the LLM calls of earlier steps are not made again.
+    }
+    \addmulrow{Exception flows}{
+        \item[1e.] The run is already finished: cancellation is rejected.
+        \item[1a1.] Another run of the project is running or waiting, or the monthly budget of the user is spent: the retry is rejected.
+    }
+    \addrow{Postconditions}{The run is \emph{cancelled}, or a new run continues the work of the failed one.}
+\end{usecase}
+
+\begin{usecase}{View the traceability matrix and coverage}{uc-10}
+    \addrow{Use case ID}{UC-10}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user checks where the requirements come from and which sources or requirements are not yet covered.}
+    \addrow{Related requirements}{FR-13}
+    \addrow{Preconditions}{The project has artifacts with trace links.}
+    \addrow{Trigger}{The user opens the traceability view of the project, or the trace of an item.}
+    \addmulrow{Normal flow}{
+        \item The system computes the traceability matrix of the project from the trace links.
+        \item The system shows the matrix and the coverage: the items without a source, and the sources without a derived item.
+        \item The user selects an item and the system shows its trace, from the quotes of the documents and interviews to the backlog.
+    }
+    \addmulrow{Alternative flows}{
+        \item[3a.] The user adds or removes a link from the trace view (UC-04); the matrix and the coverage are recomputed.
+    }
+    \addrow{Postconditions}{No data is changed, unless the user edits a link.}
+\end{usecase}
+
+\begin{usecase}{Manage projects and members}{uc-11}
+    \addrow{Use case ID}{UC-11}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user registers or logs in, and creates, renames or deletes a project; inviting members is designed but only partly implemented.}
+    \addrow{Related requirements}{FR-01, FR-03}
+    \addrow{Preconditions}{None for registration; the user is logged in for the other operations.}
+    \addrow{Trigger}{The user opens the home page.}
+    \addmulrow{Normal flow}{
+        \item The user logs in; the system creates a session stored in a secure cookie.
+        \item The system lists the projects of which the user is a member.
+        \item The user creates a project with a name, or renames or deletes one of their projects.
+    }
+    \addmulrow{Alternative flows}{
+        \item[1a.] The user has no account: the user registers and is logged in.
+        \item[3a.] The user invites another user to the project, who becomes a member. This flow is designed but not implemented yet (FR-03 is partly met).
+    }
+    \addmulrow{Exception flows}{
+        \item[1e.] The credentials are wrong: the system refuses the login without saying which part was wrong.
+        \item[3e.] The project does not exist or the user is not a member: the system answers that it was not found.
+        \item[3f.] The user deletes a project that has an unfinished run: the system refuses and asks to stop the run first.
+    }
+    \addrow{Postconditions}{The project list reflects the change.}
+\end{usecase}
+
+\begin{usecase}{View usage and cost}{uc-12}
+    \addrow{Use case ID}{UC-12}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user checks how many tokens and how much money a run, a project or an agent role has used.}
+    \addrow{Related requirements}{FR-16}
+    \addrow{Preconditions}{At least one run has made an LLM call.}
+    \addrow{Trigger}{The user opens the usage view of a run or a project.}
+    \addmulrow{Normal flow}{
+        \item The system sums the usage recorded for every step, including prompt cache reads and writes.
+        \item The system shows the tokens and the cost per run, per project and per agent role.
+    }
+    \addrow{Postconditions}{No data is changed.}
+\end{usecase}
+
+\begin{usecase}{Ask about the application}{uc-13}
+    \addrow{Use case ID}{UC-13}
+    \addrow{Actor}{User}
+    \addrow{Description}{The user asks a question about the application or the state of the project, such as where a document is or why the last run failed, and the assistant answers it.}
+    \addrow{Related requirements}{FR-18}
+    \addrow{Preconditions}{The user is a member of the project and the budget of the month is not spent.}
+    \addrow{Trigger}{The user sends a message in a thread.}
+    \addmulrow{Normal flow}{
+        \item The system stores the message and gives it to the assistant with a summary of the project.
+        \item The assistant decides that the message is about the application, and reads what it needs through its read-only tools, within the bounded number of reads.
+        \item The assistant answers in a few sentences, which are stored as a message of the thread, and names the commands for the web app.
+        \item The web app shows the answer and runs the commands, for example by opening the document the user asked for.
+    }
+    \addmulrow{Alternative flows}{
+        \item[2a.] The message is about the requirements work: it continues as in UC-01 or UC-03.
+    }
+    \addmulrow{Exception flows}{
+        \item[2e.] The assistant fails or gives no answer: the message goes to the requirements workflow, so that it is not lost.
+        \item[3e.] A command names a document or an item that does not exist: the command is dropped and the answer is kept.
+    }
+    \addrow{Postconditions}{The answer is a message of the thread and its cost is recorded; no artifact is changed.}
+\end{usecase}
